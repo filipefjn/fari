@@ -26,7 +26,6 @@ def post_folder_content():
     path = re.sub(r'^/', '', path)
     path = re.sub(r'../', '', path)
     path = os.path.join(settings["media_dir"], path)
-    # return { "result": path }
     if not os.path.exists(path):
         raise Exception("requested path does not exist")
     if not os.path.isdir(path):
@@ -38,7 +37,8 @@ def post_folder_content():
         if os.path.isdir(os.path.join(path, item)):
             subfolders.append(item)
         else:
-            files.append(item)
+            if "file_regex" in settings and re.search(settings["file_regex"], item) is not None:
+                files.append(item)
     subfolders.sort()
     files.sort()
     return {
