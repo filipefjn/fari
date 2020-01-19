@@ -4,6 +4,7 @@
     <div v-else>
         <div v-if="currentSongInfo">
             <span>Currently playing: <b>{{currentSongInfo.tags.tracktitle}}</b> by <b>{{currentSongInfo.tags.artist}}</b></span>
+            <progress :value="progressBarValue" max="100" @click="progressBarClick($event)" @drag="progressBarDrag($event)"></progress>
         </div>
         <div>
             <button @click="pausePlayer()">pause</button>
@@ -42,11 +43,11 @@ export default {
             playbackTime: null,
             playbackDuration: null,
             currentSongInfo: null,
+            progressBarValue: 0,
         };
     },
     created: function() {
         this.createPlayer();
-        console.log(this.player);
         this.fetchFolderContent();
     },
     computed: {
@@ -79,6 +80,7 @@ export default {
             });
             setInterval(() => {
                 this.playbackTime = this.player.currentTime;
+                this.updateProgressBar();
             }, 250);
 
         },
@@ -178,6 +180,19 @@ export default {
                 seconds = "0" + seconds;
             }
             return minutes + ":" + seconds;
+        },
+        progressBarClick: function(event) {
+            let x = event.pageX - event.target.offsetLeft;
+            let clickPosition = x / event.target.offsetWidth;
+            this.progressBarValue = clickPosition * 100;
+            this.player.currentTime = clickPosition * this.player.duration;
+        },
+        updateProgressBar: function() {
+            let updatedPosition = this.player.currentTime / this.player.duration * 100;
+            this.progressBarValue = updatedPosition;
+        },
+        progressBarDrag: function(event) {
+            console.log(event);
         }
     }
 }
