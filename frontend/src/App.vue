@@ -2,6 +2,9 @@
 <div>
     <div v-if="loading">Loading!</div>
     <div v-else>
+        <div v-if="currentSongInfo">
+            <span>Currently playing: <b>{{currentSongInfo.tags.tracktitle}}</b> by <b>{{currentSongInfo.tags.artist}}</b></span>
+        </div>
         <div>
             <button @click="pausePlayer()">pause</button>
             <button @click="unpausePlayer()">play</button>
@@ -18,7 +21,7 @@
                 <td>{{item}}</td>
             </tr>
             <tr v-for="item in files" :key="item">
-                <td><button @click="downloadFile(item)">play</button></td>
+                <td><button @click="fetchSong(item)">play</button></td>
                 <td>{{item}}</td>
             </tr>
         </table>
@@ -38,6 +41,7 @@ export default {
             player: null,
             playbackTime: null,
             playbackDuration: null,
+            currentSongInfo: null,
         };
     },
     created: function() {
@@ -109,9 +113,35 @@ export default {
             }
             this.fetchFolderContent();
         },
-        downloadFile: function(file) {
-            let filePath = this.currentDir + "/" + file;
-            console.log('fetching file ' + file)
+        fetchSong: function(file) {
+            let filePath = this.currentDir + file; // + "/"
+            console.log('fetching song ' + file)
+            this.fetchSongInfo(filePath);
+            this.fetchSongData(filePath);
+        },
+        fetchSongInfo: function(filePath) {
+            fetch('/api/file-info', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    path: filePath,
+                })
+            }).then((response) => {
+                if(response.status !== 200) {
+                    console.error("response status: " + response.status);
+                    return;
+                } else {
+                    response.json().then((json_response) => {
+                        console.log(json_response);
+                        this.currentSongInfo = json_response;
+                    })
+                }
+                return
+            })
+        },
+        fetchSongData: function(filePath) {
             fetch('/api/fetch-file', {
                 method: 'POST',
                 headers: {
