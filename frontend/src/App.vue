@@ -5,6 +5,7 @@
         <div>
             <button @click="pausePlayer()">pause</button>
             <button @click="unpausePlayer()">play</button>
+            {{cPlaybackTime}} / {{cPlaybackDuration}}
         </div>
         <div>Current dir: {{currentDir}}</div>
         <table>
@@ -35,14 +36,48 @@ export default {
             files: null,
             loading: true,
             player: null,
+            playbackTime: null,
+            playbackDuration: null,
         };
     },
     created: function() {
-        this.player = new window.Audio();
+        this.createPlayer();
         console.log(this.player);
         this.fetchFolderContent();
     },
+    computed: {
+        cPlaybackTime: function() {
+            if(!this.playbackTime) {
+                return "0:00";
+            } else {
+                return this.formatPlaybackTime(this.playbackTime);
+            }
+        },
+        cPlaybackDuration: function() {
+            if(!this.playbackDuration) {
+                return "0:00";
+            } else {
+                return this.formatPlaybackTime(this.playbackDuration);
+            }
+        }
+    },
     methods: {
+        createPlayer: function() {
+            this.player = new window.Audio();
+            this.player.addEventListener('play', (event) => {
+                console.log('started playback');
+            });
+            this.player.addEventListener('pause', (event) => {
+                console.log('paused playback');
+            });
+            this.player.addEventListener('durationchange', (event) => {
+                this.playbackDuration = this.player.duration;
+            });
+            setInterval(() => {
+                this.playbackTime = this.player.currentTime;
+            }, 250);
+
+        },
         fetchFolderContent: function() {
             fetch('/api/folder-content', {
                 method: 'POST',
@@ -104,6 +139,15 @@ export default {
         },
         unpausePlayer: function() {
             this.player.play()
+        },
+        formatPlaybackTime: function(val) {
+            val = Math.floor(val);
+            let minutes = Math.floor(val / 60).toFixed();
+            let seconds = (val % 60).toFixed();
+            if(seconds.length == 1) {
+                seconds = "0" + seconds;
+            }
+            return minutes + ":" + seconds;
         }
     }
 }
