@@ -2,17 +2,22 @@
 <div>
     <div v-if="loading">Loading!</div>
     <div v-else>
+        <div>
+            <button @click="pausePlayer()">pause</button>
+            <button @click="unpausePlayer()">play</button>
+        </div>
+        <div>Current dir: {{currentDir}}</div>
         <table>
             <tr v-if="currentDir !== '/'">
                 <td><button @click="openSubfolder('..')">&lt;-</button></td>
                 <td>..</td>
             </tr>
             <tr v-for="item in subfolders" :key="item">
-                <td><button  @click="openSubfolder(item)">open</button></td>
+                <td><button @click="openSubfolder(item)">open</button></td>
                 <td>{{item}}</td>
             </tr>
             <tr v-for="item in files" :key="item">
-                <td></td>
+                <td><button @click="downloadFile(item)">play</button></td>
                 <td>{{item}}</td>
             </tr>
         </table>
@@ -29,9 +34,12 @@ export default {
             subfolders: null,
             files: null,
             loading: true,
+            player: null,
         };
     },
     created: function() {
+        this.player = new window.Audio();
+        console.log(this.player);
         this.fetchFolderContent();
     },
     methods: {
@@ -57,14 +65,45 @@ export default {
             this.subfolders = null;
             this.files = null;
             if(path == '..') {
-                this.currentDir = this.currentDir.split('/').reverse().slice(1).reverse().join('/');
+                this.currentDir = this.currentDir.split('/').reverse().slice(2).reverse().join('/') + "/";
                 if(!this.currentDir) {
                     this.currentDir = "/";
                 }
             } else {
-                this.currentDir = this.currentDir + path;
+                this.currentDir = this.currentDir + path + "/";
             }
             this.fetchFolderContent();
+        },
+        downloadFile: function(file) {
+            let filePath = this.currentDir + "/" + file;
+            console.log('fetching file ' + file)
+            fetch('/api/fetch-file', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    path: filePath,
+                })
+            }).then((response) => {
+                if(response.status !== 200) {
+                    console.error("response status: " + response.status);
+                    return;
+                } else {
+                    response.blob().then((blob) => {
+                        console.log(blob);
+                        this.player.src = window.URL.createObjectURL(blob);
+                        this.player.play();
+                    })
+                }
+                return
+            })
+        },
+        pausePlayer: function() {
+            this.player.pause()
+        },
+        unpausePlayer: function() {
+            this.player.play()
         }
     }
 }
