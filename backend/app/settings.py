@@ -1,5 +1,13 @@
 
 settings = {
-    "media_dir": "/home/sloth/fari/", # must be absolute
-    "file_regex": r'((\.mp3)|(\.flac))$'
+    "media_dir": "/home/sloth/fari/", # must be an absolute path
+    "file_regex": r'((\.mp3)|(\.flac))$',
+    "file_tags": [
+        "tracknumber",
+        "tracktitle",
+        "album",
+        "artist",
+        "year",
+        "genre"
+    ]
 }

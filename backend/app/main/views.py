@@ -1,6 +1,7 @@
 from flask import jsonify, request, render_template, send_file
 from . import main
 from ..settings import settings
+import music_tag
 import os
 import re
 
@@ -9,7 +10,7 @@ import re
 def root_view(path):
     return render_template('index.html')
 
-@main.route('/api/media-dir', methods=(['GET']))
+@main.route('/api/media-dir', methods=['GET'])
 def media_dir_view():
     media_dir = settings["media_dir"]
     if not os.path.exists(media_dir):
@@ -46,7 +47,7 @@ def folder_content():
         "files": files
     }
 
-@main.route('/api/fetch-file', methods=(['POST']))
+@main.route('/api/fetch-file', methods=['POST'])
 def fetch_file_view():
     request_body = request.get_json(force=True)
     if "path" in request_body:
@@ -55,12 +56,32 @@ def fetch_file_view():
         raise Exception("you must specify a path")
     path = re.sub(r'^/', '', path)
     path = re.sub(r'\.\./', '', path)
-    print(path)
-    print(settings["media_dir"])
     path = os.path.join(settings["media_dir"], path)
-    print(path)
     if not os.path.exists(path):
         raise Exception("requested path does not exist")
     if not os.path.isfile(path):
         raise Exception("requested path is not a file")
     return send_file(path, as_attachment=True, attachment_filename=path.split("/")[-1])
+
+@main.route('/api/file-info', methods=['POST'])
+def file_info_view():
+    request_body = request.get_json(force=True)
+    if "path" in request_body:
+        path = request_body["path"]
+    else:
+        raise Exception("you must specify a path")
+    path = re.sub(r'^/', '', path)
+    path = re.sub(r'\.\./', '', path)
+    path = os.path.join(settings["media_dir"], path)
+    if not os.path.exists(path):
+        raise Exception("requested path does not exist")
+    if not os.path.isfile(path):
+        raise Exception("requested path is not a file")
+    file = music_tag.load_file(path)
+    tags = {}
+    for tag_name in settings["file_tags"]:
+        tags[tag_name] = file[tag_name].value
+    return {
+        "tags": tags
+    }
+
