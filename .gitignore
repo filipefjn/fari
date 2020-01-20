@@ -2,5 +2,6 @@ venv
 node_modules
 __pycache__
 backend/app/static
+backend/app/templates/index.html
 
 notes.txt
