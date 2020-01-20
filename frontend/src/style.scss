@@ -1,0 +1,17 @@
+
+$primary: #12C388 !default;
+$page-bgcolor: #202020 !default;
+$sidebar-bgcolor: #262626 !default;
+$footer-bgcolor: #2A2A2A !default;
+$text-color: #E3E3E3 !default;
+
+@import url('https://fonts.googleapis.com/css?family=Monda&display=swap');
+
+* {
+    font-family: 'Monda', sans-serif;
+    line-height: 1.5;
+}
+
+button::-moz-focus-inner {
+    border: 0;
+}

@@ -1,6 +1,8 @@
 <template>
 <div>
-    <div v-if="loading">Loading!</div>
+    <LoadingPage v-if="loading"/>
+    <MainPage v-else/>
+    <!-- <div v-if="loading">Loading!</div>
     <div v-else>
         <div v-if="currentSongInfo">
             <span>Currently playing: <b>{{currentSongInfo.tags.tracktitle}}</b> by <b>{{currentSongInfo.tags.artist}}</b></span>
@@ -26,13 +28,20 @@
                 <td>{{item}}</td>
             </tr>
         </table>
-    </div>
+    </div> -->
 </div>
 </template>
 
 <script>
+import LoadingPage from '@/pages/LoadingPage.vue';
+import MainPage from '@/pages/MainPage.vue';
+
 export default {
     name: 'app',
+    components: {
+        LoadingPage,
+        MainPage
+    },
     data: function() {
         return {
             currentDir: '/',
@@ -47,8 +56,12 @@ export default {
         };
     },
     created: function() {
-        this.createPlayer();
-        this.fetchFolderContent();
+        setTimeout(() => {
+            // timeout to display the LoadingPage
+            this.createPlayer();
+            this.fetchFolderContent();
+        }, 1000);
+
     },
     computed: {
         cPlaybackTime: function() {
