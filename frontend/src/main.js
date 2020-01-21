@@ -4,10 +4,10 @@ import store from './store'
 
 // font awesome icons
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faPlay, faForward, faBackward } from '@fortawesome/free-solid-svg-icons'
+import { faPlay, faPause, faForward, faBackward, faFolder, faLevelUpAlt, faMusic } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-library.add(faPlay, faForward, faBackward)
+library.add(faPlay, faPause, faForward, faBackward, faFolder, faLevelUpAlt, faMusic)
 
 Vue.component('fa-icon', FontAwesomeIcon);
 

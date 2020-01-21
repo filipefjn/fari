@@ -5,9 +5,9 @@
             <div class="path">{{currentDir}}</div>
         </div>
         <div class="list">
-            <div class="list-item" v-if="currentDir !== '/'" @click="openSubfolder('..')">..</div>
-            <div class="list-item" v-for="item in subfolders" @click="openSubfolder(item)" :key="item">{{item}}</div>
-            <div class="list-item" v-for="item in files" :key="item">{{item}}</div>
+            <div class="list-item" v-if="currentDir !== '/'" @click="openSubfolder('..')"><fa-icon class="icon" icon="level-up-alt"/>..</div>
+            <div class="list-item" v-for="item in subfolders" @click="openSubfolder(item)" :key="item"><fa-icon class="icon" icon="folder"/>{{item}}</div>
+            <div class="list-item" v-for="item in files" :key="item"><fa-icon class="icon" icon="music"/>{{item}}</div>
         </div>
     </div>
 </template>
@@ -102,6 +102,15 @@ export default {
             border-top: solid 2px $list-item-line-color;
             color: $text-color;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+
+            .icon {
+                margin-right: 1rem;
+                font-size: 1.25rem;
+                // width: 1rem;
+                color: $list-item-icon-color;
+            }
 
             &:last-child {
                 border-bottom: solid 2px $list-item-line-color;
