@@ -4,7 +4,7 @@
         <div class="footer-container">
             <SongInfo class="left"/>
             <PlaybackControls class="center"/>
-            <div class="right"></div>
+            <VolumeSlider class="right"/>
         </div>
     </div>
 </template>
@@ -13,12 +13,14 @@
 import SongInfo from '@/components/SongInfo.vue';
 import PlaybackControls from '@/components/PlaybackControls.vue';
 import Seekbar from '@/components/Seekbar.vue';
+import VolumeSlider from '@/components/VolumeSlider.vue';
 
 export default {
     components: {
         SongInfo,
         PlaybackControls,
-        Seekbar
+        Seekbar,
+        VolumeSlider
     }
 }
 </script>
@@ -50,7 +52,7 @@ export default {
         }
 
         .left {
-            left: 1rem;
+            left: 1.5rem;
         }
 
         .center {
@@ -59,7 +61,7 @@ export default {
         }
 
         .right {
-            right: 1rem;
+            right: 2rem;
         }
     }
 }

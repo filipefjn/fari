@@ -87,7 +87,6 @@ export default {
                     return;
                 } else {
                     response.json().then((info) => {
-                        console.log(info);
                         this.$store.dispatch('setSongInfo', info);
                     })
                 }

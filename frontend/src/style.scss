@@ -16,6 +16,7 @@ $list-item-icon-color: #444444 !default;
 * {
     font-family: 'Monda', sans-serif;
     line-height: 1.5;
+    box-sizing: border-box;
 }
 
 button::-moz-focus-inner {

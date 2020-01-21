@@ -8,12 +8,14 @@ export default new Vuex.Store({
         player: null,
         playerStatus: null,
         playerInfo: null,
+        playerVolume: 0.5,
         songInfo: null,
     },
     getters: {
         player: (state) => state.player,
         playerStatus: (state) => state.playerStatus,
         playerInfo: (state) => state.playerInfo,
+        playerVolume: (state) => state.playerVolume,
         songInfo: (state) => state.songInfo
     },
     mutations: {
@@ -51,11 +53,18 @@ export default new Vuex.Store({
         },
         setSongInfo: (state, info) => {
             state.songInfo = info;
+        },
+        setPlayerVolume: (state, volume) => {
+            state.playerVolume = volume;
+            if(state.player) {
+                state.player.volume = volume;
+            }
         }
     },
     actions: {
-        createPlayer: ({ commit }) => {
+        createPlayer: ({ commit, getters }) => {
             let player = new window.Audio();
+            player.volume = getters.playerVolume;
             player.addEventListener('play', () => {
                 commit('setPlayerStatus', 'playing');
             });
@@ -97,6 +106,15 @@ export default new Vuex.Store({
         },
         setSongInfo: ({ commit }, info) => {
             commit('setSongInfo', info);
+        },
+        setPlayerVolume: ({ commit, getters }, volume) => {
+            // TODO handle errors
+            if(volume < 0) {
+                volume = 0;
+            } else if(volume > 1) {
+                volume = 1;
+            }
+            commit('setPlayerVolume', volume);
         }
     },
     modules: {}
