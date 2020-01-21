@@ -136,6 +136,7 @@ export default {
         align-items: center;
         padding-left: 2rem;
         background-image: linear-gradient(black, rgba(0,0,0,0));
+        user-select: none;
 
         .title {
             font-size: 2rem;
@@ -150,6 +151,7 @@ export default {
     }
 
     .list {
+        user-select: none;
 
         .list-item {
             padding-top: $list-item-hor-padding;

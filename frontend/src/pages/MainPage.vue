@@ -1,8 +1,10 @@
 <template>
     <div class="page">
-        <div class="sidebar"></div>
+        <MainPageSidebar class="sidebar" @change="(content) => selectedContent = content"/>
         <div class="content">
-            <FolderNavigation/>
+            <transition name="content-transition" v-enter v-leave>
+                <FolderNavigation v-if="selectedContent == 'folders'"/>
+            </transition>
         </div>
         <MainPageFooter class="footer"/>
     </div>
@@ -10,13 +12,20 @@
 
 <script>
 import MainPageFooter from '@/components/MainPageFooter.vue';
+import MainPageSidebar from '@/components/MainPageSidebar.vue';
 import FolderNavigation from '@/components/FolderNavigation.vue';
 
 export default {
     components: {
         MainPageFooter,
+        MainPageSidebar,
         FolderNavigation
-    }
+    },
+    data: function() {
+        return {
+            selectedContent: '',
+        };
+    },
 }
 </script>
 
@@ -53,5 +62,13 @@ export default {
 
         background-color: $footer-bgcolor
     }
+}
+
+.content-transition-enter-active, .content-transition-leave-active {
+    transition: opacity .3s;
+}
+
+.content-transition-enter, .content-transition-leave-to {
+    opacity: 0;
 }
 </style>
