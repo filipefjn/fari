@@ -67,6 +67,11 @@ export default new Vuex.Store({
             if(state.player) {
                 state.player.volume = tools.volumeInterpolation(volume);
             }
+        },
+        setPlayerTime: (state, timeSeconds) => {
+            if(state.player) {
+                state.player.currentTime = timeSeconds;
+            }
         }
     },
     actions: {
@@ -123,6 +128,18 @@ export default new Vuex.Store({
                 volume = 1;
             }
             commit('setPlayerVolume', volume);
+        },
+        seekPosition: ({ commit, getters }, position) => {
+            if(!getters.player) {
+                return;
+            }
+            let duration = getters.player.duration;
+            if(duration) {
+                position = Math.min(position, 1);
+                position = Math.max(position, 0);
+                let time = position * duration;
+                commit('setPlayerTime', time);
+            }
         }
     },
     modules: {}

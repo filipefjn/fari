@@ -1,6 +1,8 @@
 <template>
-    <div class="seekbar">
-        <div class="progress" :style="progressStyle"></div>
+    <div class="seekbar" ref="seekbar" @click="onClick($event)">
+        <div class="seekbar-background">
+            <div class="progress" :style="progressStyle"></div>
+        </div>
     </div>
 </template>
 
@@ -19,6 +21,12 @@ export default {
                 'width': (progress * 100) + "%"
             }
         },
+    },
+    methods: {
+        onClick: function(event) {
+            let position = event.layerX / this.$refs.seekbar.offsetWidth;
+            this.$store.dispatch('seekPosition', position);
+        }
     }
 }
 </script>
@@ -27,21 +35,47 @@ export default {
 @import '@/style.scss';
 
 .seekbar {
-    height: 4px;
+    height: 10px;
     width: 100%;
-    background-color: #333333;
     padding: 0;
     margin: 0;
-    position: relative;
     overflow: hidden;
+    cursor: pointer;
+    z-index: 1000;
+    margin-top: -2px;
+    display: flex;
+    align-items: center;
+    transition: height 0.25s, padding 0.25;
 
-    .progress {
+    .seekbar-background {
+
+        background-color: #333333;
         height: 4px;
-        margin: 0;
-        position: absolute;
-        left: 0;
-        background-color: $primary;
-        transition: width .2s linear;
+        width: 100%;
+        overflow: hidden;
+        transition: height 0.25s;
+
+        .progress {
+            height: 4px;
+            margin: 0;
+            width: 100%;
+            background-color: $primary;
+            transition: width .2s linear, height 0.25s;
+        }
+    }
+
+    &:hover {
+        padding: 0 0;
+
+        .seekbar-background {
+            height: 8px;
+
+            .progress {
+                height: 8px;
+            }
+        }
+
+
     }
 }
 </style>
