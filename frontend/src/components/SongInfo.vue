@@ -1,13 +1,33 @@
 <template>
     <div class="song-info-container">
-        <div class="title">Track title</div>
-        <div class="artist">Artist</div>
+        <div class="title">{{tracktitle}}</div>
+        <div class="artist">{{artist}}</div>
     </div>
 </template>
 
 <script>
-export default {
+import { mapGetters } from "vuex";
 
+export default {
+    computed: {
+        ...mapGetters(['songInfo']),
+        tracktitle: function() {
+            let info = this.songInfo;
+            if(info && info.tags && info.tags.tracktitle) {
+                return info.tags.tracktitle;
+            } else {
+                return "-"
+            }
+        },
+        artist: function() {
+            let info = this.songInfo;
+            if(info && info.tags && info.tags.artist) {
+                return info.tags.artist;
+            } else {
+                return "-"
+            }
+        }
+    }
 }
 </script>
 

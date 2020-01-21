@@ -69,31 +69,31 @@ export default {
         fetchSong: function(file) {
             this.$store.dispatch('pausePlayer');
             let filePath = this.currentDir + file;
-            // this.fetchSongInfo(filePath);
+            this.fetchSongInfo(filePath);
             this.fetchSongData(filePath);
         },
-        // fetchSongInfo: function(filePath) {
-        //     fetch('/api/file-info', {
-        //         method: 'POST',
-        //         headers: {
-        //             "Content-Type": "application/json"
-        //         },
-        //         body: JSON.stringify({
-        //             path: filePath,
-        //         })
-        //     }).then((response) => {
-        //         if(response.status !== 200) {
-        //             console.error("response status: " + response.status);
-        //             return;
-        //         } else {
-        //             response.json().then((json_response) => {
-        //                 console.log(json_response);
-        //                 this.currentSongInfo = json_response;
-        //             })
-        //         }
-        //         return
-        //     })
-        // },
+        fetchSongInfo: function(filePath) {
+            fetch('/api/file-info', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    path: filePath,
+                })
+            }).then((response) => {
+                if(response.status !== 200) {
+                    console.error("response status: " + response.status);
+                    return;
+                } else {
+                    response.json().then((info) => {
+                        console.log(info);
+                        this.$store.dispatch('setSongInfo', info);
+                    })
+                }
+                return
+            })
+        },
         fetchSongData: function(filePath) {
             fetch('/api/fetch-file', {
                 method: 'POST',

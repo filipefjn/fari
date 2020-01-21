@@ -8,11 +8,13 @@ export default new Vuex.Store({
         player: null,
         playerStatus: null,
         playerInfo: null,
+        songInfo: null,
     },
     getters: {
         player: (state) => state.player,
         playerStatus: (state) => state.playerStatus,
-        playerInfo: (state) => state.playerInfo
+        playerInfo: (state) => state.playerInfo,
+        songInfo: (state) => state.songInfo
     },
     mutations: {
         setPlayer: (state, player) => {
@@ -46,6 +48,9 @@ export default new Vuex.Store({
         },
         clearPlayerInfo: (state) => {
             state.playerInfo = null;
+        },
+        setSongInfo: (state, info) => {
+            state.songInfo = info;
         }
     },
     actions: {
@@ -89,6 +94,9 @@ export default new Vuex.Store({
             } else {
                 console.error('no player available');
             }
+        },
+        setSongInfo: ({ commit }, info) => {
+            commit('setSongInfo', info);
         }
     },
     modules: {}
