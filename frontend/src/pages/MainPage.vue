@@ -1,18 +1,21 @@
 <template>
     <div class="page">
         <div class="sidebar"></div>
-        <div class="header"></div>
-        <div class="content"></div>
+        <div class="content">
+            <FolderNavigation/>
+        </div>
         <MainPageFooter class="footer"/>
     </div>
 </template>
 
 <script>
 import MainPageFooter from '@/components/MainPageFooter.vue';
+import FolderNavigation from '@/components/FolderNavigation.vue';
 
 export default {
     components: {
-        MainPageFooter
+        MainPageFooter,
+        FolderNavigation
     }
 }
 </script>
@@ -38,14 +41,10 @@ export default {
         background-color: $sidebar-bgcolor;
     }
 
-    .header {
-        grid-row: 1 / 2;
-        grid-column: 2 / 3;
-    }
-
     .content {
-        grid-row: 2 / 3;
+        grid-row: 1 / 3;
         grid-column: 2 / 3;
+        overflow-y: auto;
     }
 
     .footer {
