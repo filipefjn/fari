@@ -137,6 +137,7 @@ export default {
         padding-left: 2rem;
         background-image: linear-gradient(black, rgba(0,0,0,0));
         user-select: none;
+        padding-bottom: 4px;
 
         .title {
             font-size: 2rem;

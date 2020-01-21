@@ -89,6 +89,7 @@ export default {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 2px;
 
         .button {
             border-radius: 50%;

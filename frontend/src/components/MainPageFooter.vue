@@ -46,9 +46,11 @@ export default {
         left: 0;
         right: 0;
 
+
         .left, .center, .right {
             position: absolute;
-            height: 100%;
+            height: calc(100% - 4px);
+            top: 4px;
         }
 
         .left {

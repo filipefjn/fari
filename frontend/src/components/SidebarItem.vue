@@ -29,7 +29,7 @@ export default {
     color: $text-color;
     user-select: none;
     cursor: pointer;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 1.25rem;
     font-size: 1rem;
 
     .indicator {

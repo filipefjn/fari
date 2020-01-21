@@ -23,7 +23,7 @@ export default {
             if(info && info.tags && info.tags.tracktitle) {
                 return info.tags.tracktitle;
             } else {
-                return "-"
+                return ""
             }
         },
         artist: function() {
@@ -31,7 +31,7 @@ export default {
             if(info && info.tags && info.tags.artist) {
                 return info.tags.artist;
             } else {
-                return "-"
+                return ""
             }
         },
         displayArtwork: function() {

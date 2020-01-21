@@ -37,7 +37,6 @@ export default new Vuex.Store({
             state.player = player;
         },
         setPlayerStatus: (state, status) => {
-            console.log('player status: ' + status); // TODO remove line
             state.playerStatus = status;
         },
         setPlayerInfo: (state, info) => {
