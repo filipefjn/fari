@@ -91,7 +91,11 @@ export default new Vuex.Store({
             let intervalId = setInterval(() => {
                 let progress = player.currentTime / player.duration;
                 if(!isNaN(progress)) {
-                    commit('setPlayerInfo', { progress: progress });
+                    commit('setPlayerInfo', {
+                        progress: progress,
+                        currentTime: player.currentTime,
+                        duration: player.duration
+                    });
                 }
             }, 200);
             commit('setPlayer', player);
