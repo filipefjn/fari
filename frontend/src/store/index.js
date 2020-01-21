@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import tools from '@/libs/tools.js';
 
 Vue.use(Vuex);
 
@@ -57,14 +58,14 @@ export default new Vuex.Store({
         setPlayerVolume: (state, volume) => {
             state.playerVolume = volume;
             if(state.player) {
-                state.player.volume = volume;
+                state.player.volume = tools.volumeInterpolation(volume);
             }
         }
     },
     actions: {
         createPlayer: ({ commit, getters }) => {
             let player = new window.Audio();
-            player.volume = getters.playerVolume;
+            player.volume = tools.volumeInterpolation(getters.playerVolume);
             player.addEventListener('play', () => {
                 commit('setPlayerStatus', 'playing');
             });

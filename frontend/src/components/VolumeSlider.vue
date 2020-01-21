@@ -1,8 +1,7 @@
 <template>
     <div class="container" :style="containerStyle">
-        <!-- <img src="@/assets/volume.svg" class="volume-icon"> -->
         <fa-icon icon="volume-up" class="volume-icon"/>
-        <div class="volume" @click="onClick($event)">
+        <div class="volume" @click="onClick($event)" @wheel="onWheel($event)">
             <div class="slider" :style="sliderStyle"></div>
         </div>
     </div>
@@ -45,6 +44,21 @@ export default {
                 volume = 0;
             }
             volume = volume / max;
+            this.$store.dispatch('setPlayerVolume', volume);
+        },
+        onWheel: function(event) {
+            let volume = this.playerVolume;
+            if(event.deltaY < 0) {
+                volume = volume + 0.1;
+                if(volume > 1) {
+                    volume = 1;
+                }
+            } else if(event.deltaY > 0) {
+                volume = volume - 0.1;
+                if(volume < 0) {
+                    volume = 0;
+                }
+            }
             this.$store.dispatch('setPlayerVolume', volume);
         }
     }
