@@ -67,6 +67,7 @@ export default {
             this.fetchFolderContent();
         },
         fetchSong: function(file) {
+            this.$store.dispatch('pausePlayer');
             let filePath = this.currentDir + file;
             // this.fetchSongInfo(filePath);
             this.fetchSongData(filePath);

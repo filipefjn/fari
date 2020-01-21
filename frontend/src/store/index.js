@@ -6,20 +6,41 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
         player: null,
+        playerStatus: null,
     },
     getters: {
         player: (state) => state.player,
+        playerStatus: (state) => state.playerStatus,
     },
     mutations: {
         setPlayer: (state, player) => {
+            if(state.player) {
+                delete state.player;
+            }
+            if(player) {
+                state.playerStatus = null;
+            }
             state.player = player;
         },
+        setPlayerStatus: (state, status) => {
+            console.log('player status: ' + status); // TODO remove line
+            state.playerStatus = status;
+        }
     },
     actions: {
         createPlayer: ({ commit }) => {
             let player = new window.Audio();
+            player.addEventListener('play', () => {
+                commit('setPlayerStatus', 'playing');
+            });
+            player.addEventListener('pause', () => {
+                if(player.ended) {
+                    commit('setPlayerStatus', 'finished');
+                } else {
+                    commit('setPlayerStatus', 'paused');
+                }
+            });
             commit('setPlayer', player);
-            console.log('player created');
         },
         destroyPlayer: ({ commit }) => {
             commit('setPlayer', null);
