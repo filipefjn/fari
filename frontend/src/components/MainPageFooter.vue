@@ -52,7 +52,7 @@ export default {
         }
 
         .left {
-            left: 1.5rem;
+            left: 0.75rem;
         }
 
         .center {

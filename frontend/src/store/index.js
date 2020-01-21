@@ -9,15 +9,17 @@ export default new Vuex.Store({
         player: null,
         playerStatus: null,
         playerInfo: null,
-        playerVolume: 0.5,
+        playerVolume: 0.8,
         songInfo: null,
+        songArtworkCounter: 0,
     },
     getters: {
         player: (state) => state.player,
         playerStatus: (state) => state.playerStatus,
         playerInfo: (state) => state.playerInfo,
         playerVolume: (state) => state.playerVolume,
-        songInfo: (state) => state.songInfo
+        songInfo: (state) => state.songInfo,
+        songArtworkCounter: (state) => state.songArtworkCounter
     },
     mutations: {
         setPlayer: (state, player) => {
@@ -53,6 +55,11 @@ export default new Vuex.Store({
             state.playerInfo = null;
         },
         setSongInfo: (state, info) => {
+            if(state.songInfo) {
+                if(state.songInfo.artwork !== info.artwork) {
+                    state.songArtworkCounter = state.songArtworkCounter + 1;
+                }
+            }
             state.songInfo = info;
         },
         setPlayerVolume: (state, volume) => {

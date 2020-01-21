@@ -2,6 +2,7 @@ from flask import jsonify, request, render_template, send_file
 from . import main
 from ..settings import settings
 import music_tag
+from base64 import b64encode
 import os
 import re
 
@@ -78,10 +79,39 @@ def file_info_view():
     if not os.path.isfile(path):
         raise Exception("requested path is not a file")
     file = music_tag.load_file(path)
+    # gettings tags
     tags = {}
     for tag_name in settings["file_tags"]:
         tags[tag_name] = file[tag_name].value
-    return {
-        "tags": tags
+    response = {
+        "tags": tags,
     }
+    # getting artwork (if any)
+    artwork = file['artwork']
+    if artwork.first is not None:
+        artwork_b64 = "data:" + artwork.first.mime + ";base64," + b64encode(artwork.first.data).decode('ascii')
+        response["artwork"] = artwork_b64
+    return response
 
+@main.route('/api/file-artwork', methods=['POST'])
+def file_artwork_view():
+    request_body = request.get_json(force=True)
+    if "path" in request_body:
+        path = request_body["path"]
+    else:
+        raise Exception("you must specify a path")
+    path = re.sub(r'^/', '', path)
+    path = re.sub(r'\.\./', '', path)
+    path = os.path.join(settings["media_dir"], path)
+    if not os.path.exists(path):
+        raise Exception("requested path does not exist")
+    if not os.path.isfile(path):
+        raise Exception("requested path is not a file")
+    file = music_tag.load_file(path)
+    response = {}
+    # getting artwork (if any)
+    artwork = file['artwork']
+    if artwork.first is not None:
+        artwork_b64 = "data:" + artwork.first.mime + ";base64," + b64encode(artwork.first.data).decode('ascii')
+        response["artwork"] = artwork_b64
+    return response
