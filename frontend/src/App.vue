@@ -47,7 +47,7 @@ export default {
             currentDir: '/',
             subfolders: null,
             files: null,
-            loading: true,
+            loading: false,
             player: null,
             playbackTime: null,
             playbackDuration: null,
@@ -56,12 +56,7 @@ export default {
         };
     },
     created: function() {
-        setTimeout(() => {
-            // timeout to display the LoadingPage
-            this.createPlayer();
-            this.fetchFolderContent();
-        }, 1000);
-
+        this.$store.dispatch('createPlayer');
     },
     computed: {
         cPlaybackTime: function() {

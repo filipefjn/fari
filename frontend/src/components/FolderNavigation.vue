@@ -5,9 +5,18 @@
             <div class="path">{{currentDir}}</div>
         </div>
         <div class="list">
-            <div class="list-item" v-if="currentDir !== '/'" @click="openSubfolder('..')"><fa-icon class="icon" icon="level-up-alt"/>..</div>
-            <div class="list-item" v-for="item in subfolders" @click="openSubfolder(item)" :key="item"><fa-icon class="icon" icon="folder"/>{{item}}</div>
-            <div class="list-item" v-for="item in files" :key="item"><fa-icon class="icon" icon="music"/>{{item}}</div>
+            <div class="list-item" v-if="currentDir !== '/'" @click="openSubfolder('..')">
+                <div class="icon"><fa-icon icon="level-up-alt"/></div>
+                ..
+            </div>
+            <div class="list-item" v-for="item in subfolders" @click="openSubfolder(item)" :key="item">
+                <div class="icon"><fa-icon icon="folder"/></div>
+                {{item}}
+            </div>
+            <div class="list-item" v-for="item in files" :key="item" @click="fetchSong(item)">
+                <div class="icon"><fa-icon icon="music"/></div>
+                {{item}}
+            </div>
         </div>
     </div>
 </template>
@@ -56,6 +65,54 @@ export default {
                 this.currentDir = this.currentDir + path + "/";
             }
             this.fetchFolderContent();
+        },
+        fetchSong: function(file) {
+            let filePath = this.currentDir + file;
+            // this.fetchSongInfo(filePath);
+            this.fetchSongData(filePath);
+        },
+        // fetchSongInfo: function(filePath) {
+        //     fetch('/api/file-info', {
+        //         method: 'POST',
+        //         headers: {
+        //             "Content-Type": "application/json"
+        //         },
+        //         body: JSON.stringify({
+        //             path: filePath,
+        //         })
+        //     }).then((response) => {
+        //         if(response.status !== 200) {
+        //             console.error("response status: " + response.status);
+        //             return;
+        //         } else {
+        //             response.json().then((json_response) => {
+        //                 console.log(json_response);
+        //                 this.currentSongInfo = json_response;
+        //             })
+        //         }
+        //         return
+        //     })
+        // },
+        fetchSongData: function(filePath) {
+            fetch('/api/fetch-file', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    path: filePath,
+                })
+            }).then((response) => {
+                if(response.status !== 200) {
+                    console.error("response status: " + response.status);
+                    return;
+                } else {
+                    response.blob().then((blob) => {
+                        this.$store.dispatch('playBlob', blob);
+                    })
+                }
+                return
+            })
         },
     }
 }
@@ -108,8 +165,11 @@ export default {
             .icon {
                 margin-right: 1rem;
                 font-size: 1.25rem;
-                // width: 1rem;
+                width: 1rem;
                 color: $list-item-icon-color;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
 
             &:last-child {
