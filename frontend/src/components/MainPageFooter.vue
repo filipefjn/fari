@@ -1,19 +1,24 @@
 <template>
-    <div class="footer-container">
-        <SongInfo class="left"/>
-        <PlaybackControls class="center"/>
-        <div class="right"></div>
+    <div class="footer-root">
+        <Seekbar class="seekbar"/>
+        <div class="footer-container">
+            <SongInfo class="left"/>
+            <PlaybackControls class="center"/>
+            <div class="right"></div>
+        </div>
     </div>
 </template>
 
 <script>
 import SongInfo from '@/components/SongInfo.vue';
 import PlaybackControls from '@/components/PlaybackControls.vue';
+import Seekbar from '@/components/Seekbar.vue';
 
 export default {
     components: {
         SongInfo,
-        PlaybackControls
+        PlaybackControls,
+        Seekbar
     }
 }
 </script>
@@ -21,25 +26,41 @@ export default {
 <style scoped lang="scss">
 @import '@/style.scss';
 
-.footer-container {
+.footer-root {
+
     position: relative;
 
-    .left, .center, .right {
+    .seekbar {
         position: absolute;
-        height: 100%;
+        top: 0;
+        left: 0;
     }
 
-    .left {
-        left: 1rem;
-    }
+    .footer-container {
 
-    .center {
-        left: 50%;
-        transform: translateX(-50%);
-    }
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
 
-    .right {
-        right: 1rem;
+        .left, .center, .right {
+            position: absolute;
+            height: 100%;
+        }
+
+        .left {
+            left: 1rem;
+        }
+
+        .center {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .right {
+            right: 1rem;
+        }
     }
 }
 </style>

@@ -7,15 +7,22 @@ export default new Vuex.Store({
     state: {
         player: null,
         playerStatus: null,
+        playerInfo: null,
     },
     getters: {
         player: (state) => state.player,
         playerStatus: (state) => state.playerStatus,
+        playerInfo: (state) => state.playerInfo
     },
     mutations: {
         setPlayer: (state, player) => {
             if(state.player) {
-                delete state.player;
+                delete state.player; // TODO test this
+                let playerIntervalId = state.playerInfo.intervalId;
+                if(playerIntervalId) {
+                    clearInterval(playerIntervalId);
+                }
+                state.playerInfo = null;
             }
             if(player) {
                 state.playerStatus = null;
@@ -25,6 +32,20 @@ export default new Vuex.Store({
         setPlayerStatus: (state, status) => {
             console.log('player status: ' + status); // TODO remove line
             state.playerStatus = status;
+        },
+        setPlayerInfo: (state, info) => {
+            let currentInfo = state.playerInfo;
+            if(!currentInfo) {
+                currentInfo = {};
+            }
+            let nextInfo = {
+                ...currentInfo,
+                ...info
+            }
+            state.playerInfo = nextInfo;
+        },
+        clearPlayerInfo: (state) => {
+            state.playerInfo = null;
         }
     },
     actions: {
@@ -40,7 +61,14 @@ export default new Vuex.Store({
                     commit('setPlayerStatus', 'paused');
                 }
             });
+            let intervalId = setInterval(() => {
+                let progress = player.currentTime / player.duration;
+                if(!isNaN(progress)) {
+                    commit('setPlayerInfo', { progress: progress });
+                }
+            }, 200);
             commit('setPlayer', player);
+            commit('setPlayerInfo', { intervalId: intervalId })
         },
         destroyPlayer: ({ commit }) => {
             commit('setPlayer', null);
