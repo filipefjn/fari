@@ -1,28 +1,34 @@
 <template>
     <div class="container">
-        <div class="header">
-            <div class="title">Folders</div>
-            <div class="path">{{currentDir}}</div>
-        </div>
-        <div class="list">
-            <div class="list-item" v-if="currentDir !== '/'" @click="openSubfolder('..')">
+        <ContentHeader title="Folders" :subtitle="currentDir"/>
+        <ContentList>
+            <ContentListItem v-if="currentDir !== '/'" @click="openSubfolder('..')">
                 <div class="icon"><fa-icon icon="level-up-alt"/></div>
                 ..
-            </div>
-            <div class="list-item" v-for="item in subfolders" @click="openSubfolder(item)" :key="item">
+            </ContentListItem>
+            <ContentListItem v-for="item in subfolders" @click="openSubfolder(item)" :key="item">
                 <div class="icon"><fa-icon icon="folder"/></div>
                 {{item}}
-            </div>
-            <div class="list-item" v-for="item in files" :key="item" @click="fetchSong(item)">
+            </ContentListItem>
+            <ContentListItem v-for="item in files" :key="item" @click="fetchSong(item)">
                 <div class="icon"><fa-icon icon="music"/></div>
                 {{item}}
-            </div>
-        </div>
+            </ContentListItem>
+        </ContentList>
     </div>
 </template>
 
 <script>
+import ContentHeader from '@/components/ContentHeader.vue';
+import ContentList from '@/components/ContentList.vue';
+import ContentListItem from '@/components/ContentListItem.vue';
+
 export default {
+    components: {
+        ContentHeader,
+        ContentList,
+        ContentListItem
+    },
     data: function() {
         return {
             currentDir: '/',
@@ -130,61 +136,15 @@ export default {
         padding-left: 2rem;
     }
 
-    .header {
-        height: 5rem;
+    .icon {
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        width: 1rem;
+        color: $list-item-icon-color;
         display: flex;
+        justify-content: center;
         align-items: center;
-        padding-left: 2rem;
-        background-image: linear-gradient(black, rgba(0,0,0,0));
-        user-select: none;
-        padding-bottom: 4px;
-
-        .title {
-            font-size: 2rem;
-            color: $primary;
-            margin-right: 2rem;
-        }
-        .path {
-            font-size: 1rem;
-            color: $primary;
-            margin-top: 0.5rem;
-        }
     }
 
-    .list {
-        user-select: none;
-
-        .list-item {
-            padding-top: $list-item-hor-padding;
-            padding-bottom: $list-item-hor-padding;
-            padding-left: 1rem;
-            padding-right: 1rem;
-            border-top: solid 2px $list-item-line-color;
-            color: $text-color;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-
-            .icon {
-                margin-right: 1rem;
-                font-size: 1.25rem;
-                width: 1rem;
-                color: $list-item-icon-color;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-
-            &:last-child {
-                border-bottom: solid 2px $list-item-line-color;
-            }
-
-            &:hover {
-                background-color: $list-item-hover-bgcolor;
-            }
-        }
-    }
 }
-
-
 </style>

@@ -4,6 +4,7 @@
         <div class="content">
             <transition name="content-transition" v-enter v-leave>
                 <FolderNavigation v-if="selectedContent == 'folders'"/>
+                <Queue            v-if="selectedContent == 'queue'"  />
             </transition>
         </div>
         <MainPageFooter class="footer"/>
@@ -14,12 +15,14 @@
 import MainPageFooter from '@/components/MainPageFooter.vue';
 import MainPageSidebar from '@/components/MainPageSidebar.vue';
 import FolderNavigation from '@/components/FolderNavigation.vue';
+import Queue from '@/components/Queue.vue';
 
 export default {
     components: {
         MainPageFooter,
         MainPageSidebar,
-        FolderNavigation
+        FolderNavigation,
+        Queue
     },
     data: function() {
         return {
@@ -54,6 +57,7 @@ export default {
         grid-row: 1 / 3;
         grid-column: 2 / 3;
         overflow-y: auto;
+        position: relative;
     }
 
     .footer {
@@ -66,6 +70,16 @@ export default {
 
 .content-transition-enter-active, .content-transition-leave-active {
     transition: opacity .3s;
+    position: absolute;
+    top: 0; left: 0; right: 0;
+}
+
+.content-transition-enter-active {
+    z-index: 300;
+}
+
+.content-transition-leave-active {
+    z-index: 200;
 }
 
 .content-transition-enter, .content-transition-leave-to {

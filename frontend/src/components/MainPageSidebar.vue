@@ -5,15 +5,19 @@
         <SidebarItem title="Albums"    @click="onItemClick('albums')"   :selected="selectedItem == 'albums'"   />
         <SidebarItem title="Genres"    @click="onItemClick('genres')"   :selected="selectedItem == 'genres'"   />
         <SidebarItem title="Folders"   @click="onItemClick('folders')"  :selected="selectedItem == 'folders'"  />
+        <SidebarSeparator/>
+        <SidebarItem title="Queue"     @click="onItemClick('queue')"    :selected="selectedItem == 'queue'"    />
     </div>
 </template>
 
 <script>
 import SidebarItem from '@/components/SidebarItem.vue';
+import SidebarSeparator from '@/components/SidebarSeparator.vue';
 
 export default {
     components: {
-        SidebarItem
+        SidebarItem,
+        SidebarSeparator
     },
     data: function() {
         return {
