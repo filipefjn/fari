@@ -11,14 +11,4 @@ $list-item-line-color: #2F2F2F !default;
 $list-item-hover-bgcolor: #262626 !default;
 $list-item-icon-color: #444444 !default;
 
-@import url('https://fonts.googleapis.com/css?family=Monda&display=swap');
 
-* {
-    font-family: 'Monda', sans-serif;
-    line-height: 1.5;
-    box-sizing: border-box;
-}
-
-button::-moz-focus-inner {
-    border: 0;
-}
