@@ -58,6 +58,10 @@ export default {
         grid-column: 2 / 3;
         overflow-y: auto;
         position: relative;
+
+        &> :last-child {
+            padding-bottom: 2rem;
+        }
     }
 
     .footer {

@@ -18,5 +18,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    padding-right: 2rem;
+    padding-left: 2rem;
 }
 </style>

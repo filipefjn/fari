@@ -2,12 +2,12 @@
     <div class="controls-root">
         <div class="playback-time">{{currentPlaybackTime}}<span class="separator">/</span>{{playbackDuration}}</div>
         <div class="controls-container">
-            <button class="button"><fa-icon icon="backward" style="margin-right: 1px"/></button>
+            <button class="button" @click="playPrevious()"><fa-icon icon="backward" style="margin-right: 1px"/></button>
             <button class="button play" @click="togglePause()">
                 <fa-icon v-if="playOrPauseIcon == 'play'" icon="play" style="margin-left: 2px"/>
                 <fa-icon v-if="playOrPauseIcon == 'pause'" icon="pause"/>
             </button>
-            <button class="button"><fa-icon icon="forward" style="margin-left: 1px"/></button>
+            <button class="button" @click="playNext()"><fa-icon icon="forward" style="margin-left: 1px"/></button>
         </div>
     </div>
 
@@ -48,6 +48,12 @@ export default {
             } else if(this.playerStatus == 'paused') {
                 this.$store.dispatch('unpausePlayer')
             }
+        },
+        playNext: function() {
+            this.$store.dispatch('playNextFromQueue');
+        },
+        playPrevious: function() {
+            this.$store.dispatch('playPreviousFromQueue');
         },
         formatPlaybackTime: function(val) {
             if(!val) {

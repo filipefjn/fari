@@ -10,7 +10,7 @@
                 <div class="icon"><fa-icon icon="folder"/></div>
                 {{item}}
             </ContentListItem>
-            <ContentListItem v-for="item in files" :key="item" @click="fetchSong(item)">
+            <ContentListItem v-for="item in files" :key="item" @click="queueFolder(item)">
                 <div class="icon"><fa-icon icon="music"/></div>
                 {{item}}
             </ContentListItem>
@@ -72,53 +72,19 @@ export default {
             }
             this.fetchFolderContent();
         },
-        fetchSong: function(file) {
-            this.$store.dispatch('pausePlayer');
-            let filePath = this.currentDir + file;
-            this.fetchSongInfo(filePath);
-            this.fetchSongData(filePath);
-        },
-        fetchSongInfo: function(filePath) {
-            fetch('/api/file-info', {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    path: filePath,
-                })
-            }).then((response) => {
-                if(response.status !== 200) {
-                    console.error("response status: " + response.status);
-                    return;
-                } else {
-                    response.json().then((info) => {
-                        this.$store.dispatch('setSongInfo', info);
-                    })
+        queueFolder: async function(file) {
+            let queue = [];
+            let queuePlayIndex = 0;
+            for(let i = 0; i < this.files.length; i++) {
+                if(this.files[i] == file) {
+                    queuePlayIndex = i;
                 }
-                return
-            })
-        },
-        fetchSongData: function(filePath) {
-            fetch('/api/fetch-file', {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    path: filePath,
-                })
-            }).then((response) => {
-                if(response.status !== 200) {
-                    console.error("response status: " + response.status);
-                    return;
-                } else {
-                    response.blob().then((blob) => {
-                        this.$store.dispatch('playBlob', blob);
-                    })
-                }
-                return
-            })
+                queue.push({
+                    path: this.currentDir + this.files[i]
+                });
+            }
+            await this.$store.dispatch('setQueue', queue);
+            await this.$store.dispatch('playFromQueue', queuePlayIndex);
         },
     }
 }
@@ -128,13 +94,6 @@ export default {
 @import '@/style.scss';
 
 .container {
-
-    padding-bottom: 2rem;
-
-    &> * {
-        padding-right: 2rem;
-        padding-left: 2rem;
-    }
 
     .icon {
         margin-right: 1rem;

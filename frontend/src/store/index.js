@@ -12,6 +12,9 @@ export default new Vuex.Store({
         playerVolume: 0.8,
         songInfo: null,
         songArtworkCounter: 0,
+        queue: [],
+        queueKeyCounter: 0, // TODO use later to update queue songs info
+        queuePlayIndex: 0,
     },
     getters: {
         player: (state) => state.player,
@@ -19,7 +22,10 @@ export default new Vuex.Store({
         playerInfo: (state) => state.playerInfo,
         playerVolume: (state) => state.playerVolume,
         songInfo: (state) => state.songInfo,
-        songArtworkCounter: (state) => state.songArtworkCounter
+        songArtworkCounter: (state) => state.songArtworkCounter,
+        queue: (state) => state.queue,
+        queueKeyCounter: (state) => state.queueKeyCounter,
+        queuePlayIndex: (state) => state.queuePlayIndex,
     },
     mutations: {
         setPlayer: (state, player) => {
@@ -71,10 +77,23 @@ export default new Vuex.Store({
             if(state.player) {
                 state.player.currentTime = timeSeconds;
             }
+        },
+        appendToQueue: (state, song) => {
+            let queue = {
+                ...state.queue,
+                song
+            };
+            state.queue = queue;
+        },
+        setQueue: (state, songArray) => {
+            state.queue = songArray;
+        },
+        setQueuePlayIndex: (state, index) => {
+            state.queuePlayIndex = index;
         }
     },
     actions: {
-        createPlayer: ({ commit, getters }) => {
+        createPlayer: ({ commit, dispatch, getters }) => {
             let player = new window.Audio();
             player.volume = tools.volumeInterpolation(getters.playerVolume);
             player.addEventListener('play', () => {
@@ -83,6 +102,7 @@ export default new Vuex.Store({
             player.addEventListener('pause', () => {
                 if(player.ended) {
                     commit('setPlayerStatus', 'finished');
+                    dispatch('playNextFromQueue', false);
                 } else {
                     commit('setPlayerStatus', 'paused');
                 }
@@ -142,6 +162,92 @@ export default new Vuex.Store({
                 position = Math.max(position, 0);
                 let time = position * duration;
                 commit('setPlayerTime', time);
+            }
+        },
+        appendToQueue: ({ commit }, song) => {
+            commit('appendToQueue', song);
+        },
+        setQueue: ({ commit }, songArray) => {
+            if(!Array.isArray(songArray)) {
+                console.error('setQueue only accepts arrays');
+                return;
+            }
+            commit('setQueue', songArray);
+        },
+        playFromQueue: async ({ commit, getters, dispatch }, index) => {
+            if(!index) {
+                index = 0;
+            }
+            if(getters.queue.length <= index) {
+                console.error("playFromQueue received index out of bounds");
+                return;
+            }
+            // get song from queue
+            let song = getters.queue[index];
+            // TODO check if song info already exists
+            // ...
+            // get song info
+            let songInfo = await fetch('/api/file-info', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(song)
+            });
+            if(songInfo.status !== 200) {
+                console.error("file-info request return " + songInfo.status);
+                return;
+            }
+            songInfo = await songInfo.json();
+            await dispatch('setSongInfo', songInfo);
+
+            // get song data
+            let songData = await fetch('/api/fetch-file', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(song)
+            });
+            if(songData.status !== 200) {
+                console.error("file-info request return " + songData.status);
+                return;
+            }
+            songData = await songData.blob();
+            await dispatch('playBlob', songData);
+            commit('setQueuePlayIndex', index);
+        },
+        playNextFromQueue: ({ dispatch, state }, loop = true) => {
+            if(!state.queue) {
+                console.warn("queue is empty");
+                return;
+            }
+            let next = state.queuePlayIndex + 1;
+            if(next >= state.queue.length) {
+                if(loop) {
+                    next = 0;
+                } else {
+                    return;
+                }
+            }
+            dispatch('playFromQueue', next);
+        },
+        playPreviousFromQueue: ({ dispatch, state }) => {
+            if(!state.queue) {
+                console.warn("queue is empty");
+                return;
+            }
+            if(state.player.currentTime > 5) {
+                // goes back to the start of the song
+                dispatch('seekPosition', 0);
+            } else {
+                // goes to previous song
+                let previous = state.queuePlayIndex - 1;
+                previous = Math.max(previous, 0);
+                if(previous >= state.queue.length) {
+                    previous = 0;
+                }
+                dispatch('playFromQueue', previous);
             }
         }
     },
