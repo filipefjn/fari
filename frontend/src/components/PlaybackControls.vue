@@ -85,6 +85,7 @@ export default {
         font-size: 0.75rem;
         margin-bottom: 0.5rem;
         color: $text-color;
+        user-select: none;
 
         .separator {
             margin: 0 0.5rem;

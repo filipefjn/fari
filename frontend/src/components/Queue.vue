@@ -1,6 +1,5 @@
 <template>
     <div class="container">
-        <ContentHeader title="Queue"/>
         <ContentList>
             <ContentListItem v-for="item in queueList" :key="item.id" @click="playQueuePosition(item.pos)">
                 <div class="icon" v-if="queuePlayIndex == item.pos"><fa-icon icon="play" style="font-size: 1rem;"/></div>
@@ -12,14 +11,12 @@
 </template>
 
 <script>
-import ContentHeader from '@/components/ContentHeader.vue';
 import ContentList from '@/components/ContentList.vue';
 import ContentListItem from '@/components/ContentListItem.vue';
 import { mapGetters } from 'vuex';
 
 export default {
     components: {
-        ContentHeader,
         ContentList,
         ContentListItem
     },
@@ -27,6 +24,11 @@ export default {
         return {
             keyCounter: 0,
         };
+    },
+    mounted: function() {
+        this.$store.dispatch('setHeaderInfo', {
+            title: "Queue",
+        });
     },
     computed: {
         ...mapGetters(['queue', 'queuePlayIndex']),

@@ -1,6 +1,5 @@
 <template>
     <div class="container">
-        <ContentHeader title="Folders" :subtitle="currentDir"/>
         <ContentList>
             <ContentListItem v-if="currentDir !== '/'" @click="openSubfolder('..')">
                 <div class="icon"><fa-icon icon="level-up-alt"/></div>
@@ -19,13 +18,11 @@
 </template>
 
 <script>
-import ContentHeader from '@/components/ContentHeader.vue';
 import ContentList from '@/components/ContentList.vue';
 import ContentListItem from '@/components/ContentListItem.vue';
 
 export default {
     components: {
-        ContentHeader,
         ContentList,
         ContentListItem
     },
@@ -86,6 +83,17 @@ export default {
             await this.$store.dispatch('setQueue', queue);
             await this.$store.dispatch('playFromQueue', queuePlayIndex);
         },
+    },
+    watch: {
+        currentDir: {
+            handler: function(val) {
+                this.$store.dispatch('setHeaderInfo', {
+                    title: "Folders",
+                    subtitle: val
+                })
+            },
+            immediate: true
+        }
     }
 }
 </script>

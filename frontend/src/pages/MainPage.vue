@@ -1,6 +1,7 @@
 <template>
     <div class="page">
-        <MainPageSidebar class="sidebar" @change="(content) => selectedContent = content"/>
+        <Header class="header"/>
+        <Sidebar class="sidebar" @change="(content) => selectedContent = content"/>
         <div class="content">
             <transition name="content-transition" v-enter v-leave>
                 <FolderNavigation v-if="selectedContent == 'folders'"/>
@@ -13,14 +14,16 @@
 
 <script>
 import MainPageFooter from '@/components/MainPageFooter.vue';
-import MainPageSidebar from '@/components/MainPageSidebar.vue';
+import Header from '@/components/Header.vue';
+import Sidebar from '@/components/Sidebar.vue';
 import FolderNavigation from '@/components/FolderNavigation.vue';
 import Queue from '@/components/Queue.vue';
 
 export default {
     components: {
         MainPageFooter,
-        MainPageSidebar,
+        Header,
+        Sidebar,
         FolderNavigation,
         Queue
     },
@@ -46,18 +49,35 @@ export default {
     grid-template-columns: 12rem auto;
     grid-template-rows: 5rem auto 5rem;
 
-    .sidebar {
-        grid-row: 1 / 3;
-        grid-column: 1 / 2;
+    @include breakpoint(mobile) {
+        grid-template-columns: auto;
+    }
 
-        background-color: $sidebar-bgcolor;
+    .header {
+
+    }
+
+    .sidebar {
+
+        @include breakpoint(not-mobile) {
+            grid-row: 1 / 3;
+            grid-column: 1 / 2;
+        }
+
+        @include breakpoint(mobile) {
+            // display: none;
+        }
     }
 
     .content {
-        grid-row: 1 / 3;
+        grid-row: 2 / 3;
         grid-column: 2 / 3;
         overflow-y: auto;
         position: relative;
+
+        @include breakpoint(mobile) {
+            grid-column: 1 / 2;
+        }
 
         &> :last-child {
             padding-bottom: 2rem;
@@ -67,8 +87,12 @@ export default {
     .footer {
         grid-row: 3 / 4;
         grid-column: 1 / 3;
+        background-color: $footer-bgcolor;
 
-        background-color: $footer-bgcolor
+        @include breakpoint(mobile) {
+            grid-column: 1 / 2;
+        }
+
     }
 }
 

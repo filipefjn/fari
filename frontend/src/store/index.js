@@ -15,6 +15,8 @@ export default new Vuex.Store({
         queue: [],
         queueKeyCounter: 0, // TODO use later to update queue songs info
         queuePlayIndex: 0,
+        displayMobileSidebar: false,
+        headerInfo: {}
     },
     getters: {
         player: (state) => state.player,
@@ -26,6 +28,8 @@ export default new Vuex.Store({
         queue: (state) => state.queue,
         queueKeyCounter: (state) => state.queueKeyCounter,
         queuePlayIndex: (state) => state.queuePlayIndex,
+        displayMobileSidebar: (state) => state.displayMobileSidebar,
+        headerInfo: (state) => state.headerInfo
     },
     mutations: {
         setPlayer: (state, player) => {
@@ -90,6 +94,14 @@ export default new Vuex.Store({
         },
         setQueuePlayIndex: (state, index) => {
             state.queuePlayIndex = index;
+        },
+        setMobileSidebar: (state, value) => {
+            state.displayMobileSidebar = value;
+        },
+        setHeaderInfo: (state, info) => {
+            state.headerInfo = {
+                ...info
+            };
         }
     },
     actions: {
@@ -249,6 +261,15 @@ export default new Vuex.Store({
                 }
                 dispatch('playFromQueue', previous);
             }
+        },
+        openMobileSidebar: ({ commit }) => {
+            commit('setMobileSidebar', true);
+        },
+        closeMobileSidebar: ({ commit }) => {
+            commit('setMobileSidebar', false);
+        },
+        setHeaderInfo: ({ commit }, info) => {
+            commit('setHeaderInfo', info);
         }
     },
     modules: {}

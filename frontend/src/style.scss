@@ -11,4 +11,11 @@ $list-item-line-color: #2F2F2F !default;
 $list-item-hover-bgcolor: #262626 !default;
 $list-item-icon-color: #444444 !default;
 
-
+@mixin breakpoint($point) {
+    @if $point == mobile {
+        @media (max-width: 768px) { @content; }
+    }
+    @if $point == not-mobile {
+        @media (min-width: 769px) { @content; }
+    }
+}
