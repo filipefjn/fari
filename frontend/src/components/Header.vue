@@ -33,6 +33,10 @@ export default {
     user-select: none;
     padding-bottom: 4px;
 
+    @include breakpoint(mobile) {
+        padding-left: 0.5rem;
+    }
+
     .hamburger {
         margin-right: 1rem;
         margin-left: 0.25rem;

@@ -18,7 +18,10 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    padding-right: 2rem;
-    padding-left: 2rem;
+    padding: 0 2rem;
+
+    @include breakpoint(mobile) {
+        padding: 0 0.5rem;
+    }
 }
 </style>
