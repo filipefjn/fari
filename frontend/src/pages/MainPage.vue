@@ -10,14 +10,16 @@
                     <Queue            v-if="selectedContent == 'queue'"  />
                 </transition>
             </div>
-            <MainPageFooter class="footer"/>
+            <MobileFooter class="mobile-footer"/>
+            <Footer class="footer"/>
         </div>
     </div>
 
 </template>
 
 <script>
-import MainPageFooter from '@/components/MainPageFooter.vue';
+import Footer from '@/components/Footer.vue';
+import MobileFooter from '@/components/MobileFooter.vue';
 import Header from '@/components/Header.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import MobileSidebar from '@/components/MobileSidebar.vue';
@@ -28,7 +30,8 @@ import { mapGetters } from 'vuex';
 
 export default {
     components: {
-        MainPageFooter,
+        Footer,
+        MobileFooter,
         Header,
         Sidebar,
         MobileSidebar,
@@ -64,6 +67,7 @@ export default {
 
         @include breakpoint(mobile) {
             grid-template-columns: auto;
+            grid-template-rows: 5rem auto 4rem;
         }
 
         .header {
@@ -109,7 +113,19 @@ export default {
             background-color: $footer-bgcolor;
 
             @include breakpoint(mobile) {
-                grid-column: 1 / 2;
+                display: none;
+            }
+
+        }
+
+        .mobile-footer {
+            grid-row: 3 / 4;
+            grid-column: 1 / 2;
+            background-color: $footer-bgcolor;
+            display: none;
+
+            @include breakpoint(mobile) {
+                display: initial;
             }
 
         }
