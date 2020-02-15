@@ -44,7 +44,6 @@ export default {
                 return response.json();
             }).then((response) => {
                 this.songs = response;
-                console.log(response);
             })
         },
         onSongClick: async function(song) {

@@ -55,7 +55,6 @@ export default {
 
     @include breakpoint(mobile) {
         width: 12rem;
-        box-shadow: 3px 0px 3px rgba(0, 0, 0, 0.15);
     }
 }
 </style>
