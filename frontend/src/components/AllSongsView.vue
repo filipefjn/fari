@@ -1,12 +1,12 @@
 <template>
     <div class="container">
         <ContentList>
-            <ContentListItemGrid v-for="item in songs" :key="item.id" @click="onSongClick(item.path)">
+            <ContentListItemGrid v-for="item in songs" :key="item.id" @click="onSongClick(item)">
                 <template v-slot:left>
-                    <div class="icon"><fa-icon icon="play"/></div>
+                    <!-- <div class="icon"><fa-icon icon="play"/></div> -->
                 </template>
-                <div class="tracktitle">Control</div>
-                <div class="artist">Puddle of Mudd</div>
+                <div class="tracktitle">{{item.tracktitle}}</div>
+                <div class="artist">{{item.artist}}</div>
             </ContentListItemGrid>
         </ContentList>
     </div>
@@ -28,6 +28,9 @@ export default {
         };
     },
     mounted: function() {
+        this.$store.dispatch('setHeaderInfo', {
+            title: "All Songs",
+        });
         this.fetchAllSongs();
     },
     methods: {
@@ -44,42 +47,18 @@ export default {
                 console.log(response);
             })
         },
-        fetchFolderContent: function() {
-            fetch('/api/folder-content', {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    path: this.currentDir,
-                })
-            }).then((response) => {
-                return response.json();
-            }).then((response) => {
-                this.subfolders = response.subfolders;
-                this.files = response.files;
-                this.loading = false;
-            })
-        },
-        openSubfolder: function(path) {
-            this.loading = true;
-            this.subfolders = null;
-            this.files = null;
-            if(path == '..') {
-                this.currentDir = this.currentDir.split('/').reverse().slice(2).reverse().join('/') + "/";
-                if(!this.currentDir) {
-                    this.currentDir = "/";
-                }
-            } else {
-                this.currentDir = this.currentDir + path + "/";
+        onSongClick: async function(song) {
+            if(song.disabled) {
+                console.log("disabled song clicked!");
+                return;
             }
-            this.fetchFolderContent();
-        },
-        onSongClick: async function(path) {
             let queue = [];
             let queuePlayIndex = 0;
             for(let i = 0; i < this.songs.length; i++) {
-                if(this.songs[i].path == path) {
+                if(song.disabled) {
+                    return;
+                }
+                if(this.songs[i].id == song.id) {
                     queuePlayIndex = i;
                 }
                 queue.push({
@@ -89,17 +68,6 @@ export default {
             await this.$store.dispatch('setQueue', queue);
             await this.$store.dispatch('playFromQueue', queuePlayIndex);
         },
-    },
-    watch: {
-        currentDir: {
-            handler: function(val) {
-                this.$store.dispatch('setHeaderInfo', {
-                    title: "Folders",
-                    subtitle: val
-                })
-            },
-            immediate: true
-        }
     }
 }
 </script>
@@ -120,11 +88,11 @@ export default {
     }
 
     .tracktitle {
-        grid-column: 1 / 5;
+        grid-column: 1 / 7;
     }
 
     .artist {
-        grid-column: 5 / 11;
+        grid-column: 7 / 11;
     }
 
 }

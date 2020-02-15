@@ -4,6 +4,7 @@ from ..settings import settings
 import music_tag
 from base64 import b64encode
 from .models import *
+from .functions import hard_remake_library
 import os
 import re
 
@@ -119,5 +120,9 @@ def file_artwork_view():
 
 @main.route('/api/all-songs', methods=['GET', 'POST'])
 def all_songs_view():
-    all_songs = SongModel.query.all()
+    all_songs = SongModel.query.order_by(SongModel.tracktitle).all()
     return jsonify(SongSchema(many=True).dump(all_songs))
+
+@main.route('/api/hard-remake-library', methods=['GET', 'POST'])
+def hard_remake_library_view():
+    return hard_remake_library()
