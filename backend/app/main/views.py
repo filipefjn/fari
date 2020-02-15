@@ -3,6 +3,7 @@ from . import main
 from ..settings import settings
 import music_tag
 from base64 import b64encode
+from .models import *
 import os
 import re
 
@@ -115,3 +116,8 @@ def file_artwork_view():
         artwork_b64 = "data:" + artwork.first.mime + ";base64," + b64encode(artwork.first.data).decode('ascii')
         response["artwork"] = artwork_b64
     return response
+
+@main.route('/api/all-songs', methods=['GET', 'POST'])
+def all_songs_view():
+    all_songs = SongModel.query.all()
+    return jsonify(SongSchema(many=True).dump(all_songs))

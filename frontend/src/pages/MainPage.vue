@@ -6,8 +6,9 @@
             <Sidebar class="sidebar" @change="(content) => selectedContent = content"/>
             <div class="content">
                 <transition name="content-transition" v-enter v-leave>
-                    <FolderNavigation v-if="selectedContent == 'folders'"/>
-                    <Queue            v-if="selectedContent == 'queue'"  />
+                    <FolderNavigation v-if="selectedContent == 'folders'"  />
+                    <Queue            v-if="selectedContent == 'queue'"    />
+                    <AllSongsView     v-if="selectedContent == 'allsongs'" />
                 </transition>
             </div>
             <MobileFooter class="mobile-footer"/>
@@ -25,6 +26,7 @@ import Sidebar from '@/components/Sidebar.vue';
 import MobileSidebar from '@/components/MobileSidebar.vue';
 import FolderNavigation from '@/components/FolderNavigation.vue';
 import Queue from '@/components/Queue.vue';
+import AllSongsView from '@/components/AllSongsView.vue';
 
 import { mapGetters } from 'vuex';
 
@@ -36,7 +38,8 @@ export default {
         Sidebar,
         MobileSidebar,
         FolderNavigation,
-        Queue
+        Queue,
+        AllSongsView
     },
     data: function() {
         return {

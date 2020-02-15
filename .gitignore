@@ -5,3 +5,4 @@ backend/app/static
 backend/app/templates/index.html
 
 notes.txt
+*.sqlite

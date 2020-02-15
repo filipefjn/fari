@@ -58,4 +58,8 @@ button::-moz-focus-inner {
     scrollbar-color: #444444 #2A2A2A;
 }
 
+body {
+    background-color: $page-bgcolor;
+}
+
 </style>
