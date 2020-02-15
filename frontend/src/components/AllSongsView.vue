@@ -89,10 +89,17 @@ export default {
 
     .tracktitle {
         grid-column: 1 / 7;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        padding-right: 1.5rem;
     }
 
     .artist {
         grid-column: 7 / 11;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
 }

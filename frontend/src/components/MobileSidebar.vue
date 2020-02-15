@@ -15,7 +15,8 @@ export default {
         Sidebar
     },
     computed: {
-        ...mapGetters(['displayMobileSidebar'])
+        ...mapGetters(['displayMobileSidebar']),
+
     },
     methods: {
         onOverlayClick: function() {

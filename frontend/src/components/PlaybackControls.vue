@@ -1,5 +1,5 @@
 <template>
-    <div class="controls-root">
+    <div class="controls-root" :class="{'mobile': mobile}">
         <div class="playback-time">{{currentPlaybackTime}}<span class="separator">/</span>{{playbackDuration}}</div>
         <div class="controls-container">
             <button class="button" @click="playPrevious()"><fa-icon icon="backward" style="margin-right: 1px"/></button>
@@ -17,6 +17,12 @@
 import { mapGetters } from "vuex";
 
 export default {
+    props: {
+        mobile: {
+            type: Boolean,
+            default: false
+        }
+    },
     computed: {
         ...mapGetters(['playerStatus', 'playerInfo']),
         playOrPauseIcon: function() {
@@ -121,6 +127,26 @@ export default {
             &.play {
                 height: 2rem;
                 width: 2rem;
+            }
+        }
+    }
+}
+
+.mobile {
+    .playback-time {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    .controls-container {
+        .button {
+            height: 2.5rem;
+            width: 2.5rem;
+            font-size: 1.25rem;
+            margin: 0 0.5rem 0 0.5rem;
+            box-shadow: none;
+            &.play {
+                height: 3rem;
+                width: 3rem;
             }
         }
     }
