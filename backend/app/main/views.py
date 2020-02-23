@@ -1,6 +1,7 @@
 from flask import jsonify, request, render_template, send_file
 from . import main
 from ..settings import settings
+from .. import db
 import music_tag
 from base64 import b64encode
 from .models import *
@@ -126,3 +127,21 @@ def all_songs_view():
 @main.route('/api/hard-remake-library', methods=['GET', 'POST'])
 def hard_remake_library_view():
     return hard_remake_library()
+
+@main.route('/api/enable-songs', methods=['POST'])
+def enable_songs_view():
+    request_body = request.get_json(force=True)
+    for song in request_body:
+        db_song = SongModel.query.get(song["id"])
+        db_song.enabled = True
+    db.session.commit()
+    return {} # TODO improve
+
+@main.route('/api/disable-songs', methods=['POST'])
+def disable_songs_view():
+    request_body = request.get_json(force=True)
+    for song in request_body:
+        db_song = SongModel.query.get(song["id"])
+        db_song.enabled = False
+    db.session.commit()
+    return {} # TODO improve

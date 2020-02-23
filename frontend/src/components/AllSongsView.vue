@@ -4,15 +4,24 @@
             <ContextMenuItem @click="onContextMenuPlay()">Play</ContextMenuItem>
             <!-- <ContextMenuItem>Play next</ContextMenuItem> -->
             <!-- <ContextMenuItem>Queue song</ContextMenuItem> -->
-            <ContextMenuItem>Disable</ContextMenuItem> <!-- TODO: implement -->
+            <ContextMenuItem
+                v-if="contextMenuSelected !== null && !contextMenuSelected.enabled"
+                @click="onContextMenuEnable()">
+                Enable
+            </ContextMenuItem>
+            <ContextMenuItem
+                v-if="contextMenuSelected !== null && contextMenuSelected.enabled"
+                @click="onContextMenuDisable()">
+                Disable
+            </ContextMenuItem>
         </ContextMenu>
         <ContentList>
             <ContentListItemGrid v-for="item in songs" :key="item.id" @click="onSongClick(item)" @contextmenu="onMiscClick($event, item)">
                 <template v-slot:left>
                     <!-- <div class="icon"><fa-icon icon="play"/></div> -->
                 </template>
-                <div class="tracktitle" :class="{'disabled': item.disabled}">{{item.tracktitle}}</div>
-                <div class="artist">{{item.artist}}</div>
+                <div class="tracktitle" :class="{'disabled': !item.enabled}">{{item.tracktitle}}</div>
+                <div class="artist" :class="{'disabled': !item.enabled}">{{item.artist}}</div>
                 <template v-slot:right>
                     <div class="clickable-icon" @click.stop="() => openContextMenu($event, item)"><fa-icon icon="ellipsis-h"/></div>
                 </template>
@@ -40,7 +49,7 @@ export default {
             songs: [],
             contextMenuPosX: 150,
             contextMenuPosY: 300,
-            contentMenuSelected: null,
+            contextMenuSelected: null,
             showContextMenu: false,
         };
     },
@@ -64,18 +73,19 @@ export default {
             })
         },
         onSongClick: async function(song) {
-            if(song.disabled) {
-                console.log("disabled song clicked!");
+            if(!song.enabled) {
                 return;
             }
             let queue = [];
             let queuePlayIndex = 0;
+            let offset = 0;
             for(let i = 0; i < this.songs.length; i++) {
-                if(song.disabled) {
-                    return;
+                if(!this.songs[i].enabled) {
+                    offset++;
+                    continue;
                 }
                 if(this.songs[i].id == song.id) {
-                    queuePlayIndex = i;
+                    queuePlayIndex = i - offset;
                 }
                 queue.push({
                     path: this.songs[i].path
@@ -85,17 +95,61 @@ export default {
             await this.$store.dispatch('playFromQueue', queuePlayIndex);
         },
         onContextMenuPlay: function() {
-            this.onSongClick(this.contentMenuSelected);
+            this.onSongClick(this.contextMenuSelected);
         },
         openContextMenu: function(event, item) {
-            this.contentMenuSelected = item;
+            this.contextMenuSelected = item;
             this.contextMenuPosX = event.clientX;
             this.contextMenuPosY = event.clientY;
             this.showContextMenu = true;
         },
         closeContextMenu: function() {
-            this.contentMenuSelected = null;
+            this.contextMenuSelected = null;
             this.showContextMenu = false;
+        },
+        onContextMenuEnable: function() {
+            fetch('/api/enable-songs', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(
+                    [
+                        {
+                            "id": this.contextMenuSelected.id
+                        }
+                    ]
+                )
+            }).then((response) => {
+                if(response.status !== 200) {
+                    return;
+                }
+                return response.json();
+            }).then((response) => {
+                this.fetchAllSongs(); // TODO improve
+            })
+        },
+        onContextMenuDisable: function() {
+            fetch('/api/disable-songs', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(
+                    [
+                        {
+                            "id": this.contextMenuSelected.id
+                        }
+                    ]
+                )
+            }).then((response) => {
+                if(response.status !== 200) {
+                    return;
+                }
+                return response.json();
+            }).then((response) => {
+                this.fetchAllSongs(); // TODO improve
+            })
         }
     }
 }
