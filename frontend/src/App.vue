@@ -31,6 +31,11 @@ export default {
     box-sizing: border-box;
 }
 
+// change rem unit sizing
+html {
+    font-size: 87.5%
+}
+
 // remove firefox's button inner border
 button::-moz-focus-inner {
     border: 0;

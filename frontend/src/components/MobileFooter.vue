@@ -97,10 +97,10 @@ export default {
 @import '@/style.scss';
 
 .mobile-footer {
-
     position: relative;
 
     .static {
+        z-index: 1100;
         position: absolute;
         top: 0; bottom: 0; left: 0; right: 0;
         background-color: #2A2A2A;

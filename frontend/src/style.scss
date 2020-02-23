@@ -4,12 +4,19 @@ $page-bgcolor: #202020 !default;
 $sidebar-bgcolor: #262626 !default;
 $footer-bgcolor: #2A2A2A !default;
 $text-color: #E3E3E3 !default;
+$disabled-color: #444444 !default;
 $button-shadow: 2px 2px 2px rgba(0, 0, 0, 0.15), -2px -2px 2px rgba(255, 255, 255, 0.04) !default;
 $button-shadow-pressed: inset 2px 2px 2px rgba(0, 0, 0, 0.15), inset -2px -2px 2px rgba(255, 255, 255, 0.04) !default;
 $list-item-hor-padding: 0.75rem !default;
 $list-item-line-color: #2F2F2F !default;
 $list-item-hover-bgcolor: #262626 !default;
 $list-item-icon-color: #444444 !default;
+$list-item-icon-hover-color: #BBBBBB !default;
+$list-item-icon-hover-bgcolor: #2A2A2A !default;
+$list-item-clickable-icon-padding: 0.5rem !default;
+$context-menu-bgcolor: #262626 !default;
+$context-menu-shadow: 2px 2px 2px rgba(0, 0, 0, 0.15), -2px -2px 2px rgba(0, 0, 0, 0.15) !default;
+$context-menu-hover-bgcolor: #2A2A2A !default;
 
 @mixin breakpoint($point) {
     @if $point == mobile {

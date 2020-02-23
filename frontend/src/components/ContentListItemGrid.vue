@@ -1,5 +1,5 @@
 <template>
-    <div class="list-item" @click="$emit('click', $event)">
+    <div class="list-item" @click="$emit('click', $event)" @contextmenu.prevent="$emit('contextmenu', $event)">
         <slot name="left"></slot>
         <div class="grid">
             <slot></slot>
