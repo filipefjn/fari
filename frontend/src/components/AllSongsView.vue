@@ -16,7 +16,7 @@
             </ContextMenuItem>
         </ContextMenu>
         <ContentList>
-            <ContentListItemGrid v-for="item in songs" :key="item.id" @click="onSongClick(item)" @contextmenu="onMiscClick($event, item)">
+            <ContentListItemGrid v-for="item in fullSongList" :key="item.id" @click="onSongClick(item)" @contextmenu="onMiscClick($event, item)">
                 <template v-slot:left>
                     <!-- <div class="icon"><fa-icon icon="play"/></div> -->
                 </template>
@@ -35,6 +35,7 @@ import ContentList from '@/components/ContentList.vue';
 import ContentListItemGrid from '@/components/ContentListItemGrid.vue';
 import ContextMenu from '@/components/ContextMenu.vue';
 import ContextMenuItem from '@/components/ContextMenuItem.vue';
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
     components: {
@@ -46,32 +47,23 @@ export default {
     data: function() {
         return {
             loading: true,
-            songs: [],
             contextMenuPosX: 150,
             contextMenuPosY: 300,
             contextMenuSelected: null,
             showContextMenu: false,
         };
     },
+    computed: {
+        ...mapGetters(['fullSongList'])
+    },
     mounted: function() {
         this.$store.dispatch('setHeaderInfo', {
             title: "All Songs",
         });
-        this.fetchAllSongs();
+        this.fetchFullSongList();
     },
     methods: {
-        fetchAllSongs: function() {
-            fetch('/api/all-songs', {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            }).then((response) => {
-                return response.json();
-            }).then((response) => {
-                this.songs = response;
-            })
-        },
+        ...mapActions(['fetchFullSongList']),
         onSongClick: async function(song) {
             if(!song.enabled) {
                 return;
@@ -79,16 +71,16 @@ export default {
             let queue = [];
             let queuePlayIndex = 0;
             let offset = 0;
-            for(let i = 0; i < this.songs.length; i++) {
-                if(!this.songs[i].enabled) {
+            for(let i = 0; i < this.fullSongList.length; i++) {
+                if(!this.fullSongList[i].enabled) {
                     offset++;
                     continue;
                 }
-                if(this.songs[i].id == song.id) {
+                if(this.fullSongList[i].id == song.id) {
                     queuePlayIndex = i - offset;
                 }
                 queue.push({
-                    path: this.songs[i].path
+                    path: this.fullSongList[i].path
                 });
             }
             await this.$store.dispatch('setQueue', queue);
@@ -126,7 +118,7 @@ export default {
                 }
                 return response.json();
             }).then((response) => {
-                this.fetchAllSongs(); // TODO improve
+                this.fetchFullSongList(); // TODO improve
             })
         },
         onContextMenuDisable: function() {
@@ -148,7 +140,7 @@ export default {
                 }
                 return response.json();
             }).then((response) => {
-                this.fetchAllSongs(); // TODO improve
+                this.fetchFullSongList(); // TODO improve
             })
         }
     }

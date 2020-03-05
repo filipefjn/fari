@@ -119,10 +119,10 @@ def file_artwork_view():
         response["artwork"] = artwork_b64
     return response
 
-@main.route('/api/all-songs', methods=['GET', 'POST'])
-def all_songs_view():
-    all_songs = SongModel.query.order_by(SongModel.tracktitle).all()
-    return jsonify(SongSchema(many=True).dump(all_songs))
+@main.route('/api/full-song-list', methods=['GET', 'POST'])
+def full_song_list_view():
+    song_list = SongModel.query.order_by(SongModel.tracktitle).all()
+    return jsonify(SongSchema(many=True).dump(song_list))
 
 @main.route('/api/remake-library', methods=['GET', 'POST'])
 def remake_library_view():

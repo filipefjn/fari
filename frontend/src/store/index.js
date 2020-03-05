@@ -10,6 +10,7 @@ export default new Vuex.Store({
         playerStatus: null,
         playerInfo: null,
         playerVolume: 0.8,
+        fullSongList: [],
         songInfo: null,
         songArtworkCounter: 0,
         queue: [],
@@ -23,6 +24,7 @@ export default new Vuex.Store({
         playerStatus: (state) => state.playerStatus,
         playerInfo: (state) => state.playerInfo,
         playerVolume: (state) => state.playerVolume,
+        fullSongList: (state) => state.fullSongList,
         songInfo: (state) => state.songInfo,
         songArtworkCounter: (state) => state.songArtworkCounter,
         queue: (state) => state.queue,
@@ -62,6 +64,9 @@ export default new Vuex.Store({
         },
         clearPlayerInfo: (state) => {
             state.playerInfo = null;
+        },
+        setFullSongList: (state, fullSongList) => {
+            state.fullSongList = fullSongList;
         },
         setSongInfo: (state, info) => {
             if(state.songInfo) {
@@ -151,6 +156,22 @@ export default new Vuex.Store({
             } else {
                 console.error('no player available');
             }
+        },
+        fetchFullSongList: async ({commit, getters}, payload) => {
+            // implement
+            if(getters.fullSongList.length === 0 && (payload && payload.force !== true)) {
+                return;
+            }
+            let fullSongList = await fetch('/api/full-song-list', {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then((response) => {
+                return response.json();
+            })
+            console.warn(fullSongList);
+            commit('setFullSongList', fullSongList);
         },
         setSongInfo: ({ commit }, info) => {
             commit('setSongInfo', info);
