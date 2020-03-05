@@ -145,3 +145,23 @@ def disable_songs_view():
         db_song.enabled = False
     db.session.commit()
     return {} # TODO improve
+
+@main.route('/api/add-tag-to-all', methods=['POST'])
+def add_tag_to_all_view():
+    # TODO remove this view
+    # for testing only
+    request_body = request.get_json(force=True)
+
+    SongModel.query.order_by(SongModel.tracktitle).all()
+
+    tag = TagModel(
+        name=request_body["name"]
+    )
+    db.session.add(tag)
+
+    all_songs = SongModel.query.order_by(SongModel.tracktitle).all()
+    for song in all_songs:
+        song.tags.append(tag)
+    db.session.commit()
+
+    return jsonify(TagSchema().dump(tag))
