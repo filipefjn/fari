@@ -33,7 +33,7 @@ export default {
 
 // change rem unit sizing
 html {
-    font-size: 87.5%
+    // font-size: 87.5%
 }
 
 // remove firefox's button inner border

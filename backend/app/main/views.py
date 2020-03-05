@@ -5,7 +5,7 @@ from .. import db
 import music_tag
 from base64 import b64encode
 from .models import *
-from .functions import hard_remake_library
+from .functions import remake_library, create_fari_file
 import os
 import re
 
@@ -124,9 +124,9 @@ def all_songs_view():
     all_songs = SongModel.query.order_by(SongModel.tracktitle).all()
     return jsonify(SongSchema(many=True).dump(all_songs))
 
-@main.route('/api/hard-remake-library', methods=['GET', 'POST'])
-def hard_remake_library_view():
-    return hard_remake_library()
+@main.route('/api/remake-library', methods=['GET', 'POST'])
+def remake_library_view():
+    return remake_library()
 
 @main.route('/api/enable-songs', methods=['POST'])
 def enable_songs_view():
