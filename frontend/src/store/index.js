@@ -11,6 +11,7 @@ export default new Vuex.Store({
         playerInfo: null,
         playerVolume: 0.8,
         fullSongList: [],
+        tagList: [],
         songInfo: null,
         songArtworkCounter: 0,
         queue: [],
@@ -25,6 +26,7 @@ export default new Vuex.Store({
         playerInfo: (state) => state.playerInfo,
         playerVolume: (state) => state.playerVolume,
         fullSongList: (state) => state.fullSongList,
+        tagList: (state) => state.tagList,
         songInfo: (state) => state.songInfo,
         songArtworkCounter: (state) => state.songArtworkCounter,
         queue: (state) => state.queue,
@@ -67,6 +69,9 @@ export default new Vuex.Store({
         },
         setFullSongList: (state, fullSongList) => {
             state.fullSongList = fullSongList;
+        },
+        setTagList: (state, tagList) => {
+            state.tagList = tagList;
         },
         setSongInfo: (state, info) => {
             if(state.songInfo) {
@@ -158,7 +163,6 @@ export default new Vuex.Store({
             }
         },
         fetchFullSongList: async ({commit, getters}, payload) => {
-            // implement
             if(getters.fullSongList.length === 0 && (payload && payload.force !== true)) {
                 return;
             }
@@ -172,6 +176,19 @@ export default new Vuex.Store({
             })
             console.warn(fullSongList);
             commit('setFullSongList', fullSongList);
+            if(getters.fullSongList.length === 0 && (payload && payload.force !== true)) {
+                return;
+            }
+            let setTagList = await fetch('/api/tag-list', {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then((response) => {
+                return response.json();
+            })
+            console.warn(setTagList);
+            commit('setTagList', setTagList);
         },
         setSongInfo: ({ commit }, info) => {
             commit('setSongInfo', info);

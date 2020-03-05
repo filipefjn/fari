@@ -27,10 +27,20 @@
                 </template>
                 <template v-slot:bottom>
                     <Tag class="tag" v-for="tag in item.tags" :key="tag.id">{{tag.name}}</Tag>
-                    <div class="tag-plus-icon" @click.stop><fa-icon icon="plus"/></div>
+                    <div class="tag-plus-icon" @click.stop="openTagModal(item)"><fa-icon icon="plus"/></div>
                 </template>
             </ContentListItemGrid>
         </ContentList>
+        <Modal :show="displayTagModal" @close="closeTagModal()">
+            <div>Current tags</div>
+            <div>
+                <Tag v-for="tag in currentTags" :key="tag.id">{{tag.name}}</Tag>
+            </div>
+            <div>Available tags</div>
+            <div>
+                <Tag v-for="tag in availableTags" :key="tag.id">{{tag.name}}</Tag>
+            </div>
+        </Modal>
     </div>
 </template>
 
@@ -40,6 +50,7 @@ import ContentListItemGrid from '@/components/ContentListItemGrid.vue';
 import ContextMenu from '@/components/ContextMenu.vue';
 import ContextMenuItem from '@/components/ContextMenuItem.vue';
 import Tag from '@/components/Tag.vue';
+import Modal from '@/components/Modal.vue';
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -48,7 +59,8 @@ export default {
         ContentListItemGrid,
         ContextMenu,
         ContextMenuItem,
-        Tag
+        Tag,
+        Modal
     },
     data: function() {
         return {
@@ -57,10 +69,39 @@ export default {
             contextMenuPosY: 300,
             contextMenuSelected: null,
             showContextMenu: false,
+            displayTagModal: false,
+            tagModalItem: null,
+            currentTags: [],
+            availableTags: [],
         };
     },
     computed: {
-        ...mapGetters(['fullSongList'])
+        ...mapGetters(['fullSongList', 'tagList']),
+    },
+    watch: {
+        tagModalItem: function() {
+            if(this.tagModalItem == null || this.tagList == null) {
+                this.currentTags = [];
+                this.availableTags = [];
+            } else {
+                this.currentTags = this.tagList.filter((tag) => {
+                    for(let i = 0; i < this.tagModalItem.tags.length; i++) {
+                        if(tag.id === this.tagModalItem.tags[i].id) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+                this.availableTags = this.tagList.filter((tag) => {
+                    for(let i = 0; i < this.tagModalItem.tags.length; i++) {
+                        if(tag.id === this.tagModalItem.tags[i].id) {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+            }
+        }
     },
     mounted: function() {
         this.$store.dispatch('setHeaderInfo', {
@@ -147,6 +188,14 @@ export default {
             }).then((response) => {
                 this.fetchFullSongList(); // TODO improve
             })
+        },
+        openTagModal: function(item) {
+            this.displayTagModal = true;
+            this.tagModalItem = item
+        },
+        closeTagModal: function() {
+            this.displayTagModal = false;
+            this.tagModalItem = null
         }
     }
 }
