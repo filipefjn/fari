@@ -25,6 +25,10 @@
                 <template v-slot:right>
                     <div class="clickable-icon" @click.stop="() => openContextMenu($event, item)"><fa-icon icon="ellipsis-h"/></div>
                 </template>
+                <template v-slot:bottom>
+                    <Tag class="tag" v-for="tag in item.tags" :key="tag.id">{{tag.name}}</Tag>
+                    <div class="tag-plus-icon" @click.stop><fa-icon icon="plus"/></div>
+                </template>
             </ContentListItemGrid>
         </ContentList>
     </div>
@@ -35,6 +39,7 @@ import ContentList from '@/components/ContentList.vue';
 import ContentListItemGrid from '@/components/ContentListItemGrid.vue';
 import ContextMenu from '@/components/ContextMenu.vue';
 import ContextMenuItem from '@/components/ContextMenuItem.vue';
+import Tag from '@/components/Tag.vue';
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -42,7 +47,8 @@ export default {
         ContentList,
         ContentListItemGrid,
         ContextMenu,
-        ContextMenuItem
+        ContextMenuItem,
+        Tag
     },
     data: function() {
         return {
@@ -194,5 +200,25 @@ export default {
         color: $disabled-color;
     }
 
+}
+
+.tag {
+    margin-bottom: 1rem;
+}
+
+.tag-plus-icon {
+    font-size: 1rem;
+    color: $list-item-icon-color;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px;
+    margin-bottom: 0.8rem;
+    margin-left: 0.5rem;
+
+    &:hover {
+        color: $list-item-icon-hover-color;
+        background-color: $list-item-icon-hover-bgcolor;
+    }
 }
 </style>

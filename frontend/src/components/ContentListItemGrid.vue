@@ -1,11 +1,17 @@
 <template>
-    <div class="list-item" @click="$emit('click', $event)" @contextmenu.prevent="$emit('contextmenu', $event)">
-        <slot name="left"></slot>
-        <div class="grid">
-            <slot></slot>
+    <div class="container" @click="$emit('click', $event)" @contextmenu.prevent="$emit('contextmenu', $event)">
+        <div class="list-item">
+            <slot name="left"></slot>
+            <div class="grid">
+                <slot></slot>
+            </div>
+            <slot name="right"></slot>
         </div>
-        <slot name="right"></slot>
+        <div class="bottom">
+            <slot name="bottom"></slot>
+        </div>
     </div>
+
 </template>
 
 <script>
@@ -17,31 +23,48 @@ export default {
 <style scoped lang="scss">
 @import '@/style.scss';
 
-.list-item {
-    padding-top: $list-item-hor-padding;
-    padding-bottom: $list-item-hor-padding;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    border-top: solid 2px $list-item-line-color;
-    color: $text-color;
+.container {
+    display: grid;
+    grid-template-columns: 100%;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    user-select: none;
+    border-top: solid 2px $list-item-line-color;
 
-    .grid {
-        display: grid;
-        grid-template-columns: 10% 10% 10% 10% 10% 10% 10% 10% 10% 10%;
-        flex-grow: 1;
-        flex-shrink: 1;
+    &:hover {
+        background-color: $list-item-hover-bgcolor;
     }
 
     &:last-child {
         border-bottom: solid 2px $list-item-line-color;
     }
 
-    &:hover {
-        background-color: $list-item-hover-bgcolor;
+    .list-item {
+        padding-top: $list-item-hor-padding;
+        padding-bottom: $list-item-hor-padding;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        color: $text-color;
+
+        display: flex;
+        align-items: center;
+        user-select: none;
+
+        .grid {
+            display: grid;
+            grid-template-columns: 10% 10% 10% 10% 10% 10% 10% 10% 10% 10%;
+            flex-grow: 1;
+            flex-shrink: 1;
+        }
+    }
+
+    .bottom {
+        // padding-top: $list-item-hor-padding;
+        // padding-bottom: $list-item-hor-padding;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        display: flex;
+
     }
 }
+
+
 </style>
