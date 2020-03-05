@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --no-clean --watch"
+    "build": "vue-cli-service build --no-clean",
+    "watch": "vue-cli-service build --no-clean --watch"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.26",

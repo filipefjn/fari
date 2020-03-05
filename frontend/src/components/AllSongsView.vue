@@ -60,7 +60,6 @@ export default {
         this.$store.dispatch('setHeaderInfo', {
             title: "All Songs",
         });
-        this.fetchFullSongList();
     },
     methods: {
         ...mapActions(['fetchFullSongList']),

@@ -15,6 +15,9 @@ export default {
     created: function() {
         this.$store.dispatch('createPlayer');
     },
+    mounted: function() {
+        this.$store.dispatch('fetchFullSongList');
+    },
 }
 </script>
 

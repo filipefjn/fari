@@ -1,9 +1,9 @@
 <template>
     <div class="sidebar-content">
         <SidebarItem title="All songs" @click="onItemClick('allsongs')" :selected="selectedItem == 'allsongs'" />
-        <SidebarItem title="Artists"   @click="onItemClick('artists')"  :selected="selectedItem == 'artists'"  />
-        <SidebarItem title="Albums"    @click="onItemClick('albums')"   :selected="selectedItem == 'albums'"   />
-        <SidebarItem title="Genres"    @click="onItemClick('genres')"   :selected="selectedItem == 'genres'"   />
+        <!-- <SidebarItem title="Artists"   @click="onItemClick('artists')"  :selected="selectedItem == 'artists'"  /> -->
+        <!-- <SidebarItem title="Albums"    @click="onItemClick('albums')"   :selected="selectedItem == 'albums'"   /> -->
+        <!-- <SidebarItem title="Genres"    @click="onItemClick('genres')"   :selected="selectedItem == 'genres'"   /> -->
         <SidebarItem title="Folders"   @click="onItemClick('folders')"  :selected="selectedItem == 'folders'"  />
         <SidebarSeparator/>
         <SidebarItem title="Queue"     @click="onItemClick('queue')"    :selected="selectedItem == 'queue'"    />
@@ -23,20 +23,26 @@ export default {
     },
     data: function() {
         return {
-            selectedItem: '',
+            selectedItem: 'allsongs',
         };
     },
     methods: {
         onItemClick: function(item) {
             if(this.selectedItem !== item) {
-                this.$store.dispatch('setHeaderInfo', {});
                 this.selectedItem = item;
-                this.$emit('change', this.selectedItem);
+                this.$store.dispatch('setHeaderInfo', {});
                 this.$store.dispatch('closeMobileSidebar');
             }
 
         },
-
+    },
+    watch: {
+        selectedItem: {
+            handler: function() {
+                this.$emit('change', this.selectedItem);
+            },
+            immediate: true
+        }
     }
 }
 </script>
