@@ -1,5 +1,10 @@
 from .. import db, ma
 
+songs_tags_association = db.Table('songs_tags',
+    db.Column('songs', db.String(50), db.ForeignKey('songs.id'), primary_key=True),
+    db.Column('tags', db.Integer, db.ForeignKey('tags.id'), primary_key=True),
+)
+
 class SongModel(db.Model):
     __tablename__ = 'songs'
     id          = db.Column(db.String(50), primary_key=True, nullable=False)
@@ -9,6 +14,7 @@ class SongModel(db.Model):
     tracktitle  = db.Column(db.String(50))
     artist      = db.Column(db.String(50))
     album       = db.Column(db.String(50))
+    tags       = db.relationship("TagModel", secondary=songs_tags_association, back_populates="songs")
 
 class SongSchema(ma.Schema):
     class Meta:
@@ -21,4 +27,19 @@ class SongSchema(ma.Schema):
             "tracktitle",
             "artist",
             "album"
+        )
+
+class TagModel(db.Model):
+    __tablename__ = 'tags'
+    id          = db.Column(db.Integer, primary_key=True, nullable=False)
+    name        = db.Column(db.String(50), nullable=False)
+    songs       = db.relationship("SongModel", secondary=songs_tags_association, back_populates="tags")
+
+class TagSchema(ma.Schema):
+    class Meta:
+        model = SongModel
+        fields = (
+            "id",
+            "name",
+            "songs",
         )
