@@ -7,7 +7,7 @@ songs_tags_association = db.Table('songs_tags',
 
 class TagModel(db.Model):
     __tablename__ = 'tags'
-    id          = db.Column(db.Integer, primary_key=True, nullable=False)
+    id          = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
     name        = db.Column(db.String(50), nullable=False)
     songs       = db.relationship("SongModel", secondary=songs_tags_association, back_populates="tags", lazy=True)
 

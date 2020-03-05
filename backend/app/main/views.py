@@ -146,6 +146,54 @@ def disable_songs_view():
     db.session.commit()
     return {} # TODO improve
 
+@main.route('/api/tag-list', methods=["GET"])
+def tag_list_view():
+    return jsonify(TagSchema(many=True).dump(TagModel.query.all()))
+
+@main.route('/api/create-tag', methods=["POST"])
+def create_tag_view():
+    request_body = request.get_json(force=True)
+    tag = TagModel(
+        name=request_body["name"]
+    )
+    db.session.add(tag)
+    db.session.commit()
+    return (jsonify(TagSchema().dump(tag)), 201)
+
+@main.route('/api/delete-tag', methods=["DELETE"])
+def delete_tag_view():
+    request_body = request.get_json(force=True)
+    tag = TagModel.query.get(request_body["id"])
+    db.session.delete(tag)
+    db.session.commit()
+    return ("", 204)
+
+@main.route('/api/tag-song', methods=["POST"])
+def tag_song_view():
+    request_body = request.get_json(force=True)
+    if "tag_id" not in request_body:
+        return ("", 400)
+    if "song_id" not in request_body:
+        return ("", 400)
+    song = SongModel.query.get(request_body["song_id"])
+    tag = TagModel.query.get(request_body["tag_id"])
+    song.tags.append(tag)
+    db.session.commit()
+    return ("", 200)
+
+@main.route('/api/untag-song', methods=["POST"])
+def untag_song_view():
+    request_body = request.get_json(force=True)
+    if "tag_id" not in request_body:
+        return ("", 400)
+    if "song_id" not in request_body:
+        return ("", 400)
+    song = SongModel.query.get(request_body["song_id"])
+    tag = TagModel.query.get(request_body["tag_id"])
+    song.tags.remove(tag)
+    db.session.commit()
+    return ("", 200)
+
 @main.route('/api/add-tag-to-all', methods=['POST'])
 def add_tag_to_all_view():
     # TODO remove this view
