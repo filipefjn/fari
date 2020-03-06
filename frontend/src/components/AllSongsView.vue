@@ -1,69 +1,25 @@
 <template>
     <div class="container">
-        <ContextMenu :posX="contextMenuPosX" :posY="contextMenuPosY" :show="showContextMenu" @close="closeContextMenu()" @mouseleave="closeContextMenu()">
-            <ContextMenuItem @click="onContextMenuPlay()">Play</ContextMenuItem>
-            <!-- <ContextMenuItem>Play next</ContextMenuItem> -->
-            <!-- <ContextMenuItem>Queue song</ContextMenuItem> -->
-            <ContextMenuItem
-                v-if="contextMenuSelected !== null && !contextMenuSelected.enabled"
-                @click="onContextMenuEnable()">
-                Enable
-            </ContextMenuItem>
-            <ContextMenuItem
-                v-if="contextMenuSelected !== null && contextMenuSelected.enabled"
-                @click="onContextMenuDisable()">
-                Disable
-            </ContextMenuItem>
-        </ContextMenu>
         <ContentList>
-            <ContentListItemGrid v-for="item in fullSongList" :key="item.id" @click="onSongClick(item)" @contextmenu="onMiscClick($event, item)">
-                <template v-slot:left>
-                    <!-- <div class="icon"><fa-icon icon="play"/></div> -->
-                </template>
-                <div class="tracktitle" :class="{'disabled': !item.enabled}">{{item.tracktitle}}</div>
-                <div class="artist" :class="{'disabled': !item.enabled}">{{item.artist}}</div>
-                <template v-slot:right>
-                    <div class="clickable-icon" @click.stop="() => openContextMenu($event, item)"><fa-icon icon="ellipsis-h"/></div>
-                </template>
-                <template v-slot:bottom>
-                    <Tag class="tag" v-for="tag in item.tags" :key="tag.id">{{tag.name}}</Tag>
-                    <div class="tag-plus-icon" @click.stop="openTagModal(item)"><fa-icon icon="plus"/></div>
-                </template>
-            </ContentListItemGrid>
+            <SongRow v-for="song in fullSongList"
+                :songId="song.id"
+                :key="song.id"
+                @click="onSongClick(song)"
+            ></SongRow>
         </ContentList>
-        <TagModal v-if="displayTagModal" :songId="selectedItem.id" @close="closeTagModal()"/>
     </div>
 </template>
 
 <script>
 import ContentList from '@/components/ContentList.vue';
-import ContentListItemGrid from '@/components/ContentListItemGrid.vue';
-import ContextMenu from '@/components/ContextMenu.vue';
-import ContextMenuItem from '@/components/ContextMenuItem.vue';
-import TagModal from '@/components/TagModal.vue';
-import Tag from '@/components/Tag.vue';
+import SongRow from '@/components/SongRow.vue';
 
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
     components: {
         ContentList,
-        ContentListItemGrid,
-        ContextMenu,
-        ContextMenuItem,
-        TagModal,
-        Tag
-    },
-    data: function() {
-        return {
-            loading: true,
-            contextMenuPosX: 150,
-            contextMenuPosY: 300,
-            contextMenuSelected: null,
-            showContextMenu: false,
-            displayTagModal: false,
-            selectedItem: null,
-        };
+        SongRow
     },
     computed: {
         ...mapGetters(['fullSongList', 'tagList']),
@@ -97,142 +53,10 @@ export default {
             await this.$store.dispatch('setQueue', queue);
             await this.$store.dispatch('playFromQueue', queuePlayIndex);
         },
-        onContextMenuPlay: function() {
-            this.onSongClick(this.contextMenuSelected);
-        },
-        openContextMenu: function(event, item) {
-            this.contextMenuSelected = item;
-            this.contextMenuPosX = event.clientX;
-            this.contextMenuPosY = event.clientY;
-            this.showContextMenu = true;
-        },
-        closeContextMenu: function() {
-            this.contextMenuSelected = null;
-            this.showContextMenu = false;
-        },
-        onContextMenuEnable: function() {
-            fetch('/api/enable-songs', {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(
-                    [
-                        {
-                            "id": this.contextMenuSelected.id
-                        }
-                    ]
-                )
-            }).then((response) => {
-                if(response.status !== 200) {
-                    return;
-                }
-                return response.json();
-            }).then((response) => {
-                this.fetchFullSongList(); // TODO improve
-            })
-        },
-        onContextMenuDisable: function() {
-            fetch('/api/disable-songs', {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(
-                    [
-                        {
-                            "id": this.contextMenuSelected.id
-                        }
-                    ]
-                )
-            }).then((response) => {
-                if(response.status !== 200) {
-                    return;
-                }
-                return response.json();
-            }).then((response) => {
-                this.fetchFullSongList(); // TODO improve
-            })
-        },
-        openTagModal: function(item) {
-            this.displayTagModal = true;
-            this.selectedItem = item
-        },
-        closeTagModal: function() {
-            this.displayTagModal = false;
-            this.selectedItem = null
-        },
     }
 }
 </script>
 
-<style scoped lang="scss">
-@import '@/style.scss';
+<style>
 
-.container {
-
-    .icon, .clickable-icon {
-        font-size: 1.25rem;
-        color: $list-item-icon-color;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        &.icon {
-            width: 1rem;
-        }
-
-        &.clickable-icon {
-            margin-top: -$list-item-hor-padding;
-            margin-bottom: -$list-item-hor-padding;
-            padding: $list-item-clickable-icon-padding;
-            border-radius: 6px;
-
-            &:hover {
-                color: $list-item-icon-hover-color;
-                background-color: $list-item-icon-hover-bgcolor;
-            }
-        }
-    }
-
-    .tracktitle {
-        grid-column: 1 / 7;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        padding-right: 1.5rem;
-    }
-
-    .artist {
-        grid-column: 7 / 11;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-
-    .disabled {
-        color: $disabled-color;
-    }
-
-}
-
-.tag {
-    margin-bottom: 1rem;
-}
-
-.tag-plus-icon {
-    font-size: 1rem;
-    color: $list-item-icon-color;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 6px;
-    margin-bottom: 0.8rem;
-    margin-left: 0.5rem;
-
-    &:hover {
-        color: $list-item-icon-hover-color;
-        background-color: $list-item-icon-hover-bgcolor;
-    }
-}
 </style>

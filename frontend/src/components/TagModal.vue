@@ -136,7 +136,6 @@ export default {
 .tag-list-title {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
-    // margin-left: 0.5rem;
 
     &:first-child {
         margin-top: 0;
