@@ -26,12 +26,9 @@ export default {
     border-radius: 6px;
     border: none;
     padding: 0.25rem 0.5rem;
-    margin: 0.1rem 0.25rem;
+    margin: 0.25rem 0.5rem;
+    margin-left: 0;
     box-shadow: $context-menu-shadow;
     cursor: pointer;
-
-    &:first-child {
-        margin-left: 0;
-    }
 }
 </style>

@@ -31,16 +31,7 @@
                 </template>
             </ContentListItemGrid>
         </ContentList>
-        <Modal :show="displayTagModal" @close="closeTagModal()">
-            <div class="tag-list-title">Current tags</div>
-            <div class="tag-list">
-                <Tag v-for="tag in currentTags" :key="tag.id" @click="untagSong(tag)">{{tag.name}}</Tag>
-            </div>
-            <div class="tag-list-title">Available tags</div>
-            <div class="tag-list">
-                <Tag v-for="tag in availableTags" :key="tag.id" @click="tagSong(tag)">{{tag.name}}</Tag>
-            </div>
-        </Modal>
+        <TagModal v-if="displayTagModal" :songId="selectedItem.id" @close="closeTagModal()"/>
     </div>
 </template>
 
@@ -49,8 +40,9 @@ import ContentList from '@/components/ContentList.vue';
 import ContentListItemGrid from '@/components/ContentListItemGrid.vue';
 import ContextMenu from '@/components/ContextMenu.vue';
 import ContextMenuItem from '@/components/ContextMenuItem.vue';
+import TagModal from '@/components/TagModal.vue';
 import Tag from '@/components/Tag.vue';
-import Modal from '@/components/Modal.vue';
+
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -59,8 +51,8 @@ export default {
         ContentListItemGrid,
         ContextMenu,
         ContextMenuItem,
-        Tag,
-        Modal
+        TagModal,
+        Tag
     },
     data: function() {
         return {
@@ -70,38 +62,11 @@ export default {
             contextMenuSelected: null,
             showContextMenu: false,
             displayTagModal: false,
-            tagModalItem: null,
-            currentTags: [],
-            availableTags: [],
+            selectedItem: null,
         };
     },
     computed: {
         ...mapGetters(['fullSongList', 'tagList']),
-    },
-    watch: {
-        tagModalItem: function() {
-            if(this.tagModalItem == null || this.tagList == null) {
-                this.currentTags = [];
-                this.availableTags = [];
-            } else {
-                this.currentTags = this.tagList.filter((tag) => {
-                    for(let i = 0; i < this.tagModalItem.tags.length; i++) {
-                        if(tag.id === this.tagModalItem.tags[i].id) {
-                            return true;
-                        }
-                    }
-                    return false;
-                });
-                this.availableTags = this.tagList.filter((tag) => {
-                    for(let i = 0; i < this.tagModalItem.tags.length; i++) {
-                        if(tag.id === this.tagModalItem.tags[i].id) {
-                            return false;
-                        }
-                    }
-                    return true;
-                });
-            }
-        }
     },
     mounted: function() {
         this.$store.dispatch('setHeaderInfo', {
@@ -191,42 +156,12 @@ export default {
         },
         openTagModal: function(item) {
             this.displayTagModal = true;
-            this.tagModalItem = item
+            this.selectedItem = item
         },
         closeTagModal: function() {
             this.displayTagModal = false;
-            this.tagModalItem = null
+            this.selectedItem = null
         },
-        tagSong: async function(tag) {
-            await fetch('/api/tag-song', {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(
-                    {
-                        "song_id": this.tagModalItem.id,
-                        "tag_id": tag.id
-                    }
-                )
-            });
-            this.fetchFullSongList();
-        },
-        untagSong: async function(tag) {
-            await fetch('/api/untag-song', {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(
-                    {
-                        "song_id": this.tagModalItem.id,
-                        "tag_id": tag.id
-                    }
-                )
-            });
-            this.fetchFullSongList();
-        }
     }
 }
 </script>
@@ -299,15 +234,5 @@ export default {
         color: $list-item-icon-hover-color;
         background-color: $list-item-icon-hover-bgcolor;
     }
-}
-
-.tag-list {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-}
-
-.tag-list-title {
-    margin-bottom: 0.5rem;
 }
 </style>
