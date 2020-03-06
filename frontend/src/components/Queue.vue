@@ -1,24 +1,24 @@
 <template>
     <div class="container">
         <ContentList>
-            <ContentListItem v-for="item in queueList" :key="item.id" @click="playQueuePosition(item.pos)">
+            <SimpleRow v-for="item in queueList" :key="item.id" @click="playQueuePosition(item.pos)">
                 <div class="icon" v-if="queuePlayIndex == item.pos"><fa-icon icon="play" style="font-size: 1rem;"/></div>
                 <div class="icon" v-else></div>
                 {{item.name}}
-            </ContentListItem>
+            </SimpleRow>
         </ContentList>
     </div>
 </template>
 
 <script>
 import ContentList from '@/components/ContentList.vue';
-import ContentListItem from '@/components/ContentListItem.vue';
+import SimpleRow from '@/components/SimpleRow.vue';
 import { mapGetters } from 'vuex';
 
 export default {
     components: {
         ContentList,
-        ContentListItem
+        SimpleRow
     },
     data: function() {
         return {

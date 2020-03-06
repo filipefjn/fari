@@ -1,30 +1,30 @@
 <template>
     <div class="container">
         <ContentList>
-            <ContentListItem v-if="currentDir !== '/'" @click="openSubfolder('..')">
+            <SimpleRow v-if="currentDir !== '/'" @click="openSubfolder('..')">
                 <div class="icon"><fa-icon icon="level-up-alt"/></div>
                 ..
-            </ContentListItem>
-            <ContentListItem v-for="item in subfolders" @click="openSubfolder(item)" :key="item">
+            </SimpleRow>
+            <SimpleRow v-for="item in subfolders" @click="openSubfolder(item)" :key="item">
                 <div class="icon"><fa-icon icon="folder"/></div>
                 {{item}}
-            </ContentListItem>
-            <ContentListItem v-for="item in files" :key="item" @click="queueFolder(item)">
+            </SimpleRow>
+            <SimpleRow v-for="item in files" :key="item" @click="queueFolder(item)">
                 <div class="icon"><fa-icon icon="music"/></div>
                 {{item}}
-            </ContentListItem>
+            </SimpleRow>
         </ContentList>
     </div>
 </template>
 
 <script>
 import ContentList from '@/components/ContentList.vue';
-import ContentListItem from '@/components/ContentListItem.vue';
+import SimpleRow from '@/components/SimpleRow.vue';
 
 export default {
     components: {
         ContentList,
-        ContentListItem
+        SimpleRow
     },
     data: function() {
         return {
