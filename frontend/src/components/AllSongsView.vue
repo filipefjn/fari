@@ -5,6 +5,7 @@
                 :songId="song.id"
                 :key="song.id"
                 @click="onSongClick(song)"
+                @playSong="playSong(song)"
             ></SongRow>
         </ContentList>
     </div>
@@ -31,10 +32,14 @@ export default {
     },
     methods: {
         ...mapActions(['fetchFullSongList']),
-        onSongClick: async function(song) {
+        onSongClick: function(song) {
             if(!song.enabled) {
                 return;
+            } else {
+                this.playSong(song);
             }
+        },
+        playSong: async function(song) {
             let queue = [];
             let queuePlayIndex = 0;
             let offset = 0;
@@ -52,7 +57,7 @@ export default {
             }
             await this.$store.dispatch('setQueue', queue);
             await this.$store.dispatch('playFromQueue', queuePlayIndex);
-        },
+        }
     }
 }
 </script>

@@ -2,7 +2,11 @@
     <div class="container">
         <MobileSidebar @change="(content) => selectedContent = content"/>
         <div class="page">
-            <Header class="header"/>
+            <Header class="header">
+                <template v-slot:right>
+                    <button @click="toggleTags()">toggle tags</button>
+                </template>
+            </Header>
             <Sidebar class="sidebar" @change="(content) => selectedContent = content"/>
             <div class="content">
                 <transition name="content-transition" v-enter v-leave>
@@ -47,7 +51,12 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['displayMobileSidebar'])
+        ...mapGetters(['displayMobileSidebar', 'listParams'])
+    },
+    methods: {
+        toggleTags: function() {
+            this.$store.dispatch('setListParams', {showTags: !this.listParams.showTags})
+        }
     }
 }
 </script>

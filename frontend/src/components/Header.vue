@@ -3,6 +3,10 @@
         <div class="hamburger" @click="onHamburgerClick()"><fa-icon icon="bars"/></div>
         <div class="title">{{headerInfo.title}}</div>
         <div class="subtitle">{{headerInfo.subtitle}}</div>
+        <div class="spacer"></div>
+        <div class="right">
+            <slot name="right"></slot>
+        </div>
     </div>
 </template>
 
@@ -77,6 +81,14 @@ export default {
         @include breakpoint(mobile) {
             display: none;
         }
+    }
+
+    .spacer {
+        flex-grow: 1;
+    }
+
+    .right {
+
     }
 }
 </style>

@@ -46,7 +46,6 @@ export default {
             immediate: true
         },
         fullSongList: function() {
-            console.log('fullSongList changed');
             this.updateTagLists();
         }
     },

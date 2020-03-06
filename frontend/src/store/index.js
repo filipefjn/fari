@@ -18,7 +18,8 @@ export default new Vuex.Store({
         queueKeyCounter: 0, // TODO use later to update queue songs info
         queuePlayIndex: 0,
         displayMobileSidebar: false,
-        headerInfo: {}
+        headerInfo: {},
+        listParams: {}
     },
     getters: {
         player: (state) => state.player,
@@ -33,7 +34,8 @@ export default new Vuex.Store({
         queueKeyCounter: (state) => state.queueKeyCounter,
         queuePlayIndex: (state) => state.queuePlayIndex,
         displayMobileSidebar: (state) => state.displayMobileSidebar,
-        headerInfo: (state) => state.headerInfo
+        headerInfo: (state) => state.headerInfo,
+        listParams: (state) => state.listParams
     },
     mutations: {
         setPlayer: (state, player) => {
@@ -112,6 +114,12 @@ export default new Vuex.Store({
             state.headerInfo = {
                 ...info
             };
+        },
+        setListParams: (state, params) => {
+            state.listParams = {
+                ...state.listParams,
+                ...params
+            };
         }
     },
     actions: {
@@ -174,7 +182,6 @@ export default new Vuex.Store({
             }).then((response) => {
                 return response.json();
             })
-            console.warn(fullSongList);
             commit('setFullSongList', fullSongList);
             if(getters.fullSongList.length === 0 && (payload && payload.force !== true)) {
                 return;
@@ -187,7 +194,6 @@ export default new Vuex.Store({
             }).then((response) => {
                 return response.json();
             })
-            console.warn(setTagList);
             commit('setTagList', setTagList);
         },
         setSongInfo: ({ commit }, info) => {
@@ -308,6 +314,9 @@ export default new Vuex.Store({
         },
         setHeaderInfo: ({ commit }, info) => {
             commit('setHeaderInfo', info);
+        },
+        setListParams: ({ commit }, params) => {
+            commit('setListParams', params);
         }
     },
     modules: {}

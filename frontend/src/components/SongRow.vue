@@ -9,7 +9,7 @@
             </div>
             <div class="clickable-icon" @click.stop="() => openContextMenu($event)"><fa-icon icon="ellipsis-h"/></div>
         </div>
-        <div class="song-row-tags" v-if="song">
+        <div class="song-row-tags" v-if="song && listParams.showTags">
             <Tag class="tag" v-for="tag in song.tags" :key="tag.id">{{tag.name}}</Tag>
             <div class="tag-plus-icon" @click.stop="openTagModal()"><fa-icon icon="plus"/></div>
         </div>
@@ -23,9 +23,9 @@
             @mouseleave="closeContextMenu()"
         >
             <slot name="contextmenu">
-                <ContextMenuItem @click="$emit('playSong')">Play</ContextMenuItem>
-                <ContextMenuItem @click="$emit('enableSong')">Enable</ContextMenuItem>
-                <ContextMenuItem @click="$emit('disableSong')">Disable</ContextMenuItem>
+                <ContextMenuItem @click.stop="contextMenuPlaySong()">Play</ContextMenuItem>
+                <ContextMenuItem @click.stop="contextMenuEnableSong()">Enable</ContextMenuItem>
+                <ContextMenuItem @click.stop="contextMenuDisableSong()">Disable</ContextMenuItem>
             </slot>
         </ContextMenu>
 
@@ -47,6 +47,9 @@ export default {
         songId: {
             type: String,
             required: true
+        },
+        showTags: {
+            type: Boolean
         }
     },
     components: {
@@ -65,7 +68,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['fullSongList', 'tagList']),
+        ...mapGetters(['fullSongList', 'tagList', 'listParams']),
     },
     watch: {
         songId: {
@@ -79,6 +82,7 @@ export default {
         }
     },
     methods: {
+        ...mapActions(['fetchFullSongList']),
         openContextMenu: function(event) {
             this.displayContextMenu = true;
             this.contextMenuPosX = event.clientX;
@@ -106,7 +110,57 @@ export default {
             } else {
                 this.song = null;
             }
-        }
+        },
+        contextMenuPlaySong: function() {
+            this.$emit('playSong');
+            this.closeContextMenu();
+        },
+        contextMenuEnableSong: function() {
+            fetch('/api/enable-songs', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(
+                    [
+                        {
+                            "id": this.song.id
+                        }
+                    ]
+                )
+            }).then((response) => {
+                if(response.status !== 200) {
+                    return;
+                }
+                return response.json();
+            }).then((response) => {
+                this.fetchFullSongList();
+            });
+            this.closeContextMenu();
+        },
+        contextMenuDisableSong: function() {
+            fetch('/api/disable-songs', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(
+                    [
+                        {
+                            "id": this.song.id
+                        }
+                    ]
+                )
+            }).then((response) => {
+                if(response.status !== 200) {
+                    return;
+                }
+                return response.json();
+            }).then((response) => {
+                this.fetchFullSongList();
+            });
+            this.closeContextMenu();
+        },
     }
 }
 </script>
