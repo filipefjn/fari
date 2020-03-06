@@ -32,13 +32,13 @@
             </ContentListItemGrid>
         </ContentList>
         <Modal :show="displayTagModal" @close="closeTagModal()">
-            <div>Current tags</div>
-            <div>
-                <Tag v-for="tag in currentTags" :key="tag.id">{{tag.name}}</Tag>
+            <div class="tag-list-title">Current tags</div>
+            <div class="tag-list">
+                <Tag v-for="tag in currentTags" :key="tag.id" @click="untagSong(tag)">{{tag.name}}</Tag>
             </div>
-            <div>Available tags</div>
-            <div>
-                <Tag v-for="tag in availableTags" :key="tag.id">{{tag.name}}</Tag>
+            <div class="tag-list-title">Available tags</div>
+            <div class="tag-list">
+                <Tag v-for="tag in availableTags" :key="tag.id" @click="tagSong(tag)">{{tag.name}}</Tag>
             </div>
         </Modal>
     </div>
@@ -196,6 +196,36 @@ export default {
         closeTagModal: function() {
             this.displayTagModal = false;
             this.tagModalItem = null
+        },
+        tagSong: async function(tag) {
+            await fetch('/api/tag-song', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(
+                    {
+                        "song_id": this.tagModalItem.id,
+                        "tag_id": tag.id
+                    }
+                )
+            });
+            this.fetchFullSongList();
+        },
+        untagSong: async function(tag) {
+            await fetch('/api/untag-song', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(
+                    {
+                        "song_id": this.tagModalItem.id,
+                        "tag_id": tag.id
+                    }
+                )
+            });
+            this.fetchFullSongList();
         }
     }
 }
@@ -269,5 +299,15 @@ export default {
         color: $list-item-icon-hover-color;
         background-color: $list-item-icon-hover-bgcolor;
     }
+}
+
+.tag-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.tag-list-title {
+    margin-bottom: 0.5rem;
 }
 </style>

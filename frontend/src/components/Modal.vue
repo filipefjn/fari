@@ -32,6 +32,7 @@ export default {
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    user-select: none;
 
     &:not(.show) {
         display: none;
@@ -39,7 +40,9 @@ export default {
 
     .modal-box {
         min-height: 10rem;
+        max-height: calc(100% - 1rem);
         min-width: 4rem;
+        max-width: calc(100% - 1rem);
         background-color: $footer-bgcolor;
         color: $text-color;
         padding: 1rem;

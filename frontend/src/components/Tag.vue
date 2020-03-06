@@ -1,5 +1,5 @@
 <template>
-    <div class="tag">
+    <div class="tag" @click="$emit('click', $event)">
         <slot></slot>
     </div>
 </template>
@@ -20,6 +20,7 @@ export default {
     background-color: $primary;
     color: black;
     text-transform: uppercase;
+    user-select: none;
     font-weight: bold;
     font-size: 0.7rem;
     border-radius: 6px;
@@ -27,6 +28,7 @@ export default {
     padding: 0.25rem 0.5rem;
     margin: 0.1rem 0.25rem;
     box-shadow: $context-menu-shadow;
+    cursor: pointer;
 
     &:first-child {
         margin-left: 0;
