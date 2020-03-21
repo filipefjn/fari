@@ -25,7 +25,7 @@ export default {
             keyCounter: 0,
         };
     },
-    mounted: function() {
+    activated: function() {
         this.$store.dispatch('setHeaderInfo', {
             title: "Queue",
         });

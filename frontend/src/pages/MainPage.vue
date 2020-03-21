@@ -10,9 +10,9 @@
             <Sidebar class="sidebar" @change="(content) => selectedContent = content"/>
             <div class="content">
                 <transition name="content-transition" v-enter v-leave>
-                    <FolderNavigation v-if="selectedContent == 'folders'"  />
-                    <Queue            v-if="selectedContent == 'queue'"    />
-                    <AllSongsView     v-if="selectedContent == 'allsongs'" />
+                    <keep-alive>
+                        <component :is="contentComponent"></component>
+                    </keep-alive>
                 </transition>
             </div>
             <MobileFooter class="mobile-footer"/>
@@ -51,7 +51,23 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['displayMobileSidebar', 'listParams'])
+        ...mapGetters(['displayMobileSidebar', 'listParams']),
+        contentComponent: function () {
+            switch(this.selectedContent) {
+                case "folders":
+                    return "FolderNavigation";
+                    break;
+                case "queue":
+                    return "Queue";
+                    break;
+                case "allsongs":
+                    return "AllSongsView";
+                    break;
+                default:
+                    return null;
+                    break;
+            }
+        }
     },
     methods: {
         toggleTags: function() {

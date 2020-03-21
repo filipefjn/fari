@@ -37,6 +37,9 @@ export default {
     mounted: function() {
         this.fetchFolderContent();
     },
+    activated: function() {
+        this.updateHeader();
+    },
     methods: {
         fetchFolderContent: function() {
             fetch('/api/folder-content', {
@@ -83,14 +86,17 @@ export default {
             await this.$store.dispatch('setQueue', queue);
             await this.$store.dispatch('playFromQueue', queuePlayIndex);
         },
+        updateHeader: function() {
+            this.$store.dispatch('setHeaderInfo', {
+                    title: "Folders",
+                    subtitle: this.currentDir
+                })
+        }
     },
     watch: {
         currentDir: {
             handler: function(val) {
-                this.$store.dispatch('setHeaderInfo', {
-                    title: "Folders",
-                    subtitle: val
-                })
+                this.updateHeader();
             },
             immediate: true
         }

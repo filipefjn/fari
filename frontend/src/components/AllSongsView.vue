@@ -25,7 +25,7 @@ export default {
     computed: {
         ...mapGetters(['fullSongList', 'tagList']),
     },
-    mounted: function() {
+    activated: function() {
         this.$store.dispatch('setHeaderInfo', {
             title: "All Songs",
         });
