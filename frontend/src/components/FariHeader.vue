@@ -15,7 +15,7 @@ import { mapGetters } from 'vuex';
 
 export default {
     computed: {
-        ...mapGetters(['headerInfo'])
+        ...mapGetters(['headerInfo']),
     },
     methods: {
         onHamburgerClick: function() {
@@ -33,6 +33,7 @@ export default {
     display: flex;
     align-items: center;
     padding-left: 2rem;
+    padding-right: 2rem;
     background-image: linear-gradient(black, rgba(0,0,0,0));
     user-select: none;
     padding-bottom: 4px;
@@ -88,7 +89,8 @@ export default {
     }
 
     .right {
-
+        display: flex;
+        align-items: center;
     }
 }
 </style>

@@ -2,11 +2,13 @@
     <div class="container">
         <MobileSidebar @change="(content) => selectedContent = content"/>
         <div class="page">
-            <Header class="header">
+            <FariHeader class="header">
                 <template v-slot:right>
-                    <button @click="toggleTags()">toggle tags</button>
+                    <FariHeaderButton :selected="!!listParams.showTags" @click="toggleTags()">
+                        <fa-icon icon="tags"/>
+                    </FariHeaderButton>
                 </template>
-            </Header>
+            </FariHeader>
             <Sidebar class="sidebar" @change="(content) => selectedContent = content"/>
             <div class="content">
                 <transition name="content-transition" v-enter v-leave>
@@ -25,12 +27,13 @@
 <script>
 import Footer from '@/components/Footer.vue';
 import MobileFooter from '@/components/MobileFooter.vue';
-import Header from '@/components/Header.vue';
+import FariHeader from '@/components/FariHeader.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import MobileSidebar from '@/components/MobileSidebar.vue';
 import FariViewFolders from '@/components/FariViewFolders.vue';
 import FariViewQueue from '@/components/FariViewQueue.vue';
 import FariViewSongs from '@/components/FariViewSongs.vue';
+import FariHeaderButton from '@/components/FariHeaderButton.vue';
 
 import { mapGetters } from 'vuex';
 
@@ -38,12 +41,13 @@ export default {
     components: {
         Footer,
         MobileFooter,
-        Header,
+        FariHeader,
         Sidebar,
         MobileSidebar,
         FariViewFolders,
         FariViewQueue,
-        FariViewSongs
+        FariViewSongs,
+        FariHeaderButton
     },
     data: function() {
         return {

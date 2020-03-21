@@ -1,5 +1,12 @@
 
-$primary: #12C388 !default;
+$primary: rgb(0, 173, 179) !default;
+$primary-light: lighten($primary, 3%);
+$primary-lighter: lighten($primary, 6%);
+$primary-lightest: lighten($primary, 9%);
+$primary-dark: darken($primary, 3%);
+$primary-darker: darken($primary, 6%);
+$primary-darkest: darken($primary, 9%);
+$primary-contrast: rgb(0, 0, 0) !default;
 $page-bgcolor: #202020 !default;
 $sidebar-bgcolor: #262626 !default;
 $footer-bgcolor: #2A2A2A !default;
