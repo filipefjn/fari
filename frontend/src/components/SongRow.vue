@@ -1,8 +1,11 @@
 <template>
-    <div class="song-row" @click="$emit('click', $event)" @contextmenu.prevent="$emit('contextmenu', $event)">
+    <div class="song-row"
+        :class="{'disabled': !song.enabled}"
+        @click="$emit('click', $event)"
+        @contextmenu.prevent="$emit('contextmenu', $event)">
 
         <!-- Song Row -->
-        <div class="song-row-info" v-if="song">
+        <div class="song-row-info"  v-if="song">
             <div class="grid">
                 <div class="tracktitle" :class="{'disabled': !song.enabled}">{{song.tracktitle}}</div>
                 <div class="artist" :class="{'disabled': !song.enabled}">{{song.artist}}</div>
@@ -182,6 +185,10 @@ export default {
         border-bottom: solid 2px $list-item-line-color;
     }
 
+    &.disabled {
+        cursor: not-allowed;
+    }
+
     .song-row-info {
 
         padding-top: $list-item-hor-padding;
@@ -235,10 +242,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-
-    // &.icon {
-    //     width: 1rem;
-    // }
+    cursor: pointer;
 
     &.clickable-icon {
         margin-top: -$list-item-hor-padding;

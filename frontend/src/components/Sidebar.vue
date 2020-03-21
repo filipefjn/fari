@@ -1,6 +1,7 @@
 <template>
     <div class="sidebar-content">
         <SidebarItem title="All songs" @click="onItemClick('allsongs')" :selected="selectedItem == 'allsongs'" />
+        <SidebarItem title="Artists" @click="onItemClick('artists')" :selected="selectedItem == 'artists'" />
         <!-- <SidebarItem title="Artists"   @click="onItemClick('artists')"  :selected="selectedItem == 'artists'"  /> -->
         <!-- <SidebarItem title="Albums"    @click="onItemClick('albums')"   :selected="selectedItem == 'albums'"   /> -->
         <!-- <SidebarItem title="Genres"    @click="onItemClick('genres')"   :selected="selectedItem == 'genres'"   /> -->
@@ -23,7 +24,7 @@ export default {
     },
     data: function() {
         return {
-            selectedItem: 'allsongs',
+            selectedItem: 'artists',
         };
     },
     methods: {

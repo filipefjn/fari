@@ -12,7 +12,7 @@
             <Sidebar class="sidebar" @change="(content) => selectedContent = content"/>
             <div class="content">
                 <transition name="content-transition" v-enter v-leave>
-                    <keep-alive>
+                    <keep-alive exclude="FariViewSongs">
                         <component :is="contentComponent"></component>
                     </keep-alive>
                 </transition>
@@ -33,6 +33,7 @@ import MobileSidebar from '@/components/MobileSidebar.vue';
 import FariViewFolders from '@/components/FariViewFolders.vue';
 import FariViewQueue from '@/components/FariViewQueue.vue';
 import FariViewSongs from '@/components/FariViewSongs.vue';
+import FariViewArtists from '@/components/FariViewArtists.vue';
 import FariHeaderButton from '@/components/FariHeaderButton.vue';
 
 import { mapGetters } from 'vuex';
@@ -47,6 +48,7 @@ export default {
         FariViewFolders,
         FariViewQueue,
         FariViewSongs,
+        FariViewArtists,
         FariHeaderButton
     },
     data: function() {
@@ -66,6 +68,9 @@ export default {
                     break;
                 case "allsongs":
                     return "FariViewSongs";
+                    break;
+                case "artists":
+                    return "FariViewArtists";
                     break;
                 default:
                     return null;
@@ -165,8 +170,6 @@ export default {
     }
 
 }
-
-
 
 .content-transition-enter-active, .content-transition-leave-active {
     transition: opacity .3s;

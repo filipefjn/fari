@@ -88,9 +88,9 @@ export default {
         },
         updateHeader: function() {
             this.$store.dispatch('setHeaderInfo', {
-                    title: "Folders",
-                    subtitle: this.currentDir
-                })
+                title: "Folders",
+                subtitle: this.currentDir
+            });
         }
     },
     watch: {
