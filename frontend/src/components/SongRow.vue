@@ -1,11 +1,12 @@
 <template>
     <div class="song-row"
-        :class="{'disabled': !song.enabled}"
+        :class="{'disabled': !song.enabled, 'no-siblings': noSiblings}"
         @click="$emit('click', $event)"
         @contextmenu.prevent="$emit('contextmenu', $event)">
 
         <!-- Song Row -->
         <div class="song-row-info" v-if="song">
+            <slot name="left"></slot>
             <div class="grid">
                 <div class="tracktitle"
                     :class="{'disabled': !song.enabled, 'current': currentSong}"
@@ -57,6 +58,10 @@ export default {
         },
         showTags: {
             type: Boolean
+        },
+        noSiblings: {
+            type: Boolean,
+            default: false
         }
     },
     components: {
@@ -194,7 +199,7 @@ export default {
         background-color: $list-item-hover-bgcolor;
     }
 
-    &:last-child {
+    &:last-child:not(.no-siblings) {
         border-bottom: solid 2px $list-item-line-color;
     }
 

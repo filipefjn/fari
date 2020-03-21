@@ -1,12 +1,21 @@
 <template>
-    <div class="list-item" @click="$emit('click', $event)">
+    <div class="list-item" @click="$emit('click', $event)" :class="{'no-siblings': noSiblings, 'selected': selected}">
         <slot></slot>
     </div>
 </template>
 
 <script>
 export default {
-
+    props: {
+        noSiblings: {
+            type: Boolean,
+            default: false
+        },
+        selected: {
+            type: Boolean,
+            default: false
+        }
+    }
 }
 </script>
 
@@ -25,12 +34,16 @@ export default {
     align-items: center;
     user-select: none;
 
-    &:last-child {
+    &:last-child:not(.no-siblings) {
         border-bottom: solid 2px $list-item-line-color;
     }
 
     &:hover {
         background-color: $list-item-hover-bgcolor;
+    }
+
+    &.selected {
+        color: $primary;
     }
 }
 </style>

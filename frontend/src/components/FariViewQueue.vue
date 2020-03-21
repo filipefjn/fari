@@ -1,11 +1,20 @@
 <template>
     <div class="container">
         <ContentList>
-            <SimpleRow v-for="item in queueList" :key="item.id" @click="playQueuePosition(item.pos)">
-                <div class="icon" v-if="queuePlayIndex == item.pos"><fa-icon icon="play" style="font-size: 1rem;"/></div>
-                <div class="icon" v-else></div>
-                {{item.name}}
-            </SimpleRow>
+            <div v-for="(song, index) in queue" :key="song.path">
+                <SongRow v-if="song.id" :songId="song.id" @click="playQueuePosition(index)" :noSiblings="index !== queue.length-1">
+                    <template v-slot:left>
+                        <div class="icon" v-if="queuePlaySongId == song.id"><fa-icon icon="play"/></div>
+                        <div class="icon" v-else></div>
+                    </template>
+                </SongRow>
+                <SimpleRow v-else @click="playQueuePosition(index)" :noSiblings="index !== queue.length-1" :selected="queuePlayIndex === index">
+                    <div class="icon" v-if="queuePlayIndex === index"><fa-icon icon="play" style="font-size: 1rem;"/></div>
+                    <div class="icon" v-else></div>
+                    {{getNameFromPath(song.path)}}
+                </SimpleRow>
+            </div>
+
         </ContentList>
     </div>
 </template>
@@ -13,12 +22,14 @@
 <script>
 import ContentList from '@/components/ContentList.vue';
 import SimpleRow from '@/components/SimpleRow.vue';
+import SongRow from '@/components/SongRow.vue';
 import { mapGetters } from 'vuex';
 
 export default {
     components: {
         ContentList,
-        SimpleRow
+        SimpleRow,
+        SongRow
     },
     data: function() {
         return {
@@ -31,24 +42,14 @@ export default {
         });
     },
     computed: {
-        ...mapGetters(['queue', 'queuePlayIndex']),
-        queueList: function() {
-            let list = [];
-            for(let i = 0; i < this.queue.length; i++) {
-                // TODO improve
-                list.push({
-                    id: this.keyCounter,
-                    pos: i,
-                    name: this.queue[i].path.split("/").reverse()[0]
-                });
-                this.keyCounter = this.keyCounter + 1;
-            }
-            return list;
-        }
+        ...mapGetters(['queue', 'queuePlayIndex', 'queuePlaySongId']),
     },
     methods: {
         playQueuePosition: function(pos) {
             this.$store.dispatch('playFromQueue', pos);
+        },
+        getNameFromPath: function(path) {
+            return path.split("/").slice(-1)[0];
         }
     }
 }
@@ -59,7 +60,7 @@ export default {
 
 .icon {
     margin-right: 1rem;
-    font-size: 1.25rem;
+    font-size: 1rem;
     width: 1rem;
     color: $list-item-icon-color;
     display: flex;
