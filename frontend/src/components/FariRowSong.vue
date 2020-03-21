@@ -1,11 +1,11 @@
 <template>
     <div class="song-row"
         :class="{'disabled': !song.enabled, 'no-siblings': noSiblings}"
-        @click="$emit('click', $event)"
+
         @contextmenu.prevent="$emit('contextmenu', $event)">
 
-        <!-- Song Row -->
-        <div class="song-row-info" v-if="song">
+        <!-- song info -->
+        <div class="song-row-info" v-if="song" @click="$emit('click', $event)">
             <slot name="left"></slot>
             <div class="grid">
                 <div class="tracktitle"
@@ -17,12 +17,14 @@
             </div>
             <div class="clickable-icon" @click.stop="() => openContextMenu($event)"><fa-icon icon="ellipsis-h"/></div>
         </div>
-        <div class="song-row-tags" v-if="song && listParams.showTags">
-            <Tag class="tag" v-for="tag in song.tags" :key="tag.id">{{tag.name}}</Tag>
-            <div class="tag-plus-icon" @click.stop="openTagModal()"><fa-icon icon="plus"/></div>
+
+        <!-- song tags -->
+        <div class="song-row-tags" v-if="song && listParams.showTags" @click="$emit('click', $event)">
+            <FariTag class="tag" v-for="tag in song.tags" :key="tag.id">{{tag.name}}</FariTag>
+            <div class="tag-plus-icon" @click.stop="openFariModalTag()"><fa-icon icon="tags"/></div>
         </div>
 
-        <!-- Context Menu -->
+        <!-- context menu -->
         <ContextMenu
             :show="displayContextMenu"
             :posX="contextMenuPosX"
@@ -32,21 +34,22 @@
         >
             <slot name="contextmenu">
                 <ContextMenuItem @click.stop="contextMenuPlaySong()">Play</ContextMenuItem>
+                <ContextMenuItem @click.stop="openFariModalTag()">Edit tags</ContextMenuItem>
                 <ContextMenuItem @click.stop="contextMenuEnableSong()">Enable</ContextMenuItem>
                 <ContextMenuItem @click.stop="contextMenuDisableSong()">Disable</ContextMenuItem>
             </slot>
         </ContextMenu>
 
-        <!-- Tag Modal -->
-        <TagModal v-if="displayTagModal" :songId="songId" @close="closeTagModal()"/>
+        <!-- tag modal -->
+        <FariModalTag v-if="displayFariModalTag" :songId="songId" @close="closeFariModalTag()"/>
     </div>
 </template>
 
 <script>
 import ContextMenu from '@/components/ContextMenu.vue';
 import ContextMenuItem from '@/components/ContextMenuItem.vue';
-import Tag from '@/components/Tag.vue';
-import TagModal from '@/components/TagModal.vue';
+import FariTag from '@/components/FariTag.vue';
+import FariModalTag from '@/components/FariModalTag.vue';
 
 import { mapGetters, mapActions } from 'vuex'
 
@@ -67,8 +70,8 @@ export default {
     components: {
         ContextMenu,
         ContextMenuItem,
-        Tag,
-        TagModal
+        FariTag,
+        FariModalTag
     },
     data: function() {
         return {
@@ -76,7 +79,7 @@ export default {
             contextMenuPosX: 150,
             contextMenuPosY: 300,
             displayContextMenu: false,
-            displayTagModal: false
+            displayFariModalTag: false
         }
     },
     computed: {
@@ -112,11 +115,11 @@ export default {
         closeContextMenu: function() {
             this.displayContextMenu = false;
         },
-        openTagModal: function() {
-            this.displayTagModal = true;
+        openFariModalTag: function() {
+            this.displayFariModalTag = true;
         },
-        closeTagModal: function() {
-            this.displayTagModal = false;
+        closeFariModalTag: function() {
+            this.displayFariModalTag = false;
         },
         updateSong: function() {
             let found = this.fullSongList.find((item) => {

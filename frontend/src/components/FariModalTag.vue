@@ -1,19 +1,27 @@
 <template>
-    <Modal :show="show" @close="$emit('close')">
-        <div class="tag-list-title">Current tags</div>
-        <div class="tag-list">
-            <Tag v-for="tag in currentTags" :key="tag.id" @click="untagSong(tag)">{{tag.name}}</Tag>
-        </div>
-        <div class="tag-list-title">Available tags</div>
-        <div class="tag-list">
-            <Tag v-for="tag in availableTags" :key="tag.id" @click="tagSong(tag)">{{tag.name}}</Tag>
-        </div>
-    </Modal>
+    <FariModal :show="show" @close="$emit('close')">
+        <FariModalTitle>Current tags</FariModalTitle>
+        <FariModalSection>
+            <FariTag v-for="tag in currentTags" :key="tag.id" @click="untagSong(tag)">{{tag.name}}</FariTag>
+        </FariModalSection>
+        <FariModalTitle>Create new tag</FariModalTitle>
+        <FariModalSection>
+            <input type="text" v-model="createTagValue">
+            <button @click="onCreateClick()">Create</button>
+        </FariModalSection>
+        <FariModalTitle>Available tags</FariModalTitle>
+        <FariModalSection>
+            <FariTag v-for="tag in availableTags" :key="tag.id" @click="tagSong(tag)">{{tag.name}}</FariTag>
+        </FariModalSection>
+        <button @click="updateTagLists()">Reload</button>
+    </FariModal>
 </template>
 
 <script>
-import Tag from '@/components/Tag.vue';
-import Modal from '@/components/Modal.vue';
+import FariTag from '@/components/FariTag.vue';
+import FariModal from '@/components/FariModal.vue';
+import FariModalSection from '@/components/FariModalSection.vue';
+import FariModalTitle from '@/components/FariModalTitle.vue';
 
 import { mapActions, mapGetters } from 'vuex';
 
@@ -29,13 +37,16 @@ export default {
         }
     },
     components: {
-        Tag,
-        Modal
+        FariTag,
+        FariModal,
+        FariModalSection,
+        FariModalTitle
     },
     data: function() {
         return {
             currentTags: [],
             availableTags: [],
+            createTagValue: ""
         };
     },
     watch: {
@@ -45,7 +56,7 @@ export default {
             },
             immediate: true
         },
-        fullSongList: function() {
+        tagList: function() {
             this.updateTagLists();
         }
     },
@@ -68,7 +79,6 @@ export default {
                 )
             });
             this.fetchFullSongList();
-            this.updateTagLists();
         },
         untagSong: async function(tag) {
             await fetch('/api/untag-song', {
@@ -117,6 +127,25 @@ export default {
                     return true;
                 });
             }
+        },
+        onCreateClick: async function() {
+            if(this.createTagValue) {
+                let createTagResponse = await fetch('/api/create-tag', {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(
+                        {
+                            "name": this.createTagValue,
+                        }
+                    )
+                });
+                if(createTagResponse.status === 201) {
+                    let createTagResponseData = await createTagResponse.json();
+                    this.tagSong(createTagResponseData);
+                }
+            }
         }
     }
 }
@@ -124,7 +153,6 @@ export default {
 
 <style scoped lang="scss">
 @import '@/style.scss';
-
 
 .tag-list {
     display: flex;

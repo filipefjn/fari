@@ -75,7 +75,9 @@ export default new Vuex.Store({
             state.fullSongList = fullSongList;
         },
         setTagList: (state, tagList) => {
-            state.tagList = tagList;
+            state.tagList = [
+                ...tagList
+            ];
         },
         setSongInfo: (state, info) => {
             if(state.songInfo) {

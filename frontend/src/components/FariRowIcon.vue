@@ -1,12 +1,17 @@
 <template>
-    <div class="icon">
+    <div class="icon" :class="{'small': small}">
         <slot></slot>
     </div>
 </template>
 
 <script>
 export default {
-
+    props: {
+        small: {
+            type: Boolean,
+            default: false
+        }
+    }
 }
 </script>
 
@@ -21,5 +26,9 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+
+    &.small {
+        font-size: 1rem;
+    }
 }
 </style>

@@ -36,8 +36,8 @@ export default {
     background-color: rgb(49, 49, 49);
     padding: 0.25rem 0.25rem;
     margin-left: 0.5rem;
-    height: 1.75rem;
-    min-width: 1.75rem;
+    height: 2rem;
+    min-width: 2rem;
     border-radius: 4px;
     overflow: hidden;
     cursor: pointer;

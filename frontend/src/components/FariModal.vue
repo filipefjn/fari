@@ -33,6 +33,11 @@ export default {
     align-items: center;
     cursor: pointer;
     user-select: none;
+    padding: 4rem;
+
+    @include breakpoint(mobile) {
+        padding: 2rem;
+    }
 
     &:not(.show) {
         display: none;
@@ -41,8 +46,9 @@ export default {
     .modal-box {
         min-height: 10rem;
         max-height: calc(100% - 1rem);
-        min-width: 4rem;
-        max-width: calc(100% - 1rem);
+        // min-width: 4rem;
+        // max-width: calc(100% - 1rem);
+        width: 100%;
         background-color: $footer-bgcolor;
         color: $text-color;
         padding: 1rem;

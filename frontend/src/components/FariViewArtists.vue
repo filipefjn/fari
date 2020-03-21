@@ -76,6 +76,7 @@ export default {
     activated: function() {
         this.$store.dispatch('setHeaderInfo', {
             title: "Artists",
+            subtitle: this.selectedArtistKey
         });
     },
     methods: {
