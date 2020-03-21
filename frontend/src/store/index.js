@@ -17,6 +17,7 @@ export default new Vuex.Store({
         queue: [],
         queueKeyCounter: 0, // TODO use later to update queue songs info
         queuePlayIndex: 0,
+        queuePlaySongId: null,
         displayMobileSidebar: false,
         headerInfo: {},
         listParams: {}
@@ -33,6 +34,7 @@ export default new Vuex.Store({
         queue: (state) => state.queue,
         queueKeyCounter: (state) => state.queueKeyCounter,
         queuePlayIndex: (state) => state.queuePlayIndex,
+        queuePlaySongId: (state) => state.queuePlaySongId,
         displayMobileSidebar: (state) => state.displayMobileSidebar,
         headerInfo: (state) => state.headerInfo,
         listParams: (state) => state.listParams
@@ -107,6 +109,9 @@ export default new Vuex.Store({
         setQueuePlayIndex: (state, index) => {
             state.queuePlayIndex = index;
         },
+        setQueuePlaySongId: (state, id) => {
+            state.queuePlaySongId = id;
+        },
         setMobileSidebar: (state, value) => {
             state.displayMobileSidebar = value;
         },
@@ -132,6 +137,7 @@ export default new Vuex.Store({
             player.addEventListener('pause', () => {
                 if(player.ended) {
                     commit('setPlayerStatus', 'finished');
+                    commit('setQueuePlaySongId', null);
                     dispatch('playNextFromQueue', false);
                 } else {
                     commit('setPlayerStatus', 'paused');
@@ -272,6 +278,7 @@ export default new Vuex.Store({
             songData = await songData.blob();
             await dispatch('playBlob', songData);
             commit('setQueuePlayIndex', index);
+            commit('setQueuePlaySongId', song.id);
         },
         playNextFromQueue: ({ dispatch, state }, loop = true) => {
             if(!state.queue) {

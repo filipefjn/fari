@@ -79,9 +79,7 @@ export default {
                 if(this.files[i] == file) {
                     queuePlayIndex = i;
                 }
-                queue.push({
-                    path: this.currentDir + this.files[i]
-                });
+                queue.push(this.selectedArtistSongList[i]);
             }
             await this.$store.dispatch('setQueue', queue);
             await this.$store.dispatch('playFromQueue', queuePlayIndex);

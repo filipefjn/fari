@@ -51,9 +51,7 @@ export default {
                 if(this.fullSongList[i].id == song.id) {
                     queuePlayIndex = i - offset;
                 }
-                queue.push({
-                    path: this.fullSongList[i].path
-                });
+                queue.push(this.selectedArtistSongList[i]);
             }
             await this.$store.dispatch('setQueue', queue);
             await this.$store.dispatch('playFromQueue', queuePlayIndex);

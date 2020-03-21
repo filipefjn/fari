@@ -5,10 +5,14 @@
         @contextmenu.prevent="$emit('contextmenu', $event)">
 
         <!-- Song Row -->
-        <div class="song-row-info"  v-if="song">
+        <div class="song-row-info" v-if="song">
             <div class="grid">
-                <div class="tracktitle" :class="{'disabled': !song.enabled}">{{song.tracktitle}}</div>
-                <div class="artist" :class="{'disabled': !song.enabled}">{{song.artist}}</div>
+                <div class="tracktitle"
+                    :class="{'disabled': !song.enabled, 'current': currentSong}"
+                >{{song.tracktitle}}</div>
+                <div class="artist"
+                    :class="{'disabled': !song.enabled, 'current': currentSong}"
+                >{{song.artist}}</div>
             </div>
             <div class="clickable-icon" @click.stop="() => openContextMenu($event)"><fa-icon icon="ellipsis-h"/></div>
         </div>
@@ -71,7 +75,16 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['fullSongList', 'tagList', 'listParams']),
+        ...mapGetters(['fullSongList', 'tagList', 'listParams', 'queuePlaySongId']),
+        currentSong: function() {
+            if(!this.song) {
+                return false;
+            }
+            if(this.queuePlaySongId == this.song.id) {
+                return true;
+            }
+            return false
+        }
     },
     watch: {
         songId: {
@@ -225,6 +238,10 @@ export default {
 
         .disabled {
             color: $disabled-color;
+        }
+
+        .current {
+            color: $primary;
         }
     }
 
