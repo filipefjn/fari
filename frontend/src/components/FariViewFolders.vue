@@ -1,30 +1,32 @@
 <template>
     <div class="container">
-        <ContentList>
-            <SimpleRow v-if="currentDir !== '/'" @click="openSubfolder('..')">
-                <div class="icon"><fa-icon icon="level-up-alt"/></div>
+        <FariList>
+            <FariRowSimple v-if="currentDir !== '/'" @click="openSubfolder('..')">
+                <FariRowIcon><fa-icon icon="level-up-alt"/></FariRowIcon>
                 ..
-            </SimpleRow>
-            <SimpleRow v-for="item in subfolders" @click="openSubfolder(item)" :key="item">
-                <div class="icon"><fa-icon icon="folder"/></div>
+            </FariRowSimple>
+            <FariRowSimple v-for="item in subfolders" @click="openSubfolder(item)" :key="item">
+                <FariRowIcon><fa-icon icon="folder"/></FariRowIcon>
                 {{item}}
-            </SimpleRow>
-            <SimpleRow v-for="item in files" :key="item" @click="queueFolder(item)">
-                <div class="icon"><fa-icon icon="music"/></div>
+            </FariRowSimple>
+            <FariRowSimple v-for="item in files" :key="item" @click="queueFolder(item)">
+                <FariRowIcon><fa-icon icon="music"/></FariRowIcon>
                 {{item}}
-            </SimpleRow>
-        </ContentList>
+            </FariRowSimple>
+        </FariList>
     </div>
 </template>
 
 <script>
-import ContentList from '@/components/ContentList.vue';
-import SimpleRow from '@/components/SimpleRow.vue';
+import FariList from '@/components/FariList.vue';
+import FariRowSimple from '@/components/FariRowSimple.vue';
+import FariRowIcon from '@/components/FariRowIcon.vue';
 
 export default {
     components: {
-        ContentList,
-        SimpleRow
+        FariList,
+        FariRowSimple,
+        FariRowIcon
     },
     data: function() {
         return {
@@ -107,17 +109,4 @@ export default {
 <style scoped lang="scss">
 @import '@/style.scss';
 
-.container {
-
-    .icon {
-        margin-right: 1rem;
-        font-size: 1.25rem;
-        width: 1rem;
-        color: $list-item-icon-color;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-}
 </style>

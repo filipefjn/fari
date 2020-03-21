@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <MobileSidebar @change="(content) => selectedContent = content"/>
+        <FariSidebarMobile @change="(content) => selectedContent = content"/>
         <div class="page">
             <FariHeader class="header">
                 <template v-slot:right>
@@ -9,7 +9,7 @@
                     </FariHeaderButton>
                 </template>
             </FariHeader>
-            <Sidebar class="sidebar" @change="(content) => selectedContent = content"/>
+            <FariSidebar class="sidebar" @change="(content) => selectedContent = content"/>
             <div class="content">
                 <transition name="content-transition" v-enter v-leave>
                     <keep-alive exclude="FariViewSongs">
@@ -17,19 +17,19 @@
                     </keep-alive>
                 </transition>
             </div>
-            <MobileFooter class="mobile-footer"/>
-            <Footer class="footer"/>
+            <FariFooterMobile class="mobile-footer"/>
+            <FariFooter class="footer"/>
         </div>
     </div>
 
 </template>
 
 <script>
-import Footer from '@/components/Footer.vue';
-import MobileFooter from '@/components/MobileFooter.vue';
+import FariFooter from '@/components/FariFooter.vue';
+import FariFooterMobile from '@/components/FariFooterMobile.vue';
 import FariHeader from '@/components/FariHeader.vue';
-import Sidebar from '@/components/Sidebar.vue';
-import MobileSidebar from '@/components/MobileSidebar.vue';
+import FariSidebar from '@/components/FariSidebar.vue';
+import FariSidebarMobile from '@/components/FariSidebarMobile.vue';
 import FariViewFolders from '@/components/FariViewFolders.vue';
 import FariViewQueue from '@/components/FariViewQueue.vue';
 import FariViewSongs from '@/components/FariViewSongs.vue';
@@ -40,11 +40,11 @@ import { mapGetters } from 'vuex';
 
 export default {
     components: {
-        Footer,
-        MobileFooter,
+        FariFooter,
+        FariFooterMobile,
         FariHeader,
-        Sidebar,
-        MobileSidebar,
+        FariSidebar,
+        FariSidebarMobile,
         FariViewFolders,
         FariViewQueue,
         FariViewSongs,

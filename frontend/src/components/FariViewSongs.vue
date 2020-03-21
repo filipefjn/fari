@@ -1,26 +1,36 @@
 <template>
     <div class="container">
-        <ContentList>
-            <SongRow v-for="song in fullSongList"
+        <FariList>
+            <!-- shuffle row -->
+            <FariRowSimple
+                @click="onShuffleClick()"
+            ><FariRowIcon><fa-icon icon="random"/></FariRowIcon>
+            Shuffle and play</FariRowSimple>
+            <FariRowSong v-for="song in fullSongList"
                 :songId="song.id"
                 :key="song.id"
                 @click="onSongClick(song)"
                 @playSong="playSong(song)"
-            ></SongRow>
-        </ContentList>
+            ></FariRowSong>
+        </FariList>
     </div>
 </template>
 
 <script>
-import ContentList from '@/components/ContentList.vue';
-import SongRow from '@/components/SongRow.vue';
+import FariList from '@/components/FariList.vue';
+import FariRowSong from '@/components/FariRowSong.vue';
+import FariRowSimple from '@/components/FariRowSimple.vue';
+import FariRowIcon from '@/components/FariRowIcon.vue';
 
 import { mapGetters, mapActions } from 'vuex';
+import { shuffle } from 'lodash';
 
 export default {
     components: {
-        ContentList,
-        SongRow
+        FariList,
+        FariRowSong,
+        FariRowSimple,
+        FariRowIcon
     },
     computed: {
         ...mapGetters(['fullSongList', 'tagList']),
@@ -39,22 +49,29 @@ export default {
                 this.playSong(song);
             }
         },
-        playSong: async function(song) {
+        playSong: async function(song, songList = null) {
             let queue = [];
             let queuePlayIndex = 0;
             let offset = 0;
-            for(let i = 0; i < this.fullSongList.length; i++) {
-                if(!this.fullSongList[i].enabled) {
+            if(!songList) {
+                songList = this.fullSongList;
+            }
+            for(let i = 0; i < songList.length; i++) {
+                if(!songList[i].enabled) {
                     offset++;
                     continue;
                 }
-                if(this.fullSongList[i].id == song.id) {
+                if(song && songList[i].id == song.id) {
                     queuePlayIndex = i - offset;
                 }
-                queue.push(this.selectedArtistSongList[i]);
+                queue.push(songList[i]);
             }
             await this.$store.dispatch('setQueue', queue);
             await this.$store.dispatch('playFromQueue', queuePlayIndex);
+        },
+        onShuffleClick: function() {
+            let shuffledList = shuffle(this.fullSongList);
+            this.playSong(null, shuffledList);
         }
     }
 }

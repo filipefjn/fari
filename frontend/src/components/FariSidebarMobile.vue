@@ -1,18 +1,18 @@
 <template>
     <div class="mobile-sidebar-container">
-        <Sidebar class="mobile-sidebar" :class="{'display': displayMobileSidebar}" @change="(selectedItem) => $emit('change', selectedItem)"/>
+        <FariSidebar class="mobile-sidebar" :class="{'display': displayMobileSidebar}" @change="(selectedItem) => $emit('change', selectedItem)"/>
         <div class="mobile-sidebar-overlay" :class="{'display': displayMobileSidebar}" @click="onOverlayClick()"></div>
     </div>
 </template>
 
 <script>
-import Sidebar from '@/components/Sidebar.vue';
+import FariSidebar from '@/components/FariSidebar.vue';
 
 import { mapGetters } from 'vuex';
 
 export default {
     components: {
-        Sidebar
+        FariSidebar
     },
     computed: {
         ...mapGetters(['displayMobileSidebar']),

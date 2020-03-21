@@ -1,40 +1,52 @@
 <template>
     <div class="container">
-        <ContentList v-if="!isArtistSelected">
-            <SimpleRow
+        <FariList v-if="!isArtistSelected">
+            <FariRowSimple
                 v-for="(artist, artistKey) in artistList"
                 :key="artistKey"
                 @click="onArtistClick(artistKey)"
-            >{{artistKey}}</SimpleRow>
-        </ContentList>
-        <ContentList v-if="isArtistSelected">
-            <SimpleRow
+            >{{artistKey}}</FariRowSimple>
+        </FariList>
+        <FariList v-if="isArtistSelected">
+            <!-- go back row -->
+            <FariRowSimple
                 @click="onGoBackClick()"
                 ref="goBackRow"
-            ><div class="icon"><fa-icon icon="arrow-left"/></div>
-            Back to artists</SimpleRow>
-            <SongRow v-for="song in selectedArtistSongList"
+            ><FariRowIcon><fa-icon icon="arrow-left"/></FariRowIcon>
+            Back to artists</FariRowSimple>
+
+            <!-- shuffle row -->
+            <FariRowSimple
+                @click="onShuffleClick()"
+            ><FariRowIcon><fa-icon icon="random"/></FariRowIcon>
+            Shuffle and play</FariRowSimple>
+
+            <!-- song rows -->
+            <FariRowSong v-for="song in selectedArtistSongList"
                 :songId="song.id"
                 :key="song.id"
                 @click="onSongClick(song)"
                 @playSong="playSong(song)"
-            ></SongRow>
-        </ContentList>
+            ></FariRowSong>
+        </FariList>
     </div>
 </template>
 
 <script>
-import ContentList from '@/components/ContentList.vue';
-import SongRow from '@/components/SongRow.vue';
-import SimpleRow from '@/components/SimpleRow.vue';
+import FariList from '@/components/FariList.vue';
+import FariRowSong from '@/components/FariRowSong.vue';
+import FariRowSimple from '@/components/FariRowSimple.vue';
+import FariRowIcon from '@/components/FariRowIcon.vue';
 
 import { mapGetters, mapActions } from 'vuex';
+import { shuffle } from 'lodash';
 
 export default {
     components: {
-        ContentList,
-        SongRow,
-        SimpleRow
+        FariList,
+        FariRowSong,
+        FariRowSimple,
+        FariRowIcon
     },
     data: function() {
         return {
@@ -75,19 +87,22 @@ export default {
                 this.playSong(song);
             }
         },
-        playSong: async function(song) {
+        playSong: async function(song, songList = null) {
             let queue = [];
             let queuePlayIndex = 0;
             let offset = 0;
-            for(let i = 0; i < this.selectedArtistSongList.length; i++) {
-                if(!this.selectedArtistSongList[i].enabled) {
+            if(!songList) {
+                songList = this.selectedArtistSongList;
+            }
+            for(let i = 0; i < songList.length; i++) {
+                if(!songList[i].enabled) {
                     offset++;
                     continue;
                 }
-                if(this.selectedArtistSongList[i].id == song.id) {
+                if(song && songList[i].id == song.id) {
                     queuePlayIndex = i - offset;
                 }
-                queue.push(this.selectedArtistSongList[i]);
+                queue.push(songList[i]);
             }
             await this.$store.dispatch('setQueue', queue);
             await this.$store.dispatch('playFromQueue', queuePlayIndex);
@@ -114,6 +129,10 @@ export default {
                     subtitle: ""
                 });
             });
+        },
+        onShuffleClick: function() {
+            let shuffledList = shuffle(this.selectedArtistSongList);
+            this.playSong(null, shuffledList);
         }
     }
 }

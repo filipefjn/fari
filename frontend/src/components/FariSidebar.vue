@@ -1,0 +1,67 @@
+<template>
+    <div class="sidebar-content">
+        <!-- <FariSidebarItem title="All songs" @click="onItemClick('allsongs')" :selected="selectedItem == 'allsongs'" /> -->
+        <FariSidebarItem title="Artists" @click="onItemClick('artists')" :selected="selectedItem == 'artists'" />
+        <!-- <FariSidebarItem title="Artists"   @click="onItemClick('artists')"  :selected="selectedItem == 'artists'"  /> -->
+        <!-- <FariSidebarItem title="Albums"    @click="onItemClick('albums')"   :selected="selectedItem == 'albums'"   /> -->
+        <!-- <FariSidebarItem title="Genres"    @click="onItemClick('genres')"   :selected="selectedItem == 'genres'"   /> -->
+        <FariSidebarItem title="Folders"   @click="onItemClick('folders')"  :selected="selectedItem == 'folders'"  />
+        <FariSidebarSeparator/>
+        <FariSidebarItem title="Queue"     @click="onItemClick('queue')"    :selected="selectedItem == 'queue'"    />
+    </div>
+</template>
+
+<script>
+import FariSidebarItem from '@/components/FariSidebarItem.vue';
+import FariSidebarSeparator from '@/components/FariSidebarSeparator.vue';
+
+import { mapGetters } from 'vuex';
+
+export default {
+    components: {
+        FariSidebarItem,
+        FariSidebarSeparator
+    },
+    data: function() {
+        return {
+            selectedItem: 'artists',
+        };
+    },
+    methods: {
+        onItemClick: function(item) {
+            if(this.selectedItem !== item) {
+                this.selectedItem = item;
+                this.$store.dispatch('setHeaderInfo', {});
+                this.$store.dispatch('closeMobileSidebar');
+            }
+
+        },
+    },
+    watch: {
+        selectedItem: {
+            handler: function() {
+                this.$emit('change', this.selectedItem);
+            },
+            immediate: true
+        }
+    }
+}
+</script>
+
+<style scoped lang="scss">
+@import '@/style.scss';
+
+.sidebar-content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: 0.5rem;
+    width: 100%;
+    background-color: $footer-bgcolor;
+    overflow-y: scroll;
+
+    @include breakpoint(mobile) {
+        width: 12rem;
+    }
+}
+</style>

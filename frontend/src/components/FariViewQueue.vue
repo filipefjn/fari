@@ -1,35 +1,35 @@
 <template>
     <div class="container">
-        <ContentList>
+        <FariList>
             <div v-for="(song, index) in queue" :key="song.path">
-                <SongRow v-if="song.id" :songId="song.id" @click="playQueuePosition(index)" :noSiblings="index !== queue.length-1">
+                <FariRowSong v-if="song.id" :songId="song.id" @click="playQueuePosition(index)" :noSiblings="index !== queue.length-1">
                     <template v-slot:left>
-                        <div class="icon" v-if="queuePlaySongId == song.id"><fa-icon icon="play"/></div>
-                        <div class="icon" v-else></div>
+                        <!-- <div class="icon" v-if="queuePlaySongId == song.id"><fa-icon icon="play"/></div> -->
+                        <!-- <div class="icon" v-else></div> -->
                     </template>
-                </SongRow>
-                <SimpleRow v-else @click="playQueuePosition(index)" :noSiblings="index !== queue.length-1" :selected="queuePlayIndex === index">
-                    <div class="icon" v-if="queuePlayIndex === index"><fa-icon icon="play" style="font-size: 1rem;"/></div>
-                    <div class="icon" v-else></div>
+                </FariRowSong>
+                <FariRowSimple v-else @click="playQueuePosition(index)" :noSiblings="index !== queue.length-1" :selected="queuePlayIndex === index">
+                    <!-- <div class="icon" v-if="queuePlayIndex === index"><fa-icon icon="play" style="font-size: 1rem;"/></div> -->
+                    <!-- <div class="icon" v-else></div> -->
                     {{getNameFromPath(song.path)}}
-                </SimpleRow>
+                </FariRowSimple>
             </div>
 
-        </ContentList>
+        </FariList>
     </div>
 </template>
 
 <script>
-import ContentList from '@/components/ContentList.vue';
-import SimpleRow from '@/components/SimpleRow.vue';
-import SongRow from '@/components/SongRow.vue';
+import FariList from '@/components/FariList.vue';
+import FariRowSimple from '@/components/FariRowSimple.vue';
+import FariRowSong from '@/components/FariRowSong.vue';
 import { mapGetters } from 'vuex';
 
 export default {
     components: {
-        ContentList,
-        SimpleRow,
-        SongRow
+        FariList,
+        FariRowSimple,
+        FariRowSong
     },
     data: function() {
         return {
