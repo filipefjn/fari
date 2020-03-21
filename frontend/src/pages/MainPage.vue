@@ -28,9 +28,9 @@ import MobileFooter from '@/components/MobileFooter.vue';
 import Header from '@/components/Header.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import MobileSidebar from '@/components/MobileSidebar.vue';
-import FolderNavigation from '@/components/FolderNavigation.vue';
-import Queue from '@/components/Queue.vue';
-import AllSongsView from '@/components/AllSongsView.vue';
+import FariViewFolders from '@/components/FariViewFolders.vue';
+import FariViewQueue from '@/components/FariViewQueue.vue';
+import FariViewSongs from '@/components/FariViewSongs.vue';
 
 import { mapGetters } from 'vuex';
 
@@ -41,9 +41,9 @@ export default {
         Header,
         Sidebar,
         MobileSidebar,
-        FolderNavigation,
-        Queue,
-        AllSongsView
+        FariViewFolders,
+        FariViewQueue,
+        FariViewSongs
     },
     data: function() {
         return {
@@ -55,13 +55,13 @@ export default {
         contentComponent: function () {
             switch(this.selectedContent) {
                 case "folders":
-                    return "FolderNavigation";
+                    return "FariViewFolders";
                     break;
                 case "queue":
-                    return "Queue";
+                    return "FariViewQueue";
                     break;
                 case "allsongs":
-                    return "AllSongsView";
+                    return "FariViewSongs";
                     break;
                 default:
                     return null;
