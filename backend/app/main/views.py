@@ -135,6 +135,7 @@ def enable_songs_view():
         db_song = SongModel.query.get(song["id"])
         db_song.enabled = True
     db.session.commit()
+    create_fari_file(song["id"])
     return {} # TODO improve
 
 @main.route('/api/disable-songs', methods=['POST'])
@@ -144,6 +145,7 @@ def disable_songs_view():
         db_song = SongModel.query.get(song["id"])
         db_song.enabled = False
     db.session.commit()
+    create_fari_file(song["id"])
     return {} # TODO improve
 
 @main.route('/api/tag-list', methods=["GET"])
