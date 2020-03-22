@@ -19,6 +19,9 @@ def create_fari_file(song_id):
     fari_file_content = {}
     fari_file_content["id"] = song_row["id"]
     fari_file_content["enabled"] = song_row["enabled"]
+    fari_file_content["tags"] = []
+    for tag in song_row["tags"]:
+        fari_file_content["tags"].append(tag["name"])
 
     # generate fari file path
     song_path = re.sub(r"^/", r"", song_row["path"])
@@ -31,9 +34,25 @@ def create_fari_file(song_id):
 
     return fari_file_content
 
+def get_or_create_tag(tag_name):
+    # check if the tag already exists
+    queried_tag = TagModel.query.filter(TagModel.name == tag_name).first()
+    if queried_tag:
+        return queried_tag
+    else:
+        created_tag = TagModel(
+            name=tag_name
+        )
+        db.session.add(created_tag)
+        db.session.commit()
+        return created_tag
+
 def remake_library():
-    # delete all songs from database
-    SongModel.query.delete()
+    # delete all songs and tags from database
+    for song in SongModel.query.all():
+        db.session.delete(song)
+    for tag in TagModel.query.all():
+        db.session.delete(tag)
     db.session.commit()
 
     # go through all songs, read their tags and write to the database
@@ -86,6 +105,10 @@ def remake_library():
                             song.id = fari_file_content["id"]
                         if "enabled" in fari_file_content:
                             song.enabled = fari_file_content["enabled"]
+                        if "tags" in fari_file_content:
+                            tag_list = []
+                            for tag_name in fari_file_content["tags"]:
+                                song.tags.append(get_or_create_tag(tag_name))
                         fari_files_found += 1
 
                 # insert song into the database

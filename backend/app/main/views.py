@@ -156,7 +156,7 @@ def tag_list_view():
 def create_tag_view():
     request_body = request.get_json(force=True)
     name = request_body["name"].upper()
-    # check if the tags already exists
+    # check if the tag already exists
     search = TagModel.query.filter(TagModel.name == name).all()
     if search:
         return ({}, 400)
@@ -174,6 +174,7 @@ def delete_tag_view():
     tag = TagModel.query.get(request_body["id"])
     db.session.delete(tag)
     db.session.commit()
+    # TODO update all affected fari files
     return ("", 204)
 
 @main.route('/api/tag-song', methods=["POST"])
@@ -187,6 +188,7 @@ def tag_song_view():
     tag = TagModel.query.get(request_body["tag_id"])
     song.tags.append(tag)
     db.session.commit()
+    create_fari_file(request_body["song_id"])
     return ("", 200)
 
 @main.route('/api/untag-song', methods=["POST"])
@@ -200,6 +202,7 @@ def untag_song_view():
     tag = TagModel.query.get(request_body["tag_id"])
     song.tags.remove(tag)
     db.session.commit()
+    create_fari_file(request_body["song_id"])
     return ("", 200)
 
 @main.route('/api/add-tag-to-all', methods=['POST'])
