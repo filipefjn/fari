@@ -1,11 +1,11 @@
 <template>
     <div class="song-row"
-        :class="{'disabled': !song.enabled, 'no-siblings': noSiblings}"
+        :class="{'disabled': !song.enabled, 'no-siblings': noSiblings, 'narrow': listParams.isNarrow}"
 
         @contextmenu.prevent="$emit('contextmenu', $event)">
 
         <!-- song info -->
-        <div class="song-row-info" v-if="song" @click="$emit('click', $event)">
+        <div class="song-row-info" :class="{'narrow': listParams.isNarrow}" v-if="song" @click="$emit('click', $event)">
             <slot name="left"></slot>
             <div class="grid">
                 <div class="tracktitle"
@@ -19,7 +19,7 @@
         </div>
 
         <!-- song tags -->
-        <div class="song-row-tags" v-if="song && listParams.showTags" @click="$emit('click', $event)">
+        <div class="song-row-tags" :class="{'narrow': listParams.isNarrow}" v-if="song && listParams.showTags" @click="$emit('click', $event)">
             <FariTag class="tag" v-for="tag in song.tags" :key="tag.id">{{tag.name}}</FariTag>
             <div class="tag-plus-icon" @click.stop="openFariModalTag()"><fa-icon icon="tags"/></div>
         </div>
@@ -51,7 +51,7 @@ import ContextMenuItem from '@/components/ContextMenuItem.vue';
 import FariTag from '@/components/FariTag.vue';
 import FariModalTag from '@/components/FariModalTag.vue';
 
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
     props: {
@@ -198,12 +198,21 @@ export default {
     grid-template-columns: 100%;
     border-top: solid 2px $list-item-line-color;
 
+    &.narrow {
+        border-top-width: 1px;
+        font-size: 0.75rem;
+    }
+
     &:hover {
         background-color: $list-item-hover-bgcolor;
     }
 
     &:last-child:not(.no-siblings) {
         border-bottom: solid 2px $list-item-line-color;
+
+        &.narrow {
+            border-bottom-width: 1px;
+        }
     }
 
     &.disabled {
@@ -217,6 +226,10 @@ export default {
         padding-left: 1rem;
         padding-right: 1rem;
         color: $text-color;
+
+        &.narrow {
+            padding: 0.5rem 0.25rem;
+        }
 
         display: flex;
         align-items: center;
@@ -257,6 +270,11 @@ export default {
         display: flex;
         padding-left: 1rem;
         padding-right: 1rem;
+
+        &.narrow {
+            padding-left: 0.25rem;
+            padding-right: 0.25rem;
+        }
     }
 }
 
@@ -280,6 +298,13 @@ export default {
             background-color: $list-item-icon-hover-bgcolor;
         }
     }
+}
+
+.narrow .clickable-icon {
+    font-size: 1rem;
+    margin-top: -0.5rem;
+    margin-bottom: -0.5rem;
+    padding: 0.25rem;
 }
 
 // TODO improve

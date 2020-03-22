@@ -4,6 +4,9 @@
         <div class="page">
             <FariHeader class="header">
                 <template v-slot:right>
+                    <FariHeaderButton :selected="!!listParams.isNarrow" @click="toggleNarrow()">
+                        <fa-icon icon="compress-arrows-alt"/>
+                    </FariHeaderButton>
                     <FariHeaderButton :selected="!!listParams.showTags" @click="toggleTags()">
                         <fa-icon icon="tags"/>
                     </FariHeaderButton>
@@ -85,7 +88,10 @@ export default {
     },
     methods: {
         toggleTags: function() {
-            this.$store.dispatch('setListParams', {showTags: !this.listParams.showTags})
+            this.$store.dispatch('setListParams', {showTags: !this.listParams.showTags});
+        },
+        toggleNarrow: function() {
+            this.$store.dispatch('setListParams', {isNarrow: !this.listParams.isNarrow});
         }
     }
 }
