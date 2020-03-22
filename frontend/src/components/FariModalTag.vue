@@ -13,7 +13,6 @@
         <FariModalSection>
             <FariTag v-for="tag in availableTags" :key="tag.id" @click="tagSong(tag)">{{tag.name}}</FariTag>
         </FariModalSection>
-        <button @click="updateTagLists()">Reload</button>
     </FariModal>
 </template>
 
