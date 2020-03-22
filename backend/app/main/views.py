@@ -155,8 +155,14 @@ def tag_list_view():
 @main.route('/api/create-tag', methods=["POST"])
 def create_tag_view():
     request_body = request.get_json(force=True)
+    name = request_body["name"].upper()
+    # check if the tags already exists
+    search = TagModel.query.filter(TagModel.name == name).all()
+    if search:
+        return ({}, 400)
+    # if it doesnt, continue
     tag = TagModel(
-        name=request_body["name"]
+        name=name
     )
     db.session.add(tag)
     db.session.commit()
