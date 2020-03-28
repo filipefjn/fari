@@ -114,6 +114,9 @@ def remake_artists_and_albums():
 
 
 def remake_library():
+    # delete all artists and albums from database
+    delete_artists_and_albums()
+
     # delete all songs and tags from database
     for song in SongModel.query.all():
         db.session.delete(song)
@@ -204,5 +207,11 @@ def remake_library():
 
     media_dir = os.path.join(settings["media_dir"], "")
     result = recursive_search(media_dir)
+
+    result = {
+        **result,
+        **remake_artists_and_albums()
+    }
+
     return result
 
