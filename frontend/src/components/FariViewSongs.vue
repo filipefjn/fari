@@ -6,19 +6,19 @@
                 @click="onShuffleClick()"
             ><FariRowIcon><fa-icon icon="random"/></FariRowIcon>
             Shuffle and play</FariRowSimple>
-            <FariRowSong v-for="song in fullSongList"
+            <FariRowSongId v-for="song in fullSongList"
                 :songId="song.id"
                 :key="song.id"
                 @click="onSongClick(song)"
                 @playSong="playSong(song)"
-            ></FariRowSong>
+            ></FariRowSongId>
         </FariList>
     </div>
 </template>
 
 <script>
 import FariList from '@/components/FariList.vue';
-import FariRowSong from '@/components/FariRowSong.vue';
+import FariRowSongId from '@/components/FariRowSongId.vue';
 import FariRowSimple from '@/components/FariRowSimple.vue';
 import FariRowIcon from '@/components/FariRowIcon.vue';
 
@@ -28,7 +28,7 @@ import { shuffle } from 'lodash';
 export default {
     components: {
         FariList,
-        FariRowSong,
+        FariRowSongId,
         FariRowSimple,
         FariRowIcon
     },

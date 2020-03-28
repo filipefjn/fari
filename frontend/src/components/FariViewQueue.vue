@@ -2,12 +2,12 @@
     <div class="container">
         <FariList>
             <div v-for="(song, index) in queue" :key="song.path">
-                <FariRowSong v-if="song.id" :songId="song.id" @click="playQueuePosition(index)" :noSiblings="index !== queue.length-1">
+                <FariRowSongId v-if="song.id" :songId="song.id" @click="playQueuePosition(index)" :noSiblings="index !== queue.length-1">
                     <template v-slot:left>
                         <!-- <div class="icon" v-if="queuePlaySongId == song.id"><fa-icon icon="play"/></div> -->
                         <!-- <div class="icon" v-else></div> -->
                     </template>
-                </FariRowSong>
+                </FariRowSongId>
                 <FariRowSimple v-else @click="playQueuePosition(index)" :noSiblings="index !== queue.length-1" :selected="queuePlayIndex === index">
                     <!-- <div class="icon" v-if="queuePlayIndex === index"><fa-icon icon="play" style="font-size: 1rem;"/></div> -->
                     <!-- <div class="icon" v-else></div> -->
@@ -22,14 +22,14 @@
 <script>
 import FariList from '@/components/FariList.vue';
 import FariRowSimple from '@/components/FariRowSimple.vue';
-import FariRowSong from '@/components/FariRowSong.vue';
+import FariRowSongId from '@/components/FariRowSongId.vue';
 import { mapGetters } from 'vuex';
 
 export default {
     components: {
         FariList,
         FariRowSimple,
-        FariRowSong
+        FariRowSongId
     },
     data: function() {
         return {

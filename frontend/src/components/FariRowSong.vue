@@ -55,8 +55,8 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
     props: {
-        songId: {
-            type: String,
+        song: {
+            type: Object,
             required: true
         },
         showTags: {
@@ -75,7 +75,6 @@ export default {
     },
     data: function() {
         return {
-            song: null,
             contextMenuPosX: 150,
             contextMenuPosY: 300,
             displayContextMenu: false,
@@ -83,30 +82,16 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['fullSongList', 'tagList', 'listParams', 'queuePlaySongId']),
+        ...mapGetters(['tagList', 'listParams', 'queuePlaySongId']),
         currentSong: function() {
-            if(!this.song) {
-                return false;
-            }
             if(this.queuePlaySongId == this.song.id) {
                 return true;
+            } else {
+                return false
             }
-            return false
-        }
-    },
-    watch: {
-        songId: {
-            handler: function(val) {
-                this.updateSong();
-            },
-            immediate: true
-        },
-        fullSongList: function() {
-            this.updateSong();
         }
     },
     methods: {
-        ...mapActions(['fetchFullSongList']),
         openContextMenu: function(event) {
             this.displayContextMenu = true;
             this.contextMenuPosX = event.clientX;
@@ -120,20 +105,6 @@ export default {
         },
         closeFariModalTag: function() {
             this.displayFariModalTag = false;
-        },
-        updateSong: function() {
-            let found = this.fullSongList.find((item) => {
-                if(item.id === this.songId) {
-                    return true;
-                } else {
-                    return false;
-                }
-            });
-            if(found) {
-                this.song = found;
-            } else {
-                this.song = null;
-            }
         },
         contextMenuPlaySong: function() {
             this.$emit('playSong');
@@ -158,7 +129,7 @@ export default {
                 }
                 return response.json();
             }).then((response) => {
-                this.fetchFullSongList();
+                // this.fetchFullSongList();
             });
             this.closeContextMenu();
         },
@@ -181,7 +152,7 @@ export default {
                 }
                 return response.json();
             }).then((response) => {
-                this.fetchFullSongList();
+                // this.fetchFullSongList();
             });
             this.closeContextMenu();
         },
