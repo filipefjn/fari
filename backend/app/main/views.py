@@ -130,7 +130,9 @@ def full_song_list_by_artist_album_view():
 
 @main.route('/api/artist-list', methods=['GET', 'POST'])
 def artist_list_view():
-    return jsonify(ArtistSchema(many=True).dump(ArtistModel.query.all()))
+    artist_list = ArtistSchema(many=True).dump(ArtistModel.query.order_by(ArtistModel.name.asc()).all())
+    #artist_list.sort(key=lambda artist: artist["name"])
+    return jsonify(artist_list)
 
 @main.route('/api/artist-song-list', methods=['POST'])
 def artist_song_list_view():

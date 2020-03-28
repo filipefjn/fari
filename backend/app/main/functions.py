@@ -100,7 +100,8 @@ def remake_artists_and_albums():
         if not found_album:
             song_album = AlbumModel(
                 name=song_album_name,
-                artist=song_artist
+                artist=song_artist,
+                year=song.year
             )
             song.album = song_album
             db.session.commit()
@@ -156,7 +157,8 @@ def remake_library():
                     tracktitle=file_tags["tracktitle"].value,
                     albumartist=file_tags["albumartist"].value,
                     artist=file_tags["artist"].value,
-                    album_name=file_tags["album"].value
+                    album_name=file_tags["album"].value,
+                    year=file_tags["year"].value
                 )
                 # check for .fari file
                 fari_file_absolute_path = file_absolute_path + ".fari"
