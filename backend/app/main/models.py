@@ -64,7 +64,7 @@ class ArtistModel(db.Model):
     name        = db.Column(db.String(50))
     albums      = db.relationship('AlbumModel', backref="artist", lazy=True)
 
-class ArtistSchema(ma.Schema):
+class ArtistNestedSchema(ma.Schema):
     class Meta:
         model = ArtistModel
         fields = (
@@ -73,6 +73,14 @@ class ArtistSchema(ma.Schema):
             "albums"
         )
     albums = ma.Nested("AlbumSchema", many=True)
+
+class ArtistSchema(ma.Schema):
+    class Meta:
+        model = ArtistModel
+        fields = (
+            "id",
+            "name"
+        )
 
 
 ### album model ###
@@ -92,4 +100,3 @@ class AlbumSchema(ma.Schema):
             "songs"
         )
     songs = ma.Nested("SongSchema", many=True)
-

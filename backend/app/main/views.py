@@ -126,7 +126,20 @@ def full_song_list_view():
 
 @main.route('/api/full-song-list-by-artist-album', methods=['GET', 'POST'])
 def full_song_list_by_artist_album_view():
+    return jsonify(ArtistNestedSchema(many=True).dump(ArtistModel.query.all()))
+
+@main.route('/api/artist-list', methods=['GET', 'POST'])
+def artist_list_view():
     return jsonify(ArtistSchema(many=True).dump(ArtistModel.query.all()))
+
+@main.route('/api/artist-song-list', methods=['POST'])
+def artist_song_list_view():
+    request_body = request.get_json(force=True)
+    if "id" in request_body:
+        artist_id = request_body["id"]
+    else:
+        raise Exception("you must specify an id")
+    return jsonify(ArtistNestedSchema().dump(ArtistModel.query.get_or_404(artist_id)))
 
 @main.route('/api/remake-library', methods=['GET', 'POST'])
 def remake_library_view():
