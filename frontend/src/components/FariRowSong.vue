@@ -7,7 +7,11 @@
         <!-- song info -->
         <div class="song-row-info" :class="{'narrow': listParams.isNarrow}" v-if="song" @click="$emit('click', $event)">
             <slot name="left"></slot>
-            <div class="grid">
+            <div class="song-info">
+                <div class="tracknumber"
+                    :class="{'disabled': !song.enabled, 'current': currentSong}"
+                    v-show="showTracknumber"
+                >{{song.tracknumber}}</div>
                 <div class="tracktitle"
                     :class="{'disabled': !song.enabled, 'current': currentSong}"
                 >{{song.tracktitle}}</div>
@@ -41,7 +45,7 @@
         </ContextMenu>
 
         <!-- tag modal -->
-        <FariModalTag v-if="displayFariModalTag" :songId="songId" @close="closeFariModalTag()"/>
+        <FariModalTag v-if="displayFariModalTag" :songId="song.id" @close="closeFariModalTag()"/>
     </div>
 </template>
 
@@ -63,6 +67,10 @@ export default {
             type: Boolean
         },
         noSiblings: {
+            type: Boolean,
+            default: false
+        },
+        showTracknumber: {
             type: Boolean,
             default: false
         }
@@ -213,8 +221,28 @@ export default {
             flex-shrink: 1;
         }
 
+        .song-info {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            flex-grow: 1;
+            flex-shrink: 1;
+            overflow: hidden;
+        }
+
+        .tracknumber {
+            // flex: 1;
+            width: 3rem;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            text-align: right;
+            padding-right: 1.5rem;
+        }
+
         .tracktitle {
             grid-column: 1 / 7;
+            flex: 10;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -223,6 +251,7 @@ export default {
 
         .artist {
             grid-column: 7 / 11;
+            flex: 8;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;

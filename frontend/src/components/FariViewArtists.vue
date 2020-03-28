@@ -1,13 +1,13 @@
 <template>
     <div class="container">
-        <FariList v-if="!isArtistSelected">
+        <FariList v-if="!selectedArtist">
             <FariRowSimple
-                v-for="(artist, artistKey) in artistList"
-                :key="artistKey"
-                @click="onArtistClick(artistKey)"
-            >{{artistKey}}</FariRowSimple>
+                v-for="artist in artistList"
+                :key="artist.id"
+                @click="onArtistClick(artist)"
+            >{{artist.name}}</FariRowSimple>
         </FariList>
-        <FariList v-if="isArtistSelected">
+        <FariList v-if="selectedArtist">
             <!-- go back row -->
             <FariRowSimple
                 @click="onGoBackClick()"
@@ -21,13 +21,22 @@
             ><FariRowIcon><fa-icon icon="random"/></FariRowIcon>
             Shuffle and play</FariRowSimple>
 
-            <!-- song rows -->
-            <FariRowSongId v-for="song in selectedArtistSongList"
-                :songId="song.id"
-                :key="song.id"
-                @click="onSongClick(song)"
-                @playSong="playSong(song)"
-            ></FariRowSongId>
+            <div style="display: flex; flex-direction: column"
+                v-for="album in selectedArtist.albums" :key="album.id"
+            >
+                <FariRowAlbum
+                    :title="album.name"
+                    :artist="selectedArtist.name"
+                    :year="album.year"
+                />
+                <FariRowSong v-for="song in album.songs"
+                    :song="song"
+                    :key="song.id"
+                    @click="onSongClick(song)"
+                    @playSong="playSong(song)"
+                    showTracknumber
+                ></FariRowSong>
+            </div>
         </FariList>
     </div>
 </template>
@@ -35,8 +44,8 @@
 <script>
 import FariList from '@/components/FariList.vue';
 import FariRowSong from '@/components/FariRowSong.vue';
-import FariRowSongId from '@/components/FariRowSongId.vue';
 import FariRowSimple from '@/components/FariRowSimple.vue';
+import FariRowAlbum from '@/components/FariRowAlbum.vue';
 import FariRowIcon from '@/components/FariRowIcon.vue';
 
 import { mapGetters, mapActions } from 'vuex';
@@ -46,43 +55,40 @@ export default {
     components: {
         FariList,
         FariRowSong,
-        FariRowSongId,
         FariRowSimple,
+        FariRowAlbum,
         FariRowIcon
     },
     data: function() {
         return {
-            isArtistSelected: false,
-            selectedArtistKey: "",
+            artistList: [],
+            selectedArtist: null,
         };
+    },
+    created: function() {
+        this.fetchArtistList();
     },
     computed: {
         ...mapGetters(['fullSongList', 'tagList']),
-        artistList: function() {
-            let list = {};
-            for (let i = 0; i < this.fullSongList.length; i++) {
-                let song = this.fullSongList[i];
-                let songArtist = song["artist"];
-                if(!list[songArtist]) {
-                    list[songArtist] = [];
-                }
-                list[songArtist].push(song);
-            }
-            list = Object.keys(list).sort().reduce((r, k) => (r[k] = list[k], r), {});
-            return list;
-        },
-        selectedArtistSongList: function() {
-            return this.artistList[this.selectedArtistKey];
-        }
     },
     activated: function() {
-        this.$store.dispatch('setHeaderInfo', {
-            title: "Artists",
-            subtitle: this.selectedArtistKey
-        });
+        this.setHeaderInfo();
     },
     methods: {
         ...mapActions(['fetchFullSongList']),
+        fetchArtistList: function() {
+            fetch('/api/artist-list', {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(async (response) => {
+                if(response.status === 200) {
+                    let responseData = await response.json();
+                    this.artistList = responseData;
+                }
+            });
+        },
         onSongClick: function(song) {
             if(!song.enabled) {
                 return;
@@ -90,13 +96,23 @@ export default {
                 this.playSong(song);
             }
         },
-        playSong: async function(song, songList = null) {
+        playSong: async function(song) {
+            if(!this.selectedArtist) {
+                console.error("no selected artist!");
+                return;
+            }
+
+            // create song list
+            let songList = [];
+            this.selectedArtist.albums.forEach((album) => {
+                album.songs.forEach((song) => {
+                    songList.push(song);
+                })
+            });
+
             let queue = [];
             let queuePlayIndex = 0;
             let offset = 0;
-            if(!songList) {
-                songList = this.selectedArtistSongList;
-            }
             for(let i = 0; i < songList.length; i++) {
                 if(!songList[i].enabled) {
                     offset++;
@@ -110,32 +126,49 @@ export default {
             await this.$store.dispatch('setQueue', queue);
             await this.$store.dispatch('playFromQueue', queuePlayIndex);
         },
-        onArtistClick: function(artistKey) {
-            this.selectedArtistKey = artistKey;
-            this.$nextTick(() => {
-                this.isArtistSelected = true;
-                this.$store.dispatch('setHeaderInfo', {
-                    title: "Artists",
-                    subtitle: artistKey
-                });
-                this.$nextTick(() => {
-                    this.$refs.goBackRow.$el.scrollIntoView({block: "start"});
-                });
+        onArtistClick: function(artist) {
+            //this.selectedArtist = artist;
+            fetch('/api/artist-song-list', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id: artist.id
+                })
+            }).then(async (response) => {
+                if(response.status === 200) {
+                    this.selectedArtist = await response.json();
+                }
             });
         },
         onGoBackClick: function() {
-            this.isArtistSelected = false;
-            this.$nextTick(() => {
-                this.selectedArtistKey = "";
-                this.$store.dispatch('setHeaderInfo', {
-                    title: "Artists",
-                    subtitle: ""
-                });
-            });
+            this.selectedArtist = null;
         },
         onShuffleClick: function() {
             let shuffledList = shuffle(this.selectedArtistSongList);
             this.playSong(null, shuffledList);
+        },
+        setHeaderInfo: function() {
+            let artistName = "";
+            if(this.selectedArtist && this.selectedArtist.name) {
+                artistName = this.selectedArtist.name;
+            }
+            this.$store.dispatch('setHeaderInfo', {
+                title: "Artists",
+                subtitle: artistName
+            });
+        }
+    },
+    watch: {
+        selectedArtist: function(val) {
+            if(val) {
+                // move to the top on next tick
+                this.$nextTick(() => {
+                    this.$refs.goBackRow.$el.scrollIntoView({block: "start"});
+                });
+            }
+            this.setHeaderInfo();
         }
     }
 }
