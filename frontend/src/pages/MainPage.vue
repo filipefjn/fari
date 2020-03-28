@@ -38,6 +38,7 @@ import FariViewQueue from '@/components/FariViewQueue.vue';
 import FariViewSongs from '@/components/FariViewSongs.vue';
 import FariViewArtists from '@/components/FariViewArtists.vue';
 import FariViewFilterTags from '@/components/FariViewFilterTags.vue';
+import FariViewServer from '@/components/FariViewServer.vue';
 import FariHeaderButton from '@/components/FariHeaderButton.vue';
 
 import { mapGetters } from 'vuex';
@@ -54,6 +55,7 @@ export default {
         FariViewSongs,
         FariViewArtists,
         FariViewFilterTags,
+        FariViewServer,
         FariHeaderButton
     },
     data: function() {
@@ -79,6 +81,9 @@ export default {
                     break;
                 case "filtertags":
                     return "FariViewFilterTags";
+                    break;
+                case "server":
+                    return "FariViewServer";
                     break;
                 default:
                     return null;

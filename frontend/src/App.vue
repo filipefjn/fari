@@ -1,16 +1,21 @@
 <template>
     <div>
-        <MainPage/>
+        <LoadingPage v-if="loadingScreen"/>
+        <MainPage v-else/>
     </div>
 </template>
 
 <script>
 import MainPage from '@/pages/MainPage.vue';
+import LoadingPage from '@/pages/LoadingPage.vue';
+
+import { mapGetters } from 'vuex';
 
 export default {
     name: 'app',
     components: {
-        MainPage
+        MainPage,
+        LoadingPage
     },
     created: function() {
         this.$store.dispatch('createPlayer');
@@ -18,6 +23,9 @@ export default {
     mounted: function() {
         this.$store.dispatch('fetchFullSongList');
     },
+    computed: {
+        ...mapGetters(["loadingScreen"])
+    }
 }
 </script>
 

@@ -20,7 +20,8 @@ export default new Vuex.Store({
         queuePlaySongId: null,
         displayMobileSidebar: false,
         headerInfo: {},
-        listParams: {}
+        listParams: {},
+        loadingScreen: false
     },
     getters: {
         player: (state) => state.player,
@@ -37,7 +38,8 @@ export default new Vuex.Store({
         queuePlaySongId: (state) => state.queuePlaySongId,
         displayMobileSidebar: (state) => state.displayMobileSidebar,
         headerInfo: (state) => state.headerInfo,
-        listParams: (state) => state.listParams
+        listParams: (state) => state.listParams,
+        loadingScreen: (state) => state.loadingScreen
     },
     mutations: {
         setPlayer: (state, player) => {
@@ -127,6 +129,9 @@ export default new Vuex.Store({
                 ...state.listParams,
                 ...params
             };
+        },
+        setLoadingScreen: (state, value) => {
+            state.loadingScreen = !!value;
         }
     },
     actions: {
@@ -326,6 +331,9 @@ export default new Vuex.Store({
         },
         setListParams: ({ commit }, params) => {
             commit('setListParams', params);
+        },
+        setLoadingScreen: ({ commit }, value) => {
+            commit('setLoadingScreen', !!value);
         }
     },
     modules: {}

@@ -2,11 +2,13 @@
     <div class="sidebar-content">
         <!-- <FariSidebarItem title="All songs" @click="onItemClick('allsongs')" :selected="selectedItem == 'allsongs'" /> -->
         <FariSidebarItem title="Artists" @click="onItemClick('artists')" :selected="selectedItem == 'artists'" />
-        <FariSidebarItem title="Folders"   @click="onItemClick('folders')"  :selected="selectedItem == 'folders'"  />
-        <FariSidebarSeparator/>
+        <FariSidebarItem title="Folders" @click="onItemClick('folders')" :selected="selectedItem == 'folders'"  />
+        <!-- <FariSidebarSeparator/> -->
         <FariSidebarItem title="Filter by tags" @click="onItemClick('filtertags')" :selected="selectedItem == 'filtertags'" />
+        <!-- <FariSidebarSeparator/> -->
+        <FariSidebarItem title="Queue" @click="onItemClick('queue')" :selected="selectedItem == 'queue'" />
         <FariSidebarSeparator/>
-        <FariSidebarItem title="Queue"     @click="onItemClick('queue')"    :selected="selectedItem == 'queue'"    />
+        <FariSidebarItem title="Server" @click="onItemClick('server')" :selected="selectedItem == 'server'" />
     </div>
 </template>
 
