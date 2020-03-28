@@ -49,11 +49,12 @@ class SongSchema(ma.Schema):
             "tracktitle",
             "artist",
             "albumartist",
-            "album_name",
             "album_id",
-            "tags",
+            "album",
+            "tags"
         )
     tags = ma.Nested(TagSchema, many=True)
+    album = ma.Field(attribute='album_name')
 
 
 ### artist model ###
