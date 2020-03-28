@@ -6,6 +6,7 @@ settings = {
         "tracknumber",
         "tracktitle",
         "album",
+        "albumartist",
         "artist",
         "year",
         "genre"

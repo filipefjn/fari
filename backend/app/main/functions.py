@@ -47,6 +47,71 @@ def get_or_create_tag(tag_name):
         db.session.commit()
         return created_tag
 
+def delete_artists_and_albums():
+    # set all songs' album to null
+    SongModel.query.update({"album_id": None})
+    db.session.commit()
+    # delete all artists and albums from database
+    AlbumModel.query.delete()
+    ArtistModel.query.delete()
+    db.session.commit()
+
+
+def remake_artists_and_albums():
+    delete_artists_and_albums()
+
+    artists_found = 0
+    albums_found = 0
+
+    for song in SongModel.query.all():
+        # get song's artist name
+        song_artist_name = song.albumartist
+        if not song_artist_name:
+            song_artist_name = song.artist
+        if not song_artist_name:
+            song_artist_name = "Unknown artist"
+
+        # look for artist
+        song_artist = ArtistModel.query.filter(ArtistModel.name.ilike(song_artist_name)).first()
+        if not song_artist:
+            # create a new artist
+            song_artist = ArtistModel(
+                name=song_artist_name
+            )
+            db.session.add(song_artist)
+            db.session.commit()
+            artists_found += 1
+
+        # get song's album name
+        song_album_name = song.album_name
+        if not song_album_name:
+            song_album_name = "Unknown album"
+
+        # check if album exists
+        found_album = False
+        for album in song_artist.albums:
+            if album.name.lower() == song_album_name.lower():
+                found_album = True
+                song.album = album
+                db.session.commit()
+                break
+
+        # if does not, create it
+        if not found_album:
+            song_album = AlbumModel(
+                name=song_album_name,
+                artist=song_artist
+            )
+            song.album = song_album
+            db.session.commit()
+            albums_found += 1
+
+    return {
+        "artists_found": artists_found,
+        "albums_found": albums_found
+    }
+
+
 def remake_library():
     # delete all songs and tags from database
     for song in SongModel.query.all():
@@ -89,8 +154,9 @@ def remake_library():
                     enabled=True,
                     tracknumber=file_tags["tracknumber"].value,
                     tracktitle=file_tags["tracktitle"].value,
+                    albumartist=file_tags["albumartist"].value,
                     artist=file_tags["artist"].value,
-                    album=file_tags["album"].value
+                    album_name=file_tags["album"].value
                 )
                 # check for .fari file
                 fari_file_absolute_path = file_absolute_path + ".fari"

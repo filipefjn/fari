@@ -5,7 +5,7 @@ from .. import db
 import music_tag
 from base64 import b64encode
 from .models import *
-from .functions import remake_library, create_fari_file
+from .functions import remake_library, create_fari_file, remake_artists_and_albums, delete_artists_and_albums
 import os
 import re
 
@@ -124,9 +124,22 @@ def full_song_list_view():
     song_list = SongModel.query.order_by(SongModel.tracktitle).all()
     return jsonify(SongSchema(many=True).dump(song_list))
 
+@main.route('/api/full-song-list-by-artist-album', methods=['GET', 'POST'])
+def full_song_list_by_artist_album_view():
+    return jsonify(ArtistSchema(many=True).dump(ArtistModel.query.all()))
+
 @main.route('/api/remake-library', methods=['GET', 'POST'])
 def remake_library_view():
     return remake_library()
+
+@main.route('/api/remake-artists-and-albums', methods=['GET', 'POST'])
+def remake_artist_and_albums_view():
+    return remake_artists_and_albums()
+
+@main.route('/api/delete-artists-and-albums', methods=['GET', 'POST'])
+def delete_artist_and_albums_view():
+    delete_artists_and_albums()
+    return {}
 
 @main.route('/api/enable-songs', methods=['POST'])
 def enable_songs_view():
