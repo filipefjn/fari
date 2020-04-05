@@ -11,7 +11,7 @@ import json
 
 def gen_id(base_str):
     h = str(base_str) + str(random.randint(100000, 999999))
-    h = hashlib.sha1(h.encode("ascii"))
+    h = hashlib.sha1(h.encode("utf-8"))
     return h.hexdigest()
 
 def get_song_artwork_base64(path):
