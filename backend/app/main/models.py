@@ -37,6 +37,8 @@ class SongModel(db.Model):
     album_name  = db.Column(db.String(50))
     album_id    = db.Column(db.Integer, db.ForeignKey('albums.id'))
     year        = db.Column(db.String(20))
+    discnumber  = db.Column(db.Integer, default=1)
+    track_order = db.Column(db.String(20))
     tags        = db.relationship("TagModel", secondary=songs_tags_association, back_populates="songs", lazy=True)
 
 class SongSchema(ma.Schema):
@@ -53,6 +55,8 @@ class SongSchema(ma.Schema):
             "album_id",
             "album",
             "year",
+            "discnumber",
+            "track_order",
             "tags"
         )
     tags = ma.Nested(TagSchema, many=True)
@@ -92,7 +96,8 @@ class AlbumModel(db.Model):
     name        = db.Column(db.String(50))
     year        = db.Column(db.String(20))
     artist_id   = db.Column(db.Integer, db.ForeignKey('artists.id'), nullable=False)
-    songs       = db.relationship('SongModel', backref="album", lazy=True, order_by="SongModel.tracknumber")
+    songs       = db.relationship('SongModel', backref="album", lazy=True, order_by="SongModel.track_order")
+
 
 class AlbumSchema(ma.Schema):
     class Meta:

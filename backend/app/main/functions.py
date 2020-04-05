@@ -48,7 +48,7 @@ def get_or_create_tag(tag_name):
         return created_tag
 
 def delete_artists_and_albums():
-    # set all songs' album to null
+    # set all songs' albums to null
     SongModel.query.update({"album_id": None})
     db.session.commit()
     # delete all artists and albums from database
@@ -112,6 +112,14 @@ def remake_artists_and_albums():
         "albums_found": albums_found
     }
 
+def extract_integer_or(value, default = 1):
+    if isinstance(value, int):
+        return value
+    matches = re.match(r"^\d+", value)
+    if not matches:
+        return int(default)
+    else:
+        return int(matches.group())
 
 def remake_library():
     # delete all artists and albums from database
@@ -152,15 +160,20 @@ def remake_library():
                 file_absolute_path = os.path.join(current_path, file)
                 file_tags = music_tag.load_file(file_absolute_path)
                 song_id = gen_id(str(file_tags["tracktitle"].value) + str(file_tags["artist"].value))
+                song_tracknumber = extract_integer_or(file_tags["tracknumber"].value, 0)
+                song_discnumber = extract_integer_or(file_tags["discnumber"].value, 1)
+                song_track_order = "%02d-%03d" % (song_discnumber, song_tracknumber)
                 song = SongModel(
                     id=song_id,
                     path=os.path.join(current_path, file).replace(settings["media_dir"], "/", 1),
                     enabled=True,
-                    tracknumber=file_tags["tracknumber"].value,
+                    tracknumber=song_tracknumber,
                     tracktitle=file_tags["tracktitle"].value,
                     albumartist=file_tags["albumartist"].value,
                     artist=file_tags["artist"].value,
                     album_name=file_tags["album"].value,
+                    discnumber=song_discnumber,
+                    track_order=song_track_order,
                     year=file_tags["year"].value
                 )
                 # check for .fari file

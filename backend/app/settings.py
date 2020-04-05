@@ -9,6 +9,7 @@ settings = {
         "albumartist",
         "artist",
         "year",
+        "discnumber",
         "genre"
     ]
 }
