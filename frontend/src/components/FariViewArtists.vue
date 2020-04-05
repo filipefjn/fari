@@ -35,7 +35,7 @@
                     :key="song.id"
                     @click="onSongClick(song)"
                     @playSong="playSong(song)"
-                    @change="loadArtistInfo(selectedArtist)"
+                    @change="reloadArtistInfo(selectedArtist)"
                     showTracknumber
                     showRating
                 ></FariRowSong>
@@ -66,6 +66,7 @@ export default {
         return {
             artistList: [],
             selectedArtist: null,
+            isSelectedArtist: false,
         };
     },
     created: function() {
@@ -130,7 +131,7 @@ export default {
             await this.$store.dispatch('playFromQueue', queuePlayIndex);
         },
         loadArtistInfo: function(artist) {
-            this.setFullSongListPendingRefresh();
+            this.isSelectedArtist = true;
             fetch('/api/artist-song-list', {
                 method: 'POST',
                 headers: {
@@ -145,8 +146,13 @@ export default {
                 }
             });
         },
+        reloadArtistInfo: function(artist) {
+            this.setFullSongListPendingRefresh();
+            this.loadArtistInfo(artist)
+        },
         onGoBackClick: function() {
             this.selectedArtist = null;
+            this.isSelectedArtist = false;
         },
         onShuffleClick: function() {
             let shuffledList = shuffle(this.selectedArtistSongList);
@@ -164,7 +170,7 @@ export default {
         }
     },
     watch: {
-        selectedArtist: function(val) {
+        isSelectedArtist: function(val) {
             if(val) {
                 // move to the top on next tick
                 this.$nextTick(() => {

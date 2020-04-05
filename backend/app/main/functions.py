@@ -37,6 +37,7 @@ def create_fari_file(song_id):
     fari_file_content = {}
     fari_file_content["id"] = song_row["id"]
     fari_file_content["enabled"] = song_row["enabled"]
+    fari_file_content["rating"] = song_row["rating"]
     fari_file_content["tags"] = []
     for tag in song_row["tags"]:
         fari_file_content["tags"].append(tag["name"])
@@ -207,6 +208,8 @@ def remake_library():
                             song.id = fari_file_content["id"]
                         if "enabled" in fari_file_content:
                             song.enabled = fari_file_content["enabled"]
+                        if "rating" in fari_file_content:
+                            song.rating = fari_file_content["rating"]
                         if "tags" in fari_file_content:
                             tag_list = []
                             for tag_name in fari_file_content["tags"]:

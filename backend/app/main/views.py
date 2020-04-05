@@ -288,4 +288,5 @@ def change_song_rating_view():
     else:
         song.enabled = False
     db.session.commit()
+    create_fari_file(request_body["song_id"])
     return {}
