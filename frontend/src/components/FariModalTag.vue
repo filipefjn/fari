@@ -7,19 +7,19 @@
                 :key="tag.id" @click="untagSong(tag)"
             >{{tag.name}}</FariTag>
         </FariModalSection>
-        <FariModalTitle>Create new tag</FariModalTitle>
-        <FariModalSection>
-            <FariInput
-                :buttons="[{text: 'Create', emit: 'create'}]"
-                v-model="createTagValue"
-                @create="onCreateClick()"/>
-        </FariModalSection>
         <FariModalTitle>Available tags</FariModalTitle>
         <FariModalSection>
             <FariTag
                 v-for="tag in availableTags"
                 :key="tag.id" @click="tagSong(tag)"
             >{{tag.name}}</FariTag>
+        </FariModalSection>
+        <FariModalTitle>Create new tag</FariModalTitle>
+        <FariModalSection>
+            <FariInput
+                :buttons="[{text: 'Create', emit: 'create'}]"
+                v-model="createTagValue"
+                @create="onCreateClick()"/>
         </FariModalSection>
     </FariModal>
 </template>

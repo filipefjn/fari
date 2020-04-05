@@ -141,7 +141,7 @@ export default {
                 }
                 return response.json();
             }).then((response) => {
-                // this.fetchFullSongList();
+                this.$emit('change');
             });
             this.closeContextMenu();
         },
@@ -164,7 +164,7 @@ export default {
                 }
                 return response.json();
             }).then((response) => {
-                // this.fetchFullSongList();
+                this.$emit('change');
             });
             this.closeContextMenu();
         },

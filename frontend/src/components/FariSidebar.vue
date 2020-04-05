@@ -59,7 +59,7 @@ export default {
     padding-top: 0.5rem;
     width: 100%;
     background-color: $footer-bgcolor;
-    overflow-y: scroll;
+    overflow-y: auto;
 
     @include breakpoint(mobile) {
         width: 12rem;

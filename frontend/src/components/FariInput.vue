@@ -73,8 +73,10 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    border-radius: 6px;
+    box-shadow: $context-menu-shadow;
 
     .input-field {
         background-color: transparent;
