@@ -4,7 +4,7 @@
             <FariRowSimple
                 v-for="artist in artistList"
                 :key="artist.id"
-                @click="onArtistClick(artist)"
+                @click="loadArtistInfo(artist)"
             >{{artist.name}}</FariRowSimple>
         </FariList>
         <FariList v-if="selectedArtist">
@@ -34,6 +34,7 @@
                     :key="song.id"
                     @click="onSongClick(song)"
                     @playSong="playSong(song)"
+                    @change="loadArtistInfo(selectedArtist)"
                     showTracknumber
                 ></FariRowSong>
             </div>
@@ -126,8 +127,7 @@ export default {
             await this.$store.dispatch('setQueue', queue);
             await this.$store.dispatch('playFromQueue', queuePlayIndex);
         },
-        onArtistClick: function(artist) {
-            //this.selectedArtist = artist;
+        loadArtistInfo: function(artist) {
             fetch('/api/artist-song-list', {
                 method: 'POST',
                 headers: {

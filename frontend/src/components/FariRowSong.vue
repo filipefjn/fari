@@ -45,7 +45,11 @@
         </ContextMenu>
 
         <!-- tag modal -->
-        <FariModalTag v-if="displayFariModalTag" :songId="song.id" @close="closeFariModalTag()"/>
+        <FariModalTag
+            v-if="displayFariModalTag"
+            :song="song"
+            @close="closeFariModalTag()"
+            @change="onTagChange()"/>
     </div>
 </template>
 
@@ -164,6 +168,9 @@ export default {
             });
             this.closeContextMenu();
         },
+        onTagChange: function() {
+            this.$emit('change');
+        }
     }
 }
 </script>

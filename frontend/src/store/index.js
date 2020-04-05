@@ -183,7 +183,7 @@ export default new Vuex.Store({
                 console.error('no player available');
             }
         },
-        fetchFullSongList: async ({commit, getters}, payload) => {
+        fetchFullSongList: async ({commit, getters, dispatch}, payload) => {
             if(getters.fullSongList.length === 0 && (payload && payload.force !== true)) {
                 return;
             }
@@ -199,6 +199,9 @@ export default new Vuex.Store({
             if(getters.fullSongList.length === 0 && (payload && payload.force !== true)) {
                 return;
             }
+            await dispatch('fetchTagList');
+        },
+        fetchTagList: async ({commit}) => {
             let setTagList = await fetch('/api/tag-list', {
                 method: 'GET',
                 headers: {

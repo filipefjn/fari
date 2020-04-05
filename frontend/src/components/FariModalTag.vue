@@ -2,15 +2,24 @@
     <FariModal :show="show" @close="$emit('close')">
         <FariModalTitle>Current tags</FariModalTitle>
         <FariModalSection>
-            <FariTag v-for="tag in currentTags" :key="tag.id" @click="untagSong(tag)">{{tag.name}}</FariTag>
+            <FariTag
+                v-for="tag in currentTags"
+                :key="tag.id" @click="untagSong(tag)"
+            >{{tag.name}}</FariTag>
         </FariModalSection>
         <FariModalTitle>Create new tag</FariModalTitle>
         <FariModalSection>
-            <FariInput :buttons="[{text: 'Create', emit: 'create'}]" @create="onCreateClick()"/>
+            <FariInput
+                :buttons="[{text: 'Create', emit: 'create'}]"
+                v-model="createTagValue"
+                @create="onCreateClick()"/>
         </FariModalSection>
         <FariModalTitle>Available tags</FariModalTitle>
         <FariModalSection>
-            <FariTag v-for="tag in availableTags" :key="tag.id" @click="tagSong(tag)">{{tag.name}}</FariTag>
+            <FariTag
+                v-for="tag in availableTags"
+                :key="tag.id" @click="tagSong(tag)"
+            >{{tag.name}}</FariTag>
         </FariModalSection>
     </FariModal>
 </template>
@@ -26,8 +35,8 @@ import { mapActions, mapGetters } from 'vuex';
 
 export default {
     props: {
-        songId: {
-            type: String,
+        song: {
+            type: Object,
             required: true
         },
         show: {
@@ -44,27 +53,36 @@ export default {
     },
     data: function() {
         return {
-            currentTags: [],
-            availableTags: [],
             createTagValue: ""
         };
     },
-    watch: {
-        songId: {
-            handler: function() {
-                this.updateTagLists();
-            },
-            immediate: true
+    computed: {
+        ...mapGetters(['fullSongList','tagList']),
+        currentTags: function() {
+            if(this.song && this.song.tags) {
+                return this.song.tags;
+            } else {
+                console.log("no current tags");
+                return [];
+            }
         },
-        tagList: function() {
-            this.updateTagLists();
+        availableTags: function() {
+            let currentTags = [];
+            if(this.song && this.song.tags) {
+                currentTags = this.song.tags;
+            }
+            return this.tagList.filter((tag) => {
+                for(let i = 0; i < currentTags.length; i++) {
+                    if(tag.id === currentTags[i].id) {
+                        return false;
+                    }
+                }
+                return true;
+            });
         }
     },
-    computed: {
-        ...mapGetters(['fullSongList','tagList'])
-    },
     methods: {
-        ...mapActions(['fetchFullSongList']),
+        ...mapActions(['fetchTagList']),
         tagSong: async function(tag) {
             await fetch('/api/tag-song', {
                 method: 'POST',
@@ -73,12 +91,12 @@ export default {
                 },
                 body: JSON.stringify(
                     {
-                        "song_id": this.songId,
+                        "song_id": this.song.id,
                         "tag_id": tag.id
                     }
                 )
             });
-            this.fetchFullSongList();
+            this.$emit('change');
         },
         untagSong: async function(tag) {
             await fetch('/api/untag-song', {
@@ -88,48 +106,14 @@ export default {
                 },
                 body: JSON.stringify(
                     {
-                        "song_id": this.songId,
+                        "song_id": this.song.id,
                         "tag_id": tag.id
                     }
                 )
             });
-            this.fetchFullSongList();
-            this.updateTagLists();
-        },
-        updateTagLists: function() {
-            // find song
-            let song = this.fullSongList.find((song) => {
-                if(song.id === this.songId) {
-                    return true;
-                } else {
-                    return false;
-                }
-            })
-
-            if(song == null || this.tagList == null) {
-                this.currentTags = [];
-                this.availableTags = [];
-            } else {
-                this.currentTags = this.tagList.filter((tag) => {
-                    for(let i = 0; i < song.tags.length; i++) {
-                        if(tag.id === song.tags[i].id) {
-                            return true;
-                        }
-                    }
-                    return false;
-                });
-                this.availableTags = this.tagList.filter((tag) => {
-                    for(let i = 0; i < song.tags.length; i++) {
-                        if(tag.id === song.tags[i].id) {
-                            return false;
-                        }
-                    }
-                    return true;
-                });
-            }
+            this.$emit('change');
         },
         onCreateClick: async function() {
-            // TODO improve
             if(this.createTagValue) {
                 let createTagResponse = await fetch('/api/create-tag', {
                     method: 'POST',
@@ -144,7 +128,9 @@ export default {
                 });
                 if(createTagResponse.status === 201) {
                     let createTagResponseData = await createTagResponse.json();
-                    this.tagSong(createTagResponseData);
+                    await this.fetchTagList();
+                    // await this.tagSong(createTagResponseData);
+                    this.$emit('change');
                 }
             }
         }
