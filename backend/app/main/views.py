@@ -5,7 +5,7 @@ from .. import db
 import music_tag
 from base64 import b64encode
 from .models import *
-from .functions import remake_library, create_fari_file, remake_artists_and_albums, delete_artists_and_albums
+from .functions import remake_library, create_fari_file, remake_artists_and_albums, delete_artists_and_albums, get_song_artwork_base64
 import os
 import re
 
@@ -142,6 +142,22 @@ def artist_song_list_view():
     else:
         raise Exception("you must specify an id")
     return jsonify(ArtistNestedSchema().dump(ArtistModel.query.get_or_404(artist_id)))
+
+@main.route('/api/album-artwork', methods=['POST'])
+def album_artwork_view():
+    request_body = request.get_json(force=True)
+    if "id" in request_body:
+        artist_id = request_body["id"]
+    else:
+        raise Exception("you must specify an id")
+    album = AlbumSchema().dump(AlbumModel.query.get_or_404(artist_id))
+    if len(album["songs"]) == 0:
+        return ({}, 404)
+    file_path = album["songs"][0]["path"]
+    album_artwork = get_song_artwork_base64(file_path)
+    if album_artwork is None:
+        return ({}, 404)
+    return jsonify({"artwork": album_artwork})
 
 @main.route('/api/remake-library', methods=['GET', 'POST'])
 def remake_library_view():

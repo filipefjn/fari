@@ -25,6 +25,7 @@
                 v-for="album in selectedArtist.albums" :key="album.id"
             >
                 <FariRowAlbum
+                    :albumId="album.id"
                     :title="album.name"
                     :artist="selectedArtist.name"
                     :year="album.year"

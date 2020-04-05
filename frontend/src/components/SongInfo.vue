@@ -2,6 +2,7 @@
     <div class="song-info-container">
         <div class="song-info-artwork" :class="{'outset': displayArtwork}">
             <transition name="artwork-transition" v-enter v-leave>
+                <!-- TODO improve -->
                 <img class="artwork" v-if="displayArtwork" :key="songArtworkCounter" :src="songInfo.artwork">
             </transition>
         </div>

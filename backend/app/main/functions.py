@@ -2,6 +2,7 @@ from .. import db
 from .models import *
 from ..settings import settings
 import music_tag
+from base64 import b64encode
 import os
 import re
 import random
@@ -12,6 +13,23 @@ def gen_id(base_str):
     h = str(base_str) + str(random.randint(100000, 999999))
     h = hashlib.sha1(h.encode("ascii"))
     return h.hexdigest()
+
+def get_song_artwork_base64(path):
+    if not path:
+        return None
+    path = re.sub(r'^/', '', path)
+    path = re.sub(r'\.\./', '', path)
+    path = os.path.join(settings["media_dir"], path)
+    if not os.path.exists(path):
+        return None
+    if not os.path.isfile(path):
+        return None
+    file = music_tag.load_file(path)
+    artwork = file['artwork']
+    if artwork.first is not None:
+        return "data:" + artwork.first.mime + ";base64," + b64encode(artwork.first.data).decode('ascii')
+    else:
+        return None
 
 def create_fari_file(song_id):
     # find file in database

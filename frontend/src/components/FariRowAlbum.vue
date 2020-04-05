@@ -1,6 +1,8 @@
 <template>
-    <div class="album-container">
-        <div class="album-artwork"></div>
+    <div ref="albumRowContainer" class="album-container">
+        <div class="album-artwork" :style="artworkStyle">
+            <!-- <img class="artwork" v-if="displayArtwork" :src="artwork"> -->
+        </div>
         <div class="album-info">
             <div class="album-title">{{title}}</div>
             <div class="album-artist"><span v-if="year">{{year}} - </span>{{artist}}</div>
@@ -9,8 +11,15 @@
 </template>
 
 <script>
+
+import { mapGetters, mapActions } from "vuex";
+
 export default {
     props: {
+        albumId: {
+            type: Number,
+            required: true,
+        },
         artist: {
             type: String,
             required: true,
@@ -21,6 +30,63 @@ export default {
         },
         year: {
             type: String,
+        }
+    },
+    data: function() {
+        return {
+            displayArtwork: false,
+            artwork: ""
+        };
+    },
+    mounted: function() {
+        this.$nextTick(function() {
+            this.fetchAlbumArtwork();
+        });
+    },
+    computed: {
+        artworkStyle: function() {
+            let style = {};
+            if(this.displayArtwork) {
+                style["background-image"] = 'url("' + this.artwork + '")';
+            }
+            return style;
+        }
+    },
+    methods: {
+        ...mapActions(['getAlbumArtwork']),
+        fetchAlbumArtwork: async function() {
+            let artwork = await this.getAlbumArtwork(this.albumId);
+            if(artwork) {
+                this.artwork = artwork;
+                this.displayArtwork = true;
+            }
+            // OLD
+            // if(this.albumId === undefined || this.albumId === null) {
+            //     return;
+            // }
+            // fetch('/api/album-artwork', {
+            //     method: 'POST',
+            //     headers: {
+            //         "Content-Type": "application/json"
+            //     },
+            //     body: JSON.stringify(
+            //         {
+            //             "id": this.albumId
+            //         }
+            //     )
+            // }).then((response) => {
+            //     if(response.status !== 200) {
+            //         console.error("failed to load artwork for " + this.title);
+            //         return;
+            //     }
+            //     return response.json();
+            // }).then((response) => {
+            //     if(response.artwork) {
+            //         this.artwork = response.artwork;
+            //         this.displayArtwork = true;
+            //     }
+            //     console.log("load artwork successful");
+            // });
         }
     }
 }
@@ -39,6 +105,9 @@ export default {
         height: 4.5rem;
         width: 4.5rem;
         background-color: #282828;
+        overflow: hidden;
+        background-repeat: no-repeat;
+        background-size: contain;
     }
 
     .album-info {

@@ -21,7 +21,8 @@ export default new Vuex.Store({
         displayMobileSidebar: false,
         headerInfo: {},
         listParams: {},
-        loadingScreen: false
+        loadingScreen: false,
+        albumArtworkList: {}
     },
     getters: {
         player: (state) => state.player,
@@ -39,7 +40,8 @@ export default new Vuex.Store({
         displayMobileSidebar: (state) => state.displayMobileSidebar,
         headerInfo: (state) => state.headerInfo,
         listParams: (state) => state.listParams,
-        loadingScreen: (state) => state.loadingScreen
+        loadingScreen: (state) => state.loadingScreen,
+        albumArtworkList: (state) => state.albumArtworkList
     },
     mutations: {
         setPlayer: (state, player) => {
@@ -132,6 +134,12 @@ export default new Vuex.Store({
         },
         setLoadingScreen: (state, value) => {
             state.loadingScreen = !!value;
+        },
+        appendAlbumArtworkList: (state, payload) => {
+            state.albumArtworkList = {
+                ...state.albumArtworkList,
+                ...payload
+            }
         }
     },
     actions: {
@@ -337,6 +345,50 @@ export default new Vuex.Store({
         },
         setLoadingScreen: ({ commit }, value) => {
             commit('setLoadingScreen', !!value);
+        },
+        getAlbumArtwork: async ({ commit, getters }, albumId) => {
+            if(getters.albumArtworkList[albumId] !== undefined) {
+                console.log('artwork already on store');
+                return getters.albumArtworkList[albumId];
+            } else {
+                console.log('artwork not on store');
+                let artwork = await fetch('/api/album-artwork', {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(
+                        {
+                            "id": albumId
+                        }
+                    )
+                }).then((response) => {
+                    if(response.status !== 200) {
+                        //console.error("failed to load artwork");
+                        return undefined;
+                    }
+                    return response.json();
+                }).then((response) => {
+                    if(response === undefined) {
+                        return undefined;
+                    }
+                    if(response.artwork) {
+                        //console.log("load artwork successful");
+                        return response.artwork;
+                    } else {
+                        //console.log("load artwork not available");
+                        return null;
+                    }
+
+                });
+                if(artwork === undefined) {
+                    return;
+                }
+                let payload = {};
+                payload[albumId] = artwork;
+                commit('appendAlbumArtworkList', payload);
+                return artwork;
+            }
         }
     },
     modules: {}
