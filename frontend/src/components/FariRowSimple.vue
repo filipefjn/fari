@@ -31,8 +31,9 @@ export default {
 @import '@/style.scss';
 
 .list-item {
-    padding-top: $list-item-hor-padding;
-    padding-bottom: $list-item-hor-padding;
+    // padding-top: $list-item-hor-padding;
+    // padding-bottom: $list-item-hor-padding;
+    height: 3rem;
     padding-left: 1rem;
     padding-right: 1rem;
     border-top: solid 2px $list-item-line-color;
@@ -43,9 +44,11 @@ export default {
     user-select: none;
 
     &.narrow {
+        height: 2rem;
         border-top-width: 1px;
         font-size: 0.75rem;
-        padding: 0.5rem 0.25rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
     }
 
     &:last-child:not(.no-siblings) {

@@ -362,10 +362,8 @@ export default new Vuex.Store({
         },
         getAlbumArtwork: async ({ commit, getters }, albumId) => {
             if(getters.albumArtworkList[albumId] !== undefined) {
-                console.log('artwork already on store');
                 return getters.albumArtworkList[albumId];
             } else {
-                console.log('artwork not on store');
                 let artwork = await fetch('/api/album-artwork', {
                     method: 'POST',
                     headers: {
@@ -378,7 +376,6 @@ export default new Vuex.Store({
                     )
                 }).then((response) => {
                     if(response.status !== 200) {
-                        //console.error("failed to load artwork");
                         return undefined;
                     }
                     return response.json();
@@ -387,10 +384,8 @@ export default new Vuex.Store({
                         return undefined;
                     }
                     if(response.artwork) {
-                        //console.log("load artwork successful");
                         return response.artwork;
                     } else {
-                        //console.log("load artwork not available");
                         return null;
                     }
 

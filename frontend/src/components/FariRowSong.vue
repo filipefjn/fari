@@ -12,6 +12,14 @@
                     :class="{'disabled': !song.enabled, 'current': currentSong}"
                     v-show="showTracknumber"
                 >{{song.tracknumber}}</div>
+                <div class="rating" @click.stop="() => openRatingMenu($event)">
+                    <img class="rating-image" v-if="song.rating === 0" src="@/assets/rating-none.svg">
+                    <img class="rating-image" v-if="song.rating === 1" src="@/assets/rating-1.svg">
+                    <img class="rating-image" v-if="song.rating === 2" src="@/assets/rating-2.svg">
+                    <img class="rating-image" v-if="song.rating === 3" src="@/assets/rating-3.svg">
+                    <img class="rating-image" v-if="song.rating === 4" src="@/assets/rating-4.svg">
+                    <img class="rating-image" v-if="song.rating === 5" src="@/assets/rating-5.svg">
+                </div>
                 <div class="tracktitle"
                     :class="{'disabled': !song.enabled, 'current': currentSong}"
                 >{{song.tracktitle}}</div>
@@ -28,8 +36,18 @@
             <div class="tag-plus-icon" @click.stop="openFariModalTag()"><fa-icon icon="tags"/></div>
         </div>
 
+        <!-- rating menu -->
+        <FariRatingMenu
+            :show="displayRatingMenu"
+            :posX="ratingMenuPosX"
+            :posY="ratingMenuPosY"
+            :song="song"
+            @close="closeRatingMenu()"
+            @mouseleave="closeRatingMenu()"
+            @change="$emit('change')"/>
+
         <!-- context menu -->
-        <ContextMenu
+        <FariContextMenu
             :show="displayContextMenu"
             :posX="contextMenuPosX"
             :posY="contextMenuPosY"
@@ -37,12 +55,12 @@
             @mouseleave="closeContextMenu()"
         >
             <slot name="contextmenu">
-                <ContextMenuItem @click.stop="contextMenuPlaySong()">Play</ContextMenuItem>
-                <ContextMenuItem @click.stop="openFariModalTag()">Edit tags</ContextMenuItem>
-                <ContextMenuItem v-if="!song.enabled" @click.stop="contextMenuEnableSong()">Enable</ContextMenuItem>
-                <ContextMenuItem v-if="song.enabled" @click.stop="contextMenuDisableSong()">Disable</ContextMenuItem>
+                <FariContextMenuItem @click.stop="contextMenuPlaySong()">Play</FariContextMenuItem>
+                <FariContextMenuItem @click.stop="openFariModalTag()">Edit tags</FariContextMenuItem>
+                <FariContextMenuItem v-if="!song.enabled" @click.stop="contextMenuEnableSong()">Enable</FariContextMenuItem>
+                <FariContextMenuItem v-if="song.enabled" @click.stop="contextMenuDisableSong()">Disable</FariContextMenuItem>
             </slot>
-        </ContextMenu>
+        </FariContextMenu>
 
         <!-- tag modal -->
         <FariModalTag
@@ -54,10 +72,11 @@
 </template>
 
 <script>
-import ContextMenu from '@/components/ContextMenu.vue';
-import ContextMenuItem from '@/components/ContextMenuItem.vue';
+import FariContextMenu from '@/components/FariContextMenu.vue';
+import FariContextMenuItem from '@/components/FariContextMenuItem.vue';
 import FariTag from '@/components/FariTag.vue';
 import FariModalTag from '@/components/FariModalTag.vue';
+import FariRatingMenu from '@/components/FariRatingMenu.vue';
 
 import { mapGetters, mapActions } from 'vuex';
 
@@ -77,20 +96,28 @@ export default {
         showTracknumber: {
             type: Boolean,
             default: false
+        },
+        showRating: {
+            type: Boolean,
+            default: false,
         }
     },
     components: {
-        ContextMenu,
-        ContextMenuItem,
+        FariContextMenu,
+        FariContextMenuItem,
         FariTag,
-        FariModalTag
+        FariModalTag,
+        FariRatingMenu
     },
     data: function() {
         return {
             contextMenuPosX: 150,
             contextMenuPosY: 300,
             displayContextMenu: false,
-            displayFariModalTag: false
+            displayFariModalTag: false,
+            ratingMenuPosX: 150,
+            ratingMenuPosY: 150,
+            displayRatingMenu: false
         }
     },
     computed: {
@@ -111,6 +138,14 @@ export default {
         },
         closeContextMenu: function() {
             this.displayContextMenu = false;
+        },
+        openRatingMenu: function(event) {
+            this.displayRatingMenu = true;
+            this.ratingMenuPosX = event.clientX;
+            this.ratingMenuPosY = event.clientY;
+        },
+        closeRatingMenu: function(event) {
+            this.displayRatingMenu = false;
         },
         openFariModalTag: function() {
             this.displayFariModalTag = true;
@@ -206,15 +241,15 @@ export default {
     }
 
     .song-row-info {
-
-        padding-top: $list-item-hor-padding;
-        padding-bottom: $list-item-hor-padding;
         padding-left: 1rem;
         padding-right: 1rem;
+        height: 3rem;
         color: $text-color;
 
         &.narrow {
-            padding: 0.5rem 0.25rem;
+            height: 2rem;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
         }
 
         display: flex;
@@ -237,14 +272,39 @@ export default {
             overflow: hidden;
         }
 
+        .tracknumber, .tracktitle, .artist {
+            display: flex;
+            align-items: center;
+        }
+
         .tracknumber {
             // flex: 1;
             width: 3rem;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
-            text-align: right;
+            justify-content: flex-end;
             padding-right: 1.5rem;
+        }
+
+        .rating {
+            margin-right: 1.25rem;
+            // color: #cecece;
+            padding: $list-item-clickable-icon-padding;
+            border-radius: 6px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            &:hover {
+                background-color: $list-item-icon-hover-bgcolor;
+            }
+
+            .rating-image {
+                margin-top: 1px;
+                height: 1rem;
+            }
         }
 
         .tracktitle {
@@ -254,6 +314,7 @@ export default {
             white-space: nowrap;
             text-overflow: ellipsis;
             padding-right: 1.5rem;
+            justify-content: flex-start;
         }
 
         .artist {
@@ -262,6 +323,7 @@ export default {
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
+            justify-content: flex-start;
         }
 
         .disabled {

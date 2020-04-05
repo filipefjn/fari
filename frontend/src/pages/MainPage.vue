@@ -1,12 +1,13 @@
 <template>
     <div class="container">
         <FariSidebarMobile @change="(content) => selectedContent = content"/>
+        <!-- <FariRatingMenu/> -->
         <div class="page">
             <FariHeader class="header">
                 <template v-slot:right>
-                    <FariHeaderButton :selected="!!listParams.isNarrow" @click="toggleNarrow()">
+                    <!-- <FariHeaderButton :selected="!!listParams.isNarrow" @click="toggleNarrow()">
                         <fa-icon icon="compress-arrows-alt"/>
-                    </FariHeaderButton>
+                    </FariHeaderButton> -->
                     <FariHeaderButton :selected="!!listParams.showTags" @click="toggleTags()">
                         <fa-icon icon="tags"/>
                     </FariHeaderButton>
@@ -24,7 +25,6 @@
             <FariFooter class="footer"/>
         </div>
     </div>
-
 </template>
 
 <script>
@@ -40,6 +40,7 @@ import FariViewArtists from '@/components/FariViewArtists.vue';
 import FariViewFilterTags from '@/components/FariViewFilterTags.vue';
 import FariViewServer from '@/components/FariViewServer.vue';
 import FariHeaderButton from '@/components/FariHeaderButton.vue';
+import FariRatingMenu from '@/components/FariRatingMenu.vue';
 
 import { mapGetters } from 'vuex';
 
@@ -56,7 +57,8 @@ export default {
         FariViewArtists,
         FariViewFilterTags,
         FariViewServer,
-        FariHeaderButton
+        FariHeaderButton,
+        FariRatingMenu
     },
     data: function() {
         return {

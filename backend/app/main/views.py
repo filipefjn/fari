@@ -268,3 +268,24 @@ def add_tag_to_all_view():
     db.session.commit()
 
     return jsonify(TagSchema().dump(tag))
+
+@main.route('/api/change-song-rating', methods=['POST'])
+def change_song_rating_view():
+    request_body = request.get_json(force=True)
+    if "song_id" not in request_body:
+        return ("", 400)
+    if "rating" not in request_body:
+        return ("", 400)
+    song_rating = request_body["rating"]
+    if not isinstance(song_rating, int):
+        return ("", 400)
+    song_rating = max(song_rating, 0)
+    song_rating = min(song_rating, 5)
+    song = SongModel.query.get_or_404(request_body["song_id"])
+    song.rating = song_rating
+    if song_rating == 0 or song_rating > 2:
+        song.enabled = True
+    else:
+        song.enabled = False
+    db.session.commit()
+    return {}

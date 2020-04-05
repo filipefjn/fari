@@ -39,6 +39,7 @@ class SongModel(db.Model):
     year        = db.Column(db.String(20))
     discnumber  = db.Column(db.Integer, default=1)
     track_order = db.Column(db.String(20))
+    rating      = db.Column(db.Integer, default=0)
     tags        = db.relationship("TagModel", secondary=songs_tags_association, back_populates="songs", lazy=True)
 
 class SongSchema(ma.Schema):
@@ -57,6 +58,7 @@ class SongSchema(ma.Schema):
             "year",
             "discnumber",
             "track_order",
+            "rating",
             "tags"
         )
     tags = ma.Nested(TagSchema, many=True)

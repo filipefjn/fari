@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import ContextMenuItem from "@/components/ContextMenuItem.vue";
+import FariContextMenuItem from "@/components/FariContextMenuItem.vue";
 
 export default {
     props: {
@@ -23,7 +23,7 @@ export default {
         }
     },
     components: {
-        ContextMenuItem
+        FariContextMenuItem
     },
     computed: {
         containerStyle: function() {

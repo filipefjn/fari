@@ -37,6 +37,7 @@
                     @playSong="playSong(song)"
                     @change="loadArtistInfo(selectedArtist)"
                     showTracknumber
+                    showRating
                 ></FariRowSong>
             </div>
         </FariList>
