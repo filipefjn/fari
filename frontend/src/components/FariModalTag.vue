@@ -6,8 +6,7 @@
         </FariModalSection>
         <FariModalTitle>Create new tag</FariModalTitle>
         <FariModalSection>
-            <input type="text" v-model="createTagValue">
-            <button @click="onCreateClick()">Create</button>
+            <FariInput :buttons="[{text: 'Create', emit: 'create'}]" @create="onCreateClick()"/>
         </FariModalSection>
         <FariModalTitle>Available tags</FariModalTitle>
         <FariModalSection>
@@ -21,6 +20,7 @@ import FariTag from '@/components/FariTag.vue';
 import FariModal from '@/components/FariModal.vue';
 import FariModalSection from '@/components/FariModalSection.vue';
 import FariModalTitle from '@/components/FariModalTitle.vue';
+import FariInput from '@/components/FariInput.vue';
 
 import { mapActions, mapGetters } from 'vuex';
 
@@ -39,7 +39,8 @@ export default {
         FariTag,
         FariModal,
         FariModalSection,
-        FariModalTitle
+        FariModalTitle,
+        FariInput
     },
     data: function() {
         return {
@@ -128,6 +129,7 @@ export default {
             }
         },
         onCreateClick: async function() {
+            // TODO improve
             if(this.createTagValue) {
                 let createTagResponse = await fetch('/api/create-tag', {
                     method: 'POST',
