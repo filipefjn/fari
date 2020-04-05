@@ -77,7 +77,7 @@ export default {
         this.setHeaderInfo();
     },
     methods: {
-        ...mapActions(['fetchFullSongList']),
+        ...mapActions(['setFullSongListPendingRefresh']),
         fetchArtistList: function() {
             fetch('/api/artist-list', {
                 method: 'GET',
@@ -129,6 +129,7 @@ export default {
             await this.$store.dispatch('playFromQueue', queuePlayIndex);
         },
         loadArtistInfo: function(artist) {
+            this.setFullSongListPendingRefresh();
             fetch('/api/artist-song-list', {
                 method: 'POST',
                 headers: {

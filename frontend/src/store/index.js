@@ -11,6 +11,7 @@ export default new Vuex.Store({
         playerInfo: null,
         playerVolume: 0.8,
         fullSongList: [],
+        fullSongListPendingRefresh: false,
         tagList: [],
         songInfo: null,
         songArtworkCounter: 0,
@@ -30,6 +31,7 @@ export default new Vuex.Store({
         playerInfo: (state) => state.playerInfo,
         playerVolume: (state) => state.playerVolume,
         fullSongList: (state) => state.fullSongList,
+        fullSongListPendingRefresh: (state) => state.fullSongListPendingRefresh,
         tagList: (state) => state.tagList,
         songInfo: (state) => state.songInfo,
         songArtworkCounter: (state) => state.songArtworkCounter,
@@ -77,6 +79,9 @@ export default new Vuex.Store({
         },
         setFullSongList: (state, fullSongList) => {
             state.fullSongList = fullSongList;
+        },
+        setFullSongListPendingRefresh: (state, pending) => {
+            state.fullSongListPendingRefresh = pending;
         },
         setTagList: (state, tagList) => {
             state.tagList = [
@@ -208,6 +213,15 @@ export default new Vuex.Store({
                 return;
             }
             await dispatch('fetchTagList');
+        },
+        setFullSongListPendingRefresh: ({ commit }) => {
+            commit('setFullSongListPendingRefresh', true);
+        },
+        refreshFullSongList: async ({ commit, dispatch, getters }) => {
+            if(getters.fullSongListPendingRefresh) {
+                await dispatch('fetchFullSongList');
+                commit('setFullSongListPendingRefresh', false);
+            }
         },
         fetchTagList: async ({commit}) => {
             let setTagList = await fetch('/api/tag-list', {

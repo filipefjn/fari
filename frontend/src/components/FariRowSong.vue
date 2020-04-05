@@ -39,8 +39,8 @@
             <slot name="contextmenu">
                 <ContextMenuItem @click.stop="contextMenuPlaySong()">Play</ContextMenuItem>
                 <ContextMenuItem @click.stop="openFariModalTag()">Edit tags</ContextMenuItem>
-                <ContextMenuItem @click.stop="contextMenuEnableSong()">Enable</ContextMenuItem>
-                <ContextMenuItem @click.stop="contextMenuDisableSong()">Disable</ContextMenuItem>
+                <ContextMenuItem v-if="!song.enabled" @click.stop="contextMenuEnableSong()">Enable</ContextMenuItem>
+                <ContextMenuItem v-if="song.enabled" @click.stop="contextMenuDisableSong()">Disable</ContextMenuItem>
             </slot>
         </ContextMenu>
 

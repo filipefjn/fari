@@ -71,6 +71,7 @@ export default {
         this.$store.dispatch('setHeaderInfo', {
             title: "Filter by tags"
         });
+        this.refreshFullSongList();
     },
     computed: {
         ...mapGetters(['tagList', 'fullSongList']),
@@ -117,6 +118,7 @@ export default {
         }
     },
     methods: {
+        ...mapActions(['refreshFullSongList']),
         onSongClick: function(song) {
             if(!song.enabled) {
                 return;
