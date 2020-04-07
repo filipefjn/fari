@@ -182,8 +182,8 @@ export default {
         }
     },
     watch: {
-        selectedArtist: function(val) {
-            if(val) {
+        selectedArtist: function(newValue, oldValue) {
+            if(!oldValue && newValue) {
                 // move to the top on next tick
                 this.$nextTick(() => {
                     this.$refs.topRef.scrollIntoView({block: "start"});
