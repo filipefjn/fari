@@ -23,6 +23,7 @@ export default {
         };
     },
     activated: function() {
+        this.setDisplayNavigationButtons(false);
         this.$store.dispatch('setHeaderInfo', {
             title: "Server",
         });
@@ -31,7 +32,7 @@ export default {
         ...mapGetters([]),
     },
     methods: {
-        ...mapActions(["setLoadingScreen"]),
+        ...mapActions(["setLoadingScreen", 'setDisplayNavigationButtons']),
         onRemakeLibraryClick: function() {
             fetch('/api/remake-library', {
                 method: 'GET'

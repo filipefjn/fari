@@ -1,6 +1,8 @@
 <template>
     <div class="header">
         <div class="hamburger" @click="onHamburgerClick()"><fa-icon icon="bars"/></div>
+        <div class="back" v-show="displayNavigationButtons" :class="{'disabled': !backButtonAction}" @click="onBackClick()"><fa-icon icon="caret-left"/></div>
+        <div class="forward disabled" v-show="displayNavigationButtons"><fa-icon icon="caret-right"/></div>
         <div class="title">{{headerInfo.title}}</div>
         <div class="subtitle">{{headerInfo.subtitle}}</div>
         <div class="spacer"></div>
@@ -11,15 +13,22 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
     computed: {
-        ...mapGetters(['headerInfo']),
+        ...mapGetters(['headerInfo', 'backButtonAction', 'displayNavigationButtons']),
     },
     methods: {
         onHamburgerClick: function() {
             this.$store.dispatch('openMobileSidebar');
+        },
+        onBackClick: function() {
+            if(!this.backButtonAction) {
+                return;
+            } else {
+                this.backButtonAction();
+            }
         }
     }
 }
@@ -43,7 +52,7 @@ export default {
     }
 
     .hamburger {
-        margin-right: 1rem;
+        // margin-right: 1rem;
         margin-left: 0.25rem;
         font-size: 1.5rem;
         width: 2.5rem;
@@ -67,6 +76,47 @@ export default {
             background-color: rgb(44, 44, 44);
         }
     }
+
+    .back, .forward {
+        font-size: 1.75rem;
+        margin-left: 0.25rem;
+        margin-right: 0.5rem;
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 4px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+
+        &:hover {
+            background-color: rgb(34, 34, 34);
+        }
+
+        &:active {
+            background-color: rgb(44, 44, 44);
+        }
+
+        &.back {
+            margin-right: 0;
+            padding-right: 4px;
+        }
+
+        &.forward {
+            margin-left: 0;
+            padding-left: 3px;
+        }
+
+        &.disabled {
+            color: #444444;
+        }
+
+        &:not(.disabled) {
+            color: $primary;
+        }
+    }
+
+
 
     .title {
         font-size: 2rem;

@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <FariSidebarMobile @change="(content) => selectedContent = content"/>
-        <!-- <FariRatingMenu/> -->
+        <!-- <FariRatingMenu :posY="300" :posX="300" :show="true" :song="{}"/> -->
         <div class="page">
             <FariHeader class="header">
                 <template v-slot:right>

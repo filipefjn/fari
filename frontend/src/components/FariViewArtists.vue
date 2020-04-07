@@ -1,10 +1,11 @@
 <template>
     <div class="container">
+        <div ref="topRef"></div>
         <FariList v-if="!selectedArtist">
             <FariRowSimple
                 v-for="artist in artistList"
                 :key="artist.id"
-                @click="loadArtistInfo(artist)"
+                @click="onArtistClick(artist)"
             >{{artist.name}}</FariRowSimple>
         </FariList>
         <FariList v-if="selectedArtist">
@@ -77,9 +78,16 @@ export default {
     },
     activated: function() {
         this.setHeaderInfo();
+        this.setDisplayNavigationButtons(true);
+        if(this.isSelectedArtist) {
+            this.setBackButtonAction(this.onGoBackClick);
+        }
+    },
+    deactivated: function() {
+        this.resetBackButtonAction();
     },
     methods: {
-        ...mapActions(['setFullSongListPendingRefresh']),
+        ...mapActions(['setFullSongListPendingRefresh', 'setBackButtonAction', 'resetBackButtonAction', 'setDisplayNavigationButtons']),
         fetchArtistList: function() {
             fetch('/api/artist-list', {
                 method: 'GET',
@@ -130,6 +138,10 @@ export default {
             await this.$store.dispatch('setQueue', queue);
             await this.$store.dispatch('playFromQueue', queuePlayIndex);
         },
+        onArtistClick: function(artist) {
+            this.setBackButtonAction(this.onGoBackClick);
+            this.loadArtistInfo(artist);
+        },
         loadArtistInfo: function(artist) {
             this.isSelectedArtist = true;
             fetch('/api/artist-song-list', {
@@ -174,7 +186,7 @@ export default {
             if(val) {
                 // move to the top on next tick
                 this.$nextTick(() => {
-                    this.$refs.goBackRow.$el.scrollIntoView({block: "start"});
+                    this.$refs.topRef.scrollIntoView({block: "start"});
                 });
             }
             this.setHeaderInfo();

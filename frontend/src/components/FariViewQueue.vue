@@ -23,7 +23,7 @@
 import FariList from '@/components/FariList.vue';
 import FariRowSimple from '@/components/FariRowSimple.vue';
 import FariRowSongId from '@/components/FariRowSongId.vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
     components: {
@@ -37,6 +37,7 @@ export default {
         };
     },
     activated: function() {
+        this.setDisplayNavigationButtons(false);
         this.$store.dispatch('setHeaderInfo', {
             title: "Queue",
         });
@@ -45,6 +46,7 @@ export default {
         ...mapGetters(['queue', 'queuePlayIndex', 'queuePlaySongId']),
     },
     methods: {
+        ...mapActions(['setDisplayNavigationButtons']),
         playQueuePosition: function(pos) {
             this.$store.dispatch('playFromQueue', pos);
         },

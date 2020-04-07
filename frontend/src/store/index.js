@@ -23,7 +23,9 @@ export default new Vuex.Store({
         headerInfo: {},
         listParams: {},
         loadingScreen: false,
-        albumArtworkList: {}
+        albumArtworkList: {},
+        displayNavigationButtons: false,
+        backButtonAction: null
     },
     getters: {
         player: (state) => state.player,
@@ -43,7 +45,9 @@ export default new Vuex.Store({
         headerInfo: (state) => state.headerInfo,
         listParams: (state) => state.listParams,
         loadingScreen: (state) => state.loadingScreen,
-        albumArtworkList: (state) => state.albumArtworkList
+        albumArtworkList: (state) => state.albumArtworkList,
+        displayNavigationButtons: (state) => state.displayNavigationButtons,
+        backButtonAction: (state) => state.backButtonAction
     },
     mutations: {
         setPlayer: (state, player) => {
@@ -145,6 +149,12 @@ export default new Vuex.Store({
                 ...state.albumArtworkList,
                 ...payload
             }
+        },
+        setDisplayNavigationButtons: (state, value) => {
+            state.displayNavigationButtons = value;
+        },
+        setBackButtonAction: (state, action) => {
+            state.backButtonAction = action;
         }
     },
     actions: {
@@ -398,7 +408,24 @@ export default new Vuex.Store({
                 commit('appendAlbumArtworkList', payload);
                 return artwork;
             }
+        },
+        setDisplayNavigationButtons: ({ commit }, value = true) => {
+            commit('setDisplayNavigationButtons', !!value);
+        },
+        setBackButtonAction: ({ commit, dispatch }, action) => {
+            // TODO check if action is a function
+            if(action) {
+                let actionWrapper = () => {
+                    dispatch('resetBackButtonAction');
+                    return action();
+                };
+                commit('setBackButtonAction', actionWrapper);
+            }
+        },
+        resetBackButtonAction: ({ commit }) => {
+            commit('setBackButtonAction', null);
         }
+
     },
     modules: {}
 })

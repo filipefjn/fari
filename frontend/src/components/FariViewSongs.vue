@@ -40,8 +40,11 @@ export default {
             title: "All Songs",
         });
     },
+    activated: function() {
+        this.setDisplayNavigationButtons(false);
+    },
     methods: {
-        ...mapActions(['fetchFullSongList']),
+        ...mapActions(['fetchFullSongList', 'setDisplayNavigationButtons']),
         onSongClick: function(song) {
             if(!song.enabled) {
                 return;

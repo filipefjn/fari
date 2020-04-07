@@ -68,6 +68,7 @@ export default {
         };
     },
     activated: function() {
+        this.setDisplayNavigationButtons(false);
         this.$store.dispatch('setHeaderInfo', {
             title: "Filter by tags"
         });
@@ -118,7 +119,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['refreshFullSongList']),
+        ...mapActions(['refreshFullSongList', 'setDisplayNavigationButtons']),
         onSongClick: function(song) {
             if(!song.enabled) {
                 return;

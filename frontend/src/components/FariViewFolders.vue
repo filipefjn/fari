@@ -21,6 +21,7 @@
 import FariList from '@/components/FariList.vue';
 import FariRowSimple from '@/components/FariRowSimple.vue';
 import FariRowIcon from '@/components/FariRowIcon.vue';
+import { mapActions } from 'vuex';
 
 export default {
     components: {
@@ -41,8 +42,10 @@ export default {
     },
     activated: function() {
         this.updateHeader();
+        this.setDisplayNavigationButtons(false);
     },
     methods: {
+        ...mapActions(['setDisplayNavigationButtons']),
         fetchFolderContent: function() {
             fetch('/api/folder-content', {
                 method: 'POST',
