@@ -77,6 +77,7 @@ export default {
 
     & > * {
         height: 2rem;
+        width: 2rem;
         margin: 0.25rem 0.1rem;
         padding: 0.5rem;
         border-radius: 4px;
