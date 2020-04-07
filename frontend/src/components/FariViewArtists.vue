@@ -182,14 +182,16 @@ export default {
         }
     },
     watch: {
-        isSelectedArtist: function(val) {
+        selectedArtist: function(val) {
             if(val) {
                 // move to the top on next tick
                 this.$nextTick(() => {
                     this.$refs.topRef.scrollIntoView({block: "start"});
                 });
             }
-            this.setHeaderInfo();
+            this.$nextTick(() => {
+                this.setHeaderInfo();
+            });
         }
     }
 }
