@@ -1,0 +1,12 @@
+server {
+    listen 80;
+    gzip on;
+    gzip_types text/html text/plain application/json application/javascript text/css;
+    gzip_min_length 1024;
+    gzip_proxied no-cache no-store private expired auth;
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/srv/fari.sock;
+    }
+}
