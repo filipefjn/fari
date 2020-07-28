@@ -1,6 +1,6 @@
 
 settings = {
-    "media_dir": "/home/sloth/fari/", # must be an absolute path
+    "media_dir": "/srv/library/", # must be an absolute path
     "file_regex": r'((\.mp3)|(\.flac))$',
     "file_tags": [
         "tracknumber",

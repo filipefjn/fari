@@ -54,19 +54,19 @@ button::-moz-focus-inner {
 
 // scrollbar css for chrome/chromium
 ::-webkit-scrollbar {
-  width: 12px;
+    width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #2A2A2A;
+    background: #2A2A2A;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #444444;
+    background: #444444;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #444444;
+    background: #444444;
 }
 
 // scrollbar css for other browsers
