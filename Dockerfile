@@ -18,6 +18,8 @@ RUN nginx -t
 
 RUN rm -rf /srv/app/venv
 
+RUN rm /srv/app/app/db.sqlite
+
 RUN cd /srv/app \
 && python3 -m venv venv \
 && . venv/bin/activate \
@@ -31,5 +33,5 @@ EXPOSE 80
 
 WORKDIR /srv/app
 
-CMD [ "bash", "-c", "service nginx start && . venv/bin/activate && ./venv/bin/gunicorn --capture-output --bind unix:/srv/fari.sock wsgi:app" ]
+CMD [ "bash", "-c", "service nginx start && . venv/bin/activate && ./venv/bin/gunicorn --timeout 600 --bind unix:/srv/fari.sock wsgi:app" ]
 
