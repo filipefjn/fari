@@ -33,5 +33,5 @@ EXPOSE 80
 
 WORKDIR /srv/app
 
-CMD [ "bash", "-c", "service nginx start && . venv/bin/activate && ./venv/bin/gunicorn --timeout 600 --bind unix:/srv/fari.sock wsgi:app" ]
+CMD [ "bash", "-c", "service nginx start && . venv/bin/activate && ./venv/bin/gunicorn --timeout 600 --access-logfile access.log --error-logfile error.log --bind unix:/srv/fari.sock wsgi:app" ]
 
