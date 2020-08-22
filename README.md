@@ -19,5 +19,25 @@ docker build -t fari .
 Run the Docker image:
 
 ```bash
-docker run -v "<your-library-directory>:/srv/library" -p 80:80 -d fari
+docker run -v "<your-library-directory>:/srv/library" -p 80:80 --restart unless-stopped -d fari
+```
+
+# Setup development environment
+
+## On Debian/Ubuntu
+
+Make sure `nodejs` and `python3-venv` are installed
+
+```bash
+cd frontend
+npm install
+npm run build
+cd ../backend
+python3 -m venv venv
+. venv/bin/activate
+pip3 install wheel
+pip3 install -r requirements.txt
+python3 db.py
+chmod +x start.sh
+./start.sh
 ```
