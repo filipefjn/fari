@@ -40,7 +40,7 @@ class SongModel(db.Model):
     discnumber  = db.Column(db.Integer, default=1)
     track_order = db.Column(db.String(20))
     rating      = db.Column(db.Integer, default=0)
-    tags        = db.relationship("TagModel", secondary=songs_tags_association, back_populates="songs", lazy=True)
+    tags        = db.relationship("TagModel", secondary=songs_tags_association, back_populates="songs", order_by="TagModel.name", lazy=True)
 
 class SongSchema(ma.Schema):
     class Meta:

@@ -194,7 +194,8 @@ def disable_songs_view():
 
 @main.route('/api/tag-list', methods=["GET"])
 def tag_list_view():
-    return jsonify(TagSchema(many=True).dump(TagModel.query.all()))
+    tags = TagModel.query.order_by(TagModel.name).all()
+    return jsonify(TagSchema(many=True).dump(tags))
 
 @main.route('/api/create-tag', methods=["POST"])
 def create_tag_view():
