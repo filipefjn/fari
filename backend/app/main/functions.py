@@ -8,6 +8,7 @@ import re
 import random
 import hashlib
 import json
+import time
 
 def gen_id(base_str):
     h = str(base_str) + str(random.randint(100000, 999999))
@@ -53,7 +54,7 @@ def create_fari_file(song_id):
 
     return fari_file_content
 
-def get_or_create_tag(tag_name):
+def get_or_create_tag(tag_name, **kwargs):
     # check if the tag already exists
     queried_tag = TagModel.query.filter(TagModel.name == tag_name).first()
     if queried_tag:
@@ -63,7 +64,10 @@ def get_or_create_tag(tag_name):
             name=tag_name
         )
         db.session.add(created_tag)
-        db.session.commit()
+        if 'commit' not in kwargs:
+            kwargs['commit'] = True
+        if kwargs['commit']:
+            db.session.commit()
         return created_tag
 
 def delete_artists_and_albums():
@@ -76,8 +80,15 @@ def delete_artists_and_albums():
     db.session.commit()
 
 
-def remake_artists_and_albums():
-    delete_artists_and_albums()
+def remake_artists_and_albums(**kwargs):
+    # start time
+    start_time = time.time()
+
+    # delete artists and albums
+    if 'delete' not in kwargs:
+        kwargs['delete'] = True
+    if kwargs['delete']:
+        delete_artists_and_albums()
 
     artists_found = 0
     albums_found = 0
@@ -98,7 +109,6 @@ def remake_artists_and_albums():
                 name=song_artist_name
             )
             db.session.add(song_artist)
-            db.session.commit()
             artists_found += 1
 
         # get song's album name
@@ -112,7 +122,6 @@ def remake_artists_and_albums():
             if album.name.lower() == song_album_name.lower():
                 found_album = True
                 song.album = album
-                db.session.commit()
                 break
 
         # if does not, create it
@@ -123,8 +132,14 @@ def remake_artists_and_albums():
                 year=song.year
             )
             song.album = song_album
-            db.session.commit()
             albums_found += 1
+
+    if 'commit' not in kwargs:
+        kwargs['commit'] = True
+    if kwargs['commit']:
+        db.session.commit()
+
+    print("Remake artists/albums total time: %.2fs" % (time.time() - start_time))
 
     return {
         "artists_found": artists_found,
@@ -151,101 +166,87 @@ def remake_library():
         db.session.delete(tag)
     db.session.commit()
 
-    # go through all songs, read their tags and write to the database
-    # via recursive function
-    def recursive_search(current_path):
+    # start time
+    start_time = time.time()
 
-        # function values
-        songs_found = 0
-        fari_files_found = 0
-        fari_files_created = 0
+    # search directory
+    filtered_file_list = []
+    for root, dirs, files in os.walk(settings["media_dir"]):
+        for file in files:
+            if re.search(re.compile(settings["file_regex"], re.IGNORECASE), file) is not None:
+                file_path = os.path.join(root, file)
+                filtered_file_list.append(file_path)
 
-        # check if current path is a directory (not a file)
-        if not os.path.isfile(current_path):
-            subfolders = []
-            files = []
-            dir_content = os.listdir(current_path)
+    # files loop
+    fari_files_found = 0
+    songs_found = 0
+    fari_files_created = 0
+    for file in filtered_file_list:
+        file_absolute_path = os.path.join(settings["media_dir"], file)
+        file_tags = music_tag.load_file(file_absolute_path)
+        song_id = gen_id(str(file_tags["tracktitle"].value) + str(file_tags["artist"].value))
+        song_tracknumber = extract_integer_or(file_tags["tracknumber"].value, 0)
+        song_discnumber = extract_integer_or(file_tags["discnumber"].value, 1)
+        song_track_order = "%02d-%03d" % (song_discnumber, song_tracknumber)
+        song = SongModel(
+            id=song_id,
+            path=file_absolute_path.replace(settings["media_dir"], "/", 1),
+            enabled=True,
+            tracknumber=song_tracknumber,
+            tracktitle=file_tags["tracktitle"].value,
+            albumartist=file_tags["albumartist"].value,
+            artist=file_tags["artist"].value,
+            album_name=file_tags["album"].value,
+            discnumber=song_discnumber,
+            track_order=song_track_order,
+            year=file_tags["year"].value
+        )
+        # check for .fari file
+        fari_file_absolute_path = file_absolute_path + ".fari"
+        fari_file_exists = os.path.exists(fari_file_absolute_path)
 
-            # get files and subfolders
-            for item in dir_content:
-                if os.path.isdir(os.path.join(current_path, item)):
-                    subfolders.append(item)
-                else:
-                    if "file_regex" in settings and re.search(settings["file_regex"], item) is not None:
-                        files.append(item)
+        # if .fari file exists, extract info from it
+        if fari_file_exists:
+            with open(fari_file_absolute_path, "r") as fari_file:
+                fari_file_content = json.loads(fari_file.read())
+                if "id" in fari_file_content:
+                    song_id = fari_file_content["id"]
+                    song.id = fari_file_content["id"]
+                if "enabled" in fari_file_content:
+                    song.enabled = fari_file_content["enabled"]
+                if "rating" in fari_file_content:
+                    song.rating = fari_file_content["rating"]
+                if "tags" in fari_file_content:
+                    tag_list = []
+                    for tag_name in fari_file_content["tags"]:
+                        song.tags.append(get_or_create_tag(tag_name, commit=False))
+                fari_files_found += 1
 
-            # files loop
-            for file in files:
-                file_absolute_path = os.path.join(current_path, file)
-                file_tags = music_tag.load_file(file_absolute_path)
-                song_id = gen_id(str(file_tags["tracktitle"].value) + str(file_tags["artist"].value))
-                song_tracknumber = extract_integer_or(file_tags["tracknumber"].value, 0)
-                song_discnumber = extract_integer_or(file_tags["discnumber"].value, 1)
-                song_track_order = "%02d-%03d" % (song_discnumber, song_tracknumber)
-                song = SongModel(
-                    id=song_id,
-                    path=os.path.join(current_path, file).replace(settings["media_dir"], "/", 1),
-                    enabled=True,
-                    tracknumber=song_tracknumber,
-                    tracktitle=file_tags["tracktitle"].value,
-                    albumartist=file_tags["albumartist"].value,
-                    artist=file_tags["artist"].value,
-                    album_name=file_tags["album"].value,
-                    discnumber=song_discnumber,
-                    track_order=song_track_order,
-                    year=file_tags["year"].value
-                )
-                # check for .fari file
-                fari_file_absolute_path = file_absolute_path + ".fari"
-                fari_file_exists = os.path.exists(fari_file_absolute_path)
+        # insert song into the database
+        db.session.add(song)
+        songs_found += 1
 
-                # if .fari file exists, extract info from it
-                if fari_file_exists:
-                    with open(fari_file_absolute_path, "r") as fari_file:
-                        fari_file_content = json.loads(fari_file.read())
-                        if "id" in fari_file_content:
-                            song_id = fari_file_content["id"]
-                            song.id = fari_file_content["id"]
-                        if "enabled" in fari_file_content:
-                            song.enabled = fari_file_content["enabled"]
-                        if "rating" in fari_file_content:
-                            song.rating = fari_file_content["rating"]
-                        if "tags" in fari_file_content:
-                            tag_list = []
-                            for tag_name in fari_file_content["tags"]:
-                                song.tags.append(get_or_create_tag(tag_name))
-                        fari_files_found += 1
+        # if .fari file does not exist, create one
+        if not fari_file_exists:
+            create_fari_file(song_id)
+            fari_files_created += 1
 
-                # insert song into the database
-                db.session.add(song)
-                db.session.commit()
-                songs_found += 1
+    print("Song search total time: %.2fs" % (time.time() - start_time))
 
-                # if .fari file does not exist, create one
-                if not fari_file_exists:
-                    create_fari_file(song_id)
-                    fari_files_created += 1
+    # remake artists and albums
+    remake_artists_and_albums_result = remake_artists_and_albums(delete=False, commit=False)
 
-            # subfolders loop
-            for subfolder in subfolders:
-                subfolder_result = recursive_search(os.path.join(current_path, subfolder))
-                songs_found += subfolder_result["songs_found"]
-                fari_files_found += subfolder_result["fari_files_found"]
-                fari_files_created += subfolder_result["fari_files_created"]
+    # commit all changes
+    db.session.commit()
 
-        return {
-            "songs_found": songs_found,
-            "fari_files_found": fari_files_found,
-            "fari_files_created": fari_files_created
-        }
+    total_time = time.time() - start_time
+    print("Remake library total time: %.2fs" % (total_time))
 
-    media_dir = os.path.join(settings["media_dir"], "")
-    result = recursive_search(media_dir)
-
-    result = {
-        **result,
-        **remake_artists_and_albums()
+    return {
+        "songs_found": songs_found,
+        "fari_files_found": fari_files_found,
+        "fari_files_created": fari_files_created,
+        "total_time": total_time,
+        **remake_artists_and_albums_result,
     }
-
-    return result
 

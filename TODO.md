@@ -14,7 +14,7 @@
   - add filter by rating (between x an y)
   - implement AND/OR logic on tag inclusion
   - implement tag exclusion
-  - order tags alphabetically
+  - ~~order tags alphabetically~~
   - search tags
 - queue view
   - lazy load full queue if long
@@ -52,6 +52,7 @@
 - create new APIs more REST-like
 - improve library remake/refresh
   - current algorithm is very slow
+  - ~~remove unnecessary database commits~~
 - implement 'users' and 'user_permissions' tables
 
 ## repository
