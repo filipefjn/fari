@@ -1,8 +1,9 @@
 <template>
     <FariList>
         <div class="view-wrapper">
+            <FariButton @click="onUpdateLibraryClick()">Update Library</FariButton>
             <FariButton @click="onRemakeLibraryClick()">Remake library</FariButton>
-            <!-- <FariButton>Remake artists/albums</FariButton> -->
+            <FariButton @click="onDeleteLibraryClick()">Delete library</FariButton>
         </div>
     </FariList>
 </template>
@@ -34,11 +35,34 @@ export default {
     methods: {
         ...mapActions(["setLoadingScreen", 'setDisplayNavigationButtons']),
         onRemakeLibraryClick: function() {
-            fetch('/api/remake-library', {
-                method: 'GET'
+            fetch('/api/v2/library/remake', {
+                method: 'POST'
             }).then(async (response) => {
                 if(response.status === 200) {
-                    console.log(await response.json());
+                    window.location.reload();
+                } else {
+                    console.error(response);
+                }
+            });
+            this.setLoadingScreen(true);
+        },
+        onUpdateLibraryClick: function() {
+            fetch('/api/v2/library/update', {
+                method: 'POST'
+            }).then(async (response) => {
+                if(response.status === 200) {
+                    window.location.reload();
+                } else {
+                    console.error(response);
+                }
+            });
+            this.setLoadingScreen(true);
+        },
+        onDeleteLibraryClick: function() {
+            fetch('/api/v2/library/delete', {
+                method: 'POST'
+            }).then(async (response) => {
+                if(response.status === 200) {
                     window.location.reload();
                 } else {
                     console.error(response);
