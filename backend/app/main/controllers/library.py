@@ -191,7 +191,7 @@ class LibraryController:
 
 
     """
-    Create a new tag if it doesn't exist already
+    Creates a new tag if it doesn't exist already
     """
     @classmethod
     def create_tag(self, tag_name, **kwargs):
@@ -215,6 +215,34 @@ class LibraryController:
         if kwargs['commit']:
             db.session.commit()
         return created_tag
+
+
+    """
+    Creates a .fari file for a given song id
+    """
+    @classmethod
+    def create_fari_file(self, song_id, **kwargs):
+        # find song
+        song = SongSchema().dump(SongModel.query.get(song_id))
+        if song is None:
+            app.logger.error("Song '%s' was not found. It was not possible to create its fari file" % song_id)
+            return
+        fari_file_content = {}
+        fari_file_content["id"] = song["id"]
+        fari_file_content["enabled"] = song["enabled"]
+        fari_file_content["rating"] = song["rating"]
+        fari_file_content["tags"] = []
+        for tag in song["tags"]:
+            fari_file_content["tags"].append(tag["name"])
+
+        # fari file path
+        song_path = re.sub(r"^/", r"", song["path"])
+        fari_file_path = os.path.join(settings["media_dir"], song_path) + ".fari"
+
+        # create fari file
+        with open(fari_file_path, "w") as file:
+            # write file info in json
+            file.write(json.dumps(fari_file_content))
 
 
     """
@@ -337,7 +365,7 @@ class LibraryController:
 
             # if .fari file does not exist, create one
             if not fari_file_exists:
-                create_fari_file(song_id)
+                self.create_fari_file(song_id)
                 fari_files_created += 1
 
         app.logger.info("Songs added: %d", songs_added)
