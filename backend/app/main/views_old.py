@@ -9,10 +9,10 @@ from .functions import remake_library, create_fari_file, remake_artists_and_albu
 import os
 import re
 
-@main.route('/', defaults={'path':''})
-@main.route('/<path:path>')
-def root_view(path):
-    return render_template('index.html')
+# @main.route('/', defaults={'path':''})
+# @main.route('/<path:path>')
+# def root_view(path):
+#     return render_template('index.html')
 
 @main.route('/api/media-dir', methods=['GET'])
 def media_dir_view():
