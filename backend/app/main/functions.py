@@ -1,3 +1,4 @@
+from flask import current_app as app
 from .. import db
 from .models import *
 from ..settings import settings
@@ -139,7 +140,7 @@ def remake_artists_and_albums(**kwargs):
     if kwargs['commit']:
         db.session.commit()
 
-    print("Remake artists/albums total time: %.2fs" % (time.time() - start_time))
+    app.logger.info("Remake artists took %.2fs" % (time.time() - start_time))
 
     return {
         "artists_found": artists_found,
@@ -156,6 +157,8 @@ def extract_integer_or(value, default = 1):
         return int(matches.group())
 
 def remake_library():
+    app.logger.info("Starting library remake")
+
     # delete all artists and albums from database
     delete_artists_and_albums()
 
@@ -231,7 +234,7 @@ def remake_library():
             create_fari_file(song_id)
             fari_files_created += 1
 
-    print("Song search total time: %.2fs" % (time.time() - start_time))
+    app.logger.info("Songs search took %.2fs" % (time.time() - start_time))
 
     # remake artists and albums
     remake_artists_and_albums_result = remake_artists_and_albums(delete=False, commit=False)
@@ -240,7 +243,7 @@ def remake_library():
     db.session.commit()
 
     total_time = time.time() - start_time
-    print("Remake library total time: %.2fs" % (total_time))
+    app.logger.info("Library remake took %.2fs" % total_time)
 
     return {
         "songs_found": songs_found,

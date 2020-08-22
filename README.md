@@ -38,6 +38,6 @@ python3 -m venv venv
 pip3 install wheel
 pip3 install -r requirements.txt
 python3 db.py
-chmod +x start.sh
-./start.sh
+chmod +x start-dev.sh
+./start-dev.sh
 ```
