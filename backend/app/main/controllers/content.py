@@ -117,6 +117,13 @@ class ContentController:
         for metadata_tag in settings["metadata_tags"]:
             song_info[metadata_tag] = song_file[metadata_tag].value
 
+        # get tags and rating
+        song = SongModel.query.get(song_id)
+        song_info["rating"] = song.rating
+        tags = list(TagSchema(many=True).dump(song.tags))
+        tags = list(map(lambda x: x["name"], tags))
+        song_info["tags"] = tags
+
         if not kwargs['no_artwork']:
             # get artwork if any
             song_artwork = song_file['artwork']
