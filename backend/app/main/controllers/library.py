@@ -118,10 +118,18 @@ class LibraryController:
         app.logger.info("Starting artists and albums update")
         if 'commit' not in kwargs:
             kwargs['commit'] = True
+        if 'song_id' not in kwargs:
+            kwargs['song_id'] = None
 
         artists_added = 0
         albums_added = 0
-        for song in SongModel.query.all():
+        song_query = SongModel.query
+
+        # check if should update only a single song
+        if kwargs['song_id']:
+            song_query = song_query.filter(SongModel.id == kwargs['song_id'])
+
+        for song in song_query.all():
             # get song's artist name
             song_artist_name = song.albumartist
             if not song_artist_name:

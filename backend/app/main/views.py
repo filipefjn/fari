@@ -112,3 +112,25 @@ def song_file_view_v2(song_id):
         return ("", 404)
     return flask.send_file(song_path, as_attachment=True, attachment_filename=song_path.split("/")[-1])
 
+
+"""
+Returns or updates the song's info
+"""
+@main.route('/api/v2/song/<song_id>/info', methods=['GET', 'PUT'])
+def song_info_view_v2(song_id):
+    if flask.request.method == 'GET':
+        no_artwork = flask.request.args.get('noartwork')
+        no_artwork = True if no_artwork is not None else False
+        song_info = ContentController.get_song_info(song_id, no_artwork=no_artwork)
+        if not song_info:
+            return ("", 404)
+        return flask.jsonify(song_info)
+    elif flask.request.method == 'PUT':
+        new_song_info = flask.request.get_json(force=True)
+        if not new_song_info or not isinstance(new_song_info, dict):
+            return ("", 400)
+        final_song_info = ContentController.put_song_info(song_id, new_song_info)
+        if not final_song_info:
+            return ("", 400)
+        return flask.jsonify(final_song_info)
+
