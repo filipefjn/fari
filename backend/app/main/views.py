@@ -93,3 +93,14 @@ def tag_view_v2(tag_name):
         else:
             return ("", 200)
 
+
+"""
+Returns the song's file
+"""
+@main.route('/api/v2/song/<song_id>/file', methods=['GET'])
+def get_song_file_view_v2(song_id):
+    song_path = ContentController.get_song_path(song_id)
+    if not song_path:
+        return ("", 404)
+    return flask.send_file(song_path, as_attachment=True, attachment_filename=song_path.split("/")[-1])
+

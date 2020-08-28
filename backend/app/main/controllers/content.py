@@ -1,7 +1,10 @@
 from flask import current_app as app
+import flask
 from ... import db
 from ...settings import settings
 from ..models import *
+import os
+import re
 
 class ContentController:
     """
@@ -50,6 +53,7 @@ class ContentController:
         db.session.commit()
         return TagSchema().dump(new_tag)
 
+
     """
     Deletes a tag if it exists
     """
@@ -66,4 +70,28 @@ class ContentController:
             # tag was not found
             app.logger.info("Tag '%s' was not found" % tag_name)
             return False
+
+
+    """
+    Get a song's path
+    """
+    @classmethod
+    def get_song_path(self, song_id, **kwargs):
+        song = SongModel.query.get(song_id)
+        if not song:
+            # the song was not found
+            return False
+
+        # prepare path
+        path = os.path.normpath(song.path)
+        path = re.sub(r"^\/", "", path)
+        path = os.path.join(settings["media_dir"], path)
+        path = os.path.normpath(path)
+
+        # check if path exists and is a file
+        if not os.path.exists(path) or not os.path.isfile(path):
+            app.logger.info("File '%s' does not exist" % path)
+            return False
+
+        return path
 
