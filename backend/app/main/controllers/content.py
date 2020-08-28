@@ -88,7 +88,7 @@ class ContentController:
         # prepare path
         path = os.path.normpath(song.path)
         path = re.sub(r"^\/", "", path)
-        path = os.path.join(settings["media_dir"], path)
+        path = os.path.join(settings["library_path"], path)
         path = os.path.normpath(path)
 
         # check if path exists and is a file

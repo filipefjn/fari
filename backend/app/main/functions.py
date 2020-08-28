@@ -21,7 +21,7 @@ def get_song_artwork_base64(path):
         return None
     path = re.sub(r'^/', '', path)
     path = re.sub(r'\.\./', '', path)
-    path = os.path.join(settings["media_dir"], path)
+    path = os.path.join(settings["library_path"], path)
     if not os.path.exists(path):
         return None
     if not os.path.isfile(path):
@@ -46,7 +46,7 @@ def create_fari_file(song_id):
 
     # generate fari file path
     song_path = re.sub(r"^/", r"", song_row["path"])
-    fari_file_path = os.path.join(settings["media_dir"], song_path) + ".fari"
+    fari_file_path = os.path.join(settings["library_path"], song_path) + ".fari"
 
     # create fari file
     with open(fari_file_path, "w") as file:
@@ -174,7 +174,7 @@ def remake_library():
 
     # search directory
     filtered_file_list = []
-    for root, dirs, files in os.walk(settings["media_dir"]):
+    for root, dirs, files in os.walk(settings["library_path"]):
         for file in files:
             if re.search(re.compile(settings["file_regex"], re.IGNORECASE), file) is not None:
                 file_path = os.path.join(root, file)
@@ -185,7 +185,7 @@ def remake_library():
     songs_found = 0
     fari_files_created = 0
     for file in filtered_file_list:
-        file_absolute_path = os.path.join(settings["media_dir"], file)
+        file_absolute_path = os.path.join(settings["library_path"], file)
         file_tags = music_tag.load_file(file_absolute_path)
         song_id = gen_id(str(file_tags["tracktitle"].value) + str(file_tags["artist"].value))
         song_tracknumber = extract_integer_or(file_tags["tracknumber"].value, 0)
@@ -193,7 +193,7 @@ def remake_library():
         song_track_order = "%02d-%03d" % (song_discnumber, song_tracknumber)
         song = SongModel(
             id=song_id,
-            path=file_absolute_path.replace(settings["media_dir"], "/", 1),
+            path=file_absolute_path.replace(settings["library_path"], "/", 1),
             enabled=True,
             tracknumber=song_tracknumber,
             tracktitle=file_tags["tracktitle"].value,

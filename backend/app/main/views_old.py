@@ -16,7 +16,7 @@ import re
 
 @main.route('/api/media-dir', methods=['GET'])
 def media_dir_view():
-    media_dir = settings["media_dir"]
+    media_dir = settings["library_path"]
     if not os.path.exists(media_dir):
         raise Exception("media_dir does not exist")
     return { "result": media_dir }
@@ -30,7 +30,7 @@ def folder_content():
         path = "/"
     path = re.sub(r'^/', '', path)
     path = re.sub(r'\.\./', '', path)
-    path = os.path.join(settings["media_dir"], path)
+    path = os.path.join(settings["library_path"], path)
     if not os.path.exists(path):
         raise Exception("requested path does not exist")
     if not os.path.isdir(path):
@@ -60,7 +60,7 @@ def fetch_file_view():
         raise Exception("you must specify a path")
     path = re.sub(r'^/', '', path)
     path = re.sub(r'\.\./', '', path)
-    path = os.path.join(settings["media_dir"], path)
+    path = os.path.join(settings["library_path"], path)
     if not os.path.exists(path):
         raise Exception("requested path does not exist")
     if not os.path.isfile(path):
@@ -76,7 +76,7 @@ def file_info_view():
         raise Exception("you must specify a path")
     path = re.sub(r'^/', '', path)
     path = re.sub(r'\.\./', '', path)
-    path = os.path.join(settings["media_dir"], path)
+    path = os.path.join(settings["library_path"], path)
     if not os.path.exists(path):
         raise Exception("requested path does not exist")
     if not os.path.isfile(path):
@@ -84,7 +84,7 @@ def file_info_view():
     file = music_tag.load_file(path)
     # gettings tags
     tags = {}
-    for tag_name in settings["file_tags"]:
+    for tag_name in settings["metadata_tags"]:
         tags[tag_name] = file[tag_name].value
     response = {
         "tags": tags,
@@ -105,7 +105,7 @@ def file_artwork_view():
         raise Exception("you must specify a path")
     path = re.sub(r'^/', '', path)
     path = re.sub(r'\.\./', '', path)
-    path = os.path.join(settings["media_dir"], path)
+    path = os.path.join(settings["library_path"], path)
     if not os.path.exists(path):
         raise Exception("requested path does not exist")
     if not os.path.isfile(path):

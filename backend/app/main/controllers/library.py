@@ -245,7 +245,7 @@ class LibraryController:
 
         # fari file path
         song_path = re.sub(r"^/", r"", song["path"])
-        fari_file_path = os.path.join(settings["media_dir"], song_path) + ".fari"
+        fari_file_path = os.path.join(settings["library_path"], song_path) + ".fari"
 
         # create fari file
         with open(fari_file_path, "w") as file:
@@ -264,7 +264,7 @@ class LibraryController:
 
         # get songs from the library directory
         dir_files_list = []
-        for root, dirs, files in os.walk(settings["media_dir"]):
+        for root, dirs, files in os.walk(settings["library_path"]):
             for file in files:
                 if re.search(re.compile(settings["file_regex"], re.IGNORECASE), file) is not None:
                     file_path = os.path.join(root, file)
@@ -273,7 +273,7 @@ class LibraryController:
         # get songs on the database
         db_files_list = []
         query_result = SongModel.query.with_entities(SongModel.path).all()
-        path_prefix = re.sub(r"\/+$", "", settings["media_dir"])
+        path_prefix = re.sub(r"\/+$", "", settings["library_path"])
         for file in query_result:
             db_files_list.append(path_prefix + file[0])
 
@@ -294,7 +294,7 @@ class LibraryController:
 
         # get songs from the library directory
         dir_files_list = []
-        for root, dirs, files in os.walk(settings["media_dir"]):
+        for root, dirs, files in os.walk(settings["library_path"]):
             for file in files:
                 if re.search(re.compile(settings["file_regex"], re.IGNORECASE), file) is not None:
                     file_path = os.path.join(root, file)
@@ -303,7 +303,7 @@ class LibraryController:
         # get songs on the database
         db_files_list = []
         query_result = SongModel.query.with_entities(SongModel.path).all()
-        path_prefix = re.sub(r"\/+$", "", settings["media_dir"])
+        path_prefix = re.sub(r"\/+$", "", settings["library_path"])
         for file in query_result:
             db_files_list.append(path_prefix + file[0])
 
@@ -326,7 +326,7 @@ class LibraryController:
         fari_files_found = 0
         fari_files_created = 0
         for file in file_list:
-            file_absolute_path = os.path.join(settings["media_dir"], file)
+            file_absolute_path = os.path.join(settings["library_path"], file)
             file_tags = music_tag.load_file(file_absolute_path)
             song_id = CommonController.generate_id(str(file_tags["tracktitle"].value) + str(file_tags["artist"].value))
             song_tracknumber = CommonController.extract_integer_or(file_tags["tracknumber"].value, 0)
@@ -334,7 +334,7 @@ class LibraryController:
             song_track_order = "%02d-%03d" % (song_discnumber, song_tracknumber)
             song = SongModel(
                 id=song_id,
-                path=file_absolute_path.replace(settings["media_dir"], "/", 1),
+                path=file_absolute_path.replace(settings["library_path"], "/", 1),
                 enabled=True,
                 tracknumber=song_tracknumber,
                 tracktitle=file_tags["tracktitle"].value,
