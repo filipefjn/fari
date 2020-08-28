@@ -1,6 +1,7 @@
+from flask import current_app as app
 import flask
 from . import main
-from .controllers import LibraryController
+from .controllers import LibraryController, ContentController
 
 """
 Returns the frontend's entrypoint
@@ -45,3 +46,50 @@ Remakes the library
 def remake_library_view_v2():
     LibraryController.remake()
     return ""
+
+
+"""
+Returns the artists
+"""
+@main.route('/api/v2/artists', methods=['GET'])
+def artists_view_v2():
+    artist_list = ContentController.get_artists()
+    return flask.jsonify(artist_list)
+
+
+"""
+Returns the albums and songs of an artist
+"""
+@main.route('/api/v2/artist/<artist_id>', methods=['GET'])
+def get_artist_view_v2(artist_id):
+    artist = ContentController.get_artist_content(artist_id)
+    if not artist:
+        return ("", 404)
+    return flask.jsonify(artist)
+
+
+"""
+Returns the tags
+"""
+@main.route('/api/v2/tags', methods=['GET'])
+def tags_view_v2():
+    tag_list = ContentController.get_tags()
+    return flask.jsonify(tag_list)
+
+
+"""
+Creates or deletes a tag
+"""
+@main.route('/api/v2/tag/<tag_name>', methods=['POST', 'DELETE'])
+def tag_view_v2(tag_name):
+    tag_name = tag_name.upper()
+    if flask.request.method == 'POST':
+        tag = ContentController.create_tag(tag_name)
+        return flask.jsonify(tag)
+    elif flask.request.method == 'DELETE':
+        result = ContentController.delete_tag(tag_name)
+        if not result:
+            return ("", 404)
+        else:
+            return ("", 200)
+
