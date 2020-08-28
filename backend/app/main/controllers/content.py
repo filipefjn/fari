@@ -169,3 +169,46 @@ class ContentController:
         db.session.commit()
         return self.get_song_info(song_id, no_artwork=True)
 
+
+    """
+    Applies tag to a list of songs
+    """
+    @classmethod
+    def apply_tag(self, tag_name, song_id_list, **kwargs):
+        # get tag
+        tag = TagModel.query.filter(TagModel.name.ilike(tag_name)).first()
+
+        # if it doesn't exist, create it
+        if not tag:
+            self.create_tag(tag_name)
+            tag = TagModel.query.filter(TagModel.name.ilike(tag_name)).first()
+
+        for song in SongModel.query.filter(SongModel.id.in_(song_id_list)).all():
+            song.tags.append(tag)
+            db.session.commit()
+            LibraryController.create_fari_file(song.id)
+
+        db.session.commit()
+        return True
+
+
+    """
+    Removes tag from a list of songs
+    """
+    @classmethod
+    def remove_tag(self, tag_name, song_id_list, **kwargs):
+        # get tag
+        tag = TagModel.query.filter(TagModel.name.ilike(tag_name)).first()
+
+        # if it doesn't exist, do nothing
+        if not tag:
+            return True
+
+        for song in SongModel.query.filter(SongModel.id.in_(song_id_list)).all():
+            song.tags.remove(tag)
+            db.session.commit()
+            LibraryController.create_fari_file(song.id)
+
+        db.session.commit()
+        return True
+

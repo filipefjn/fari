@@ -134,3 +134,33 @@ def song_info_view_v2(song_id):
             return ("", 400)
         return flask.jsonify(final_song_info)
 
+
+"""
+Applies tag to a list of songs
+"""
+@main.route('/api/v2/tag/<tag_name>/apply', methods=['POST'])
+def apply_tag_view_v2(tag_name):
+    tag_name = tag_name.upper()
+    song_id_list = flask.request.get_json(force=True)
+    if not song_id_list or not isinstance(song_id_list, list):
+        return ("", 400)
+    result = ContentController.apply_tag(tag_name, song_id_list)
+    if not result:
+        return ("", 500)
+    return ""
+
+
+"""
+Removes tag from a list of songs
+"""
+@main.route('/api/v2/tag/<tag_name>/remove', methods=['POST'])
+def remove_tag_view_v2(tag_name):
+    tag_name = tag_name.upper()
+    song_id_list = flask.request.get_json(force=True)
+    if not song_id_list or not isinstance(song_id_list, list):
+        return ("", 400)
+    result = ContentController.remove_tag(tag_name, song_id_list)
+    if not result:
+        return ("", 500)
+    return ""
+
