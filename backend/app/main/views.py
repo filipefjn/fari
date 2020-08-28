@@ -13,6 +13,14 @@ def root_view(path):
 
 
 """
+404 route for invalid API endpoints
+"""
+@main.route('/api/<path:path>')
+def api_not_found_view(path):
+    return ("", 404)
+
+
+"""
 Deletes the library
 """
 @main.route('/api/v2/library/delete', methods=['POST'])
@@ -98,7 +106,7 @@ def tag_view_v2(tag_name):
 Returns the song's file
 """
 @main.route('/api/v2/song/<song_id>/file', methods=['GET'])
-def get_song_file_view_v2(song_id):
+def song_file_view_v2(song_id):
     song_path = ContentController.get_song_path(song_id)
     if not song_path:
         return ("", 404)
