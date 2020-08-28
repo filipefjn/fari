@@ -162,6 +162,17 @@ class ContentController:
         SongModel.query.filter(SongModel.id == song_id).update(song_db_update)
         song = SongModel.query.get(song_id)
         song.track_order = "%02d-%03d" % (song.discnumber, song.tracknumber)
+        if 'rating' in new_song_info:
+            # attempt to update rating
+            rating = int(new_song_info['rating'])
+            rating = max(rating, 0)
+            rating = min(rating, 5)
+            song.rating = rating
+
+            # update fari file
+            LibraryController.create_fari_file(song.id)
+
+        # update artists/albums
         LibraryController.update_artists_and_albums(commit=False, song_id=song_id)
 
         # commit changes
