@@ -7,4 +7,5 @@ python3 db.py
     --log-level info \
     --access-logfile access.log \
     --reload \
+    --workers 4 \
     --bind 0.0.0.0:5000 wsgi:app
