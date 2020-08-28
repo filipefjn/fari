@@ -131,6 +131,7 @@ class ContentController:
         tags = list(TagSchema(many=True).dump(song.tags))
         tags = list(map(lambda x: x["name"], tags))
         song_info["tags"] = tags
+        song_info["enabled"] = song.enabled
 
         if not kwargs['no_artwork']:
             # get artwork if any
@@ -167,6 +168,7 @@ class ContentController:
                 song_db_update[settings["metadata_tags_to_song_model"][metadata_tag]] = new_song_info[metadata_tag]
 
         # update song on the database
+        update_fari_file = False
         SongModel.query.filter(SongModel.id == song_id).update(song_db_update)
         song = SongModel.query.get(song_id)
         song.track_order = "%02d-%03d" % (song.discnumber, song.tracknumber)
@@ -176,7 +178,13 @@ class ContentController:
             rating = max(rating, 0)
             rating = min(rating, 5)
             song.rating = rating
-
+            update_fari_file = True
+        if 'enabled' in new_song_info:
+            # attempt to update enabled
+            enabled = bool(new_song_info['enabled'])
+            song.enabled = enabled
+            update_fari_file = True
+        if update_fari_file:
             # update fari file
             LibraryController.create_fari_file(song.id)
 
