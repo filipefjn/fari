@@ -64,9 +64,17 @@ class ContentController:
     def delete_tag(self, tag_name, **kwargs):
         found_tag = TagModel.query.filter(TagModel.name.ilike(tag_name)).first()
         if found_tag:
-            # tag was found, delete it
+            # tag was found
+            # look for the songs which have the tag
+            song_id_list = []
+            for song in SongModel.query.filter(SongModel.tags.contains(found_tag)):
+                song_id_list.append(song.id)
+            # delete the tag
             db.session.delete(found_tag)
             db.session.commit()
+            # recreate the songs' fari file
+            for song_id in song_id_list:
+                LibraryController.create_fari_file(song_id)
             app.logger.info("Tag '%s' deleted" % tag_name)
             return True
         else:
