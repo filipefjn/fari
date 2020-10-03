@@ -1,43 +1,4 @@
-<template>
-    <div class="header">
-        <div class="hamburger" @click="onHamburgerClick()"><fa-icon icon="bars"/></div>
-        <div class="back" v-show="displayNavigationButtons" :class="{'disabled': !backButtonAction}" @click="onBackClick()"><fa-icon icon="caret-left"/></div>
-        <div class="forward disabled" v-show="displayNavigationButtons"><fa-icon icon="caret-right"/></div>
-        <div class="title">{{headerInfo.title}}</div>
-        <div class="subtitle">{{headerInfo.subtitle}}</div>
-        <div class="spacer"></div>
-        <div class="right">
-            <slot name="right"></slot>
-        </div>
-    </div>
-</template>
-
-<script>
-import { mapGetters, mapActions } from 'vuex';
-
-export default {
-    computed: {
-        ...mapGetters(['headerInfo', 'backButtonAction', 'displayNavigationButtons']),
-    },
-    methods: {
-        onHamburgerClick: function() {
-            this.$store.dispatch('openMobileSidebar');
-        },
-        onBackClick: function() {
-            if(!this.backButtonAction) {
-                return;
-            } else {
-                this.backButtonAction();
-            }
-        }
-    }
-}
-</script>
-
-<style scoped lang="scss">
-@import '@/style.scss';
-
-.header {
+.np-header {
     height: 5rem;
     display: flex;
     align-items: center;
@@ -51,7 +12,7 @@ export default {
         padding-left: 0.5rem;
     }
 
-    .hamburger {
+    .np-header-hamburger {
         // margin-right: 1rem;
         margin-left: 0.25rem;
         font-size: 1.5rem;
@@ -77,7 +38,7 @@ export default {
         }
     }
 
-    .back, .forward {
+    .np-header-back, .np-header-forward {
         font-size: 1.75rem;
         margin-left: 0.25rem;
         margin-right: 0.5rem;
@@ -102,7 +63,7 @@ export default {
             padding-right: 4px;
         }
 
-        &.forward {
+        &.np-header-forward {
             margin-left: 0;
             padding-left: 3px;
         }
@@ -116,15 +77,13 @@ export default {
         }
     }
 
-
-
-    .title {
+    .np-header-title {
         font-size: 2rem;
         color: $primary;
         margin-right: 2rem;
     }
 
-    .subtitle {
+    .np-header-subtitle {
         font-size: 1rem;
         color: $primary;
         margin-top: 0.5rem;
@@ -134,13 +93,12 @@ export default {
         }
     }
 
-    .spacer {
+    .np-header-spacer {
         flex-grow: 1;
     }
 
-    .right {
+    .np-header-right {
         display: flex;
         align-items: center;
     }
 }
-</style>

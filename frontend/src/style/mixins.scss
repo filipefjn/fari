@@ -1,0 +1,19 @@
+@mixin breakpoint($point) {
+    @if $point == mobile {
+        @media (max-width: 768px) { @content; }
+    }
+    @if $point == not-mobile {
+        @media (min-width: 769px) { @content; }
+    }
+}
+
+@mixin stretch-child {
+    position: relative;
+    > * {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+}
