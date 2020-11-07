@@ -87,8 +87,16 @@ class ArtistSchema(ma.Schema):
         model = ArtistModel
         fields = (
             "id",
-            "name"
+            "name",
+            "album_count",
+            "song_count",
+            "unrated_songs_count",
+            "untagged_songs_count"
         )
+    album_count = ma.Function(lambda x: ArtistModel.query.filter(ArtistModel.id == x.id).join(AlbumModel).count())
+    song_count = ma.Function(lambda x: ArtistModel.query.filter(ArtistModel.id == x.id).join(AlbumModel).join(SongModel).count())
+    unrated_songs_count = ma.Function(lambda x: ArtistModel.query.filter(ArtistModel.id == x.id).join(AlbumModel).join(SongModel).filter(SongModel.rating == 0).count())
+    untagged_songs_count = ma.Function(lambda x: ArtistModel.query.filter(ArtistModel.id == x.id).join(AlbumModel).join(SongModel).filter(SongModel.tags == None).count())
 
 
 ### album model ###

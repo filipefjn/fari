@@ -15,7 +15,7 @@ class ContentController:
     """
     @classmethod
     def get_artists(self, **kwargs):
-        artist_list = ArtistModel.query.all()
+        artist_list = ArtistModel.query.order_by('name').all()
         return ArtistSchema(many=True).dump(artist_list)
 
 

@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import App from './App.vue';
 import store from './store';
+import axios from 'axios';
 
 // font awesome icons
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -13,6 +14,8 @@ library.add(faPlay, faPause, faForward, faBackward, faFolder, faLevelUpAlt, faMu
 Vue.component('fa-icon', FontAwesomeIcon);
 
 Vue.config.productionTip = false;
+
+Vue.prototype.$http = axios;
 
 new Vue({
     store,
