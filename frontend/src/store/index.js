@@ -1,6 +1,9 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import tools from '@/libs/tools.js';
+import $http from 'axios';
+
+// TODO split this into modules
 
 Vue.use(Vuex);
 
@@ -374,35 +377,15 @@ export default new Vuex.Store({
             if(getters.albumArtworkList[albumId] !== undefined) {
                 return getters.albumArtworkList[albumId];
             } else {
-                let artwork = await fetch('/api/album-artwork', {
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(
-                        {
-                            "id": albumId
-                        }
-                    )
-                }).then((response) => {
-                    if(response.status !== 200) {
-                        return undefined;
-                    }
-                    return response.json();
-                }).then((response) => {
-                    if(response === undefined) {
-                        return undefined;
-                    }
-                    if(response.artwork) {
-                        return response.artwork;
-                    } else {
-                        return null;
-                    }
-
-                });
-                if(artwork === undefined) {
-                    return;
+                let url = '/api/v2/albums/' + albumId + "/artwork";
+                let response = await $http.get(url);
+                if(response.status != 200) {
+                    return undefined;
                 }
+                if(response.data.artwork === undefined) {
+                    return undefined;
+                }
+                let artwork = response.data.artwork;
                 let payload = {};
                 payload[albumId] = artwork;
                 commit('appendAlbumArtworkList', payload);

@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import MainLayout from '../layouts/MainLayout.vue';
 import HomeView from '../views/HomeView.vue';
 import ArtistsView from '../views/ArtistsView.vue';
+import ArtistView from '../views/ArtistView.vue';
 import NotFoundView from '../views/NotFoundView.vue';
 
 Vue.use(VueRouter);
@@ -12,7 +13,7 @@ Vue.use(VueRouter);
 const routes = [
     {
         path: '/',
-        name: 'Home',
+        name: 'home',
         components: {
             layout: MainLayout,
             view: HomeView
@@ -20,10 +21,18 @@ const routes = [
     },
     {
         path: '/artists',
-        name: 'Artists',
+        name: 'artists',
         components: {
             layout: MainLayout,
             view: ArtistsView
+        }
+    },
+    {
+        path: '/artists/:slug',
+        name: 'artist',
+        components: {
+            layout: MainLayout,
+            view: ArtistView
         }
     },
     {

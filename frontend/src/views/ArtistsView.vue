@@ -81,7 +81,7 @@ export default {
     },
     methods: {
         onArtistClick: function(artist) {
-            // TODO open artist
+            this.$router.push({ name: 'artist', params: { slug: artist.slug }});
         }
     }
 };

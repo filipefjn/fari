@@ -1,5 +1,6 @@
 import random
 import hashlib
+import math
 
 class CommonController:
     """
@@ -24,3 +25,19 @@ class CommonController:
             return int(default)
         else:
             return int(matches.group())
+    
+
+    """
+    Formats a number of seconds to the [00:]00:00 format
+    """
+    @classmethod
+    def format_duration(self, duration):
+        duration = round(duration)
+        seconds = duration % 60
+        minutes = math.floor(duration / 60) % 60
+        output = "%02d:%02d" % (minutes, seconds)
+        hours = math.floor(duration / 3600)
+        if hours:
+            output = "%2d:%s" % (hours, output)
+        return output
+

@@ -68,12 +68,23 @@ def artists_view_v2():
 """
 Returns the albums and songs of an artist
 """
-@main.route('/api/v2/artist/<artist_id>', methods=['GET'])
-def get_artist_view_v2(artist_id):
-    artist = ContentController.get_artist_content(artist_id)
+@main.route('/api/v2/artists/<artist_slug>', methods=['GET'])
+def get_artist_view_v2(artist_slug):
+    artist = ContentController.get_artist_content(artist_slug=artist_slug)
     if not artist:
         return ("", 404)
     return flask.jsonify(artist)
+
+
+"""
+Returns the artwork of an album
+"""
+@main.route('/api/v2/albums/<int:album_id>/artwork', methods=['GET'])
+def get_album_artwork_v2(album_id):
+    artwork_dict = ContentController.get_album_artwork(album_id)
+    if not artwork_dict:
+        return ("", 404)
+    return flask.jsonify(artwork_dict)
 
 
 """
@@ -88,7 +99,7 @@ def tags_view_v2():
 """
 Creates or deletes a tag
 """
-@main.route('/api/v2/tag/<tag_name>', methods=['POST', 'DELETE'])
+@main.route('/api/v2/tags/<tag_name>', methods=['POST', 'DELETE'])
 def tag_view_v2(tag_name):
     tag_name = tag_name.upper()
     if flask.request.method == 'POST':
@@ -105,7 +116,7 @@ def tag_view_v2(tag_name):
 """
 Returns the song's file
 """
-@main.route('/api/v2/song/<song_id>/file', methods=['GET'])
+@main.route('/api/v2/songs/<song_id>/file', methods=['GET'])
 def song_file_view_v2(song_id):
     song_path = ContentController.get_song_path(song_id)
     if not song_path:
@@ -116,7 +127,7 @@ def song_file_view_v2(song_id):
 """
 Returns or updates the song's info
 """
-@main.route('/api/v2/song/<song_id>/info', methods=['GET', 'PUT'])
+@main.route('/api/v2/songs/<song_id>/info', methods=['GET', 'PUT'])
 def song_info_view_v2(song_id):
     if flask.request.method == 'GET':
         no_artwork = flask.request.args.get('noartwork')
@@ -138,7 +149,7 @@ def song_info_view_v2(song_id):
 """
 Applies tag to a list of songs
 """
-@main.route('/api/v2/tag/<tag_name>/apply', methods=['POST'])
+@main.route('/api/v2/tags/<tag_name>/apply', methods=['POST'])
 def apply_tag_view_v2(tag_name):
     tag_name = tag_name.upper()
     song_id_list = flask.request.get_json(force=True)
@@ -153,7 +164,7 @@ def apply_tag_view_v2(tag_name):
 """
 Removes tag from a list of songs
 """
-@main.route('/api/v2/tag/<tag_name>/remove', methods=['POST'])
+@main.route('/api/v2/tags/<tag_name>/remove', methods=['POST'])
 def remove_tag_view_v2(tag_name):
     tag_name = tag_name.upper()
     song_id_list = flask.request.get_json(force=True)

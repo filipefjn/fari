@@ -3,10 +3,12 @@ from ... import db
 from ...settings import settings
 from ..models import *
 from .common import CommonController
+from slugify import slugify
 import os
 import re
 import json
 import music_tag
+from tinytag import TinyTag
 
 class LibraryController:
     """
@@ -140,9 +142,17 @@ class LibraryController:
             # look for artist
             song_artist = ArtistModel.query.filter(ArtistModel.name.ilike(song_artist_name)).first()
             if not song_artist:
+                # create slug for artist
+                artist_slug = slugify(song_artist_name)
+                # check if slug already exists
+                if ArtistModel.query.filter(ArtistModel.slug == artist_slug).first() is not None:
+                    slug_attempt_counter = 2
+                    while ArtistModel.query.filter(ArtistModel.slug == artist_slug).first() is not None:
+                        artist_slug = slugify("%s-%s" % (song_artist_name, str(slug_attempt_counter)))
                 # create a new artist
                 song_artist = ArtistModel(
-                    name=song_artist_name
+                    name=song_artist_name,
+                    slug=artist_slug
                 )
                 db.session.add(song_artist)
                 artists_added += 1
@@ -332,6 +342,8 @@ class LibraryController:
             song_tracknumber = CommonController.extract_integer_or(file_tags["tracknumber"].value, 0)
             song_discnumber = CommonController.extract_integer_or(file_tags["discnumber"].value, 1)
             song_track_order = "%02d-%03d" % (song_discnumber, song_tracknumber)
+            file_tags_tiny_tag = TinyTag.get(file_absolute_path)
+            song_duration = CommonController.format_duration(file_tags_tiny_tag.duration)
             song = SongModel(
                 id=song_id,
                 path=file_absolute_path.replace(settings["library_path"], "/", 1),
@@ -343,7 +355,8 @@ class LibraryController:
                 album_name=file_tags["album"].value,
                 discnumber=song_discnumber,
                 track_order=song_track_order,
-                year=file_tags["year"].value
+                year=file_tags["year"].value,
+                duration=song_duration
             )
 
             # look for .fari file

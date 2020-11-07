@@ -76,3 +76,35 @@
         background-color: rgb(65, 65, 65);
     }
 }
+
+.np-list-row-album {
+    display: flex;
+    flex-direction: row;
+    padding: 1rem 0.5rem;
+    padding-top: 2rem;
+    align-items: center;
+
+    .np-list-row-album-art {
+        height: 4.5rem;
+        width: 4.5rem;
+        background-color: #252525;
+        overflow: hidden;
+        background-repeat: no-repeat;
+        background-size: contain;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .np-list-row-album-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        padding-left: 1rem;
+
+        .np-list-row-album-info-title {
+            font-size: 1.25rem;
+            padding-bottom: 0.25rem;
+        }
+    }
+}

@@ -23,8 +23,11 @@ class ContentController:
     Returns the albums and songs of an artist
     """
     @classmethod
-    def get_artist_content(self, artist_id, **kwargs):
-        artist = ArtistModel.query.get(artist_id)
+    def get_artist_content(self, artist_id=None, artist_slug=None, **kwargs):
+        if artist_id:
+            artist = ArtistModel.query.get(artist_id)
+        elif artist_slug:
+            artist = ArtistModel.query.filter(ArtistModel.slug == artist_slug).first()
         return ArtistNestedSchema().dump(artist)
 
 
@@ -195,6 +198,27 @@ class ContentController:
         song_file.save()
         db.session.commit()
         return self.get_song_info(song_id, no_artwork=True)
+
+
+    """
+    Gets an album's artwork
+    """
+    @classmethod
+    def get_album_artwork(self, album_id):
+        song = SongModel.query.join(AlbumModel).filter(AlbumModel.id == album_id).first()
+        if not song:
+            return None
+        song_path = self.get_song_path(song.id) # TODO avoid second song query
+        file = music_tag.load_file(song_path)
+        response = {
+            "album_id": album_id
+        }
+        # get artwork if any
+        artwork = file['artwork']
+        if artwork.first is not None:
+            artwork_b64 = "data:" + artwork.first.mime + ";base64," + b64encode(artwork.first.data).decode('ascii')
+            response["artwork"] = artwork_b64
+        return response
 
 
     """
